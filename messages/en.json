@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "energyDrinks": "ENERGY DRINKS",
+    "storeLocator": "STORE LOCATOR",
+    "news": "NEWS",
+    "athletes": "ATHLETES",
+    "promos": "PROMOS",
+    "events": "EVENTS",
+    "shopAllFlavors": "SHOP ALL FLAVORS"
+  },
+  "flavors": {
+    "monsterEnergy": "MONSTER ENERGY",
+    "monsterUltra": "MONSTER ULTRA",
+    "monsterCoffee": "MONSTER COFFEE",
+    "juiceMonster": "JUICE MONSTER",
+    "rehabMonster": "REHAB MONSTER",
+    "fanFavorites": "FAN FAVORITES",
+    "original": "Original",
+    "zeroSugar": "Zero Sugar",
+    "coffeeEnergy": "Coffee + Energy",
+    "juiceEnergy": "Juice + Energy",
+    "teaEnergy": "Tea + Energy",
+    "topFlavors": "Top Flavors"
+  },
+  "location": {
+    "title": "CHOOSE YOUR LOCATION",
+    "americas": "AMERICAS",
+    "asiaPacific": "ASIA PACIFIC",
+    "emea": "EUROPE, MIDDLE EAST, & AFRICA"
+  },
+  "store": {
+    "title": "WHERE TO BUY",
+    "addressPlaceholder": "Address, postal code...",
+    "shopOnline": "SHOP ONLINE",
+    "findInStore": "FIND IN STORE",
+    "notAvailable": "This item is not available near you.",
+    "enterZip": "Enter an address or zip code to see available retailers.",
+    "monsterEnergy16oz": "MONSTER ENERGY 16OZ",
+    "flavorDesc": "Flavor: Sweet And Salty Citrus - Monster Energy packs a powerful punch with an Energy Drink that delivers a smooth, easy-drinking flavor. What does it taste like? It tastes uniquely like Monster, setting the standard for Energy Drinks everywhere."
+  },
+  "hero": {
+    "tagline": "UNLEASH THE BEAST",
+    "cta": "EXPLORE FLAVORS",
+    "sub": "The original energy drink. The one that started it all.",
+    "shopNow": "SHOP NOW",
+    "slide1Title": "Monster Ultra Punk Punch",
+    "slide2Title": "Lando Norris",
+    "slide3Title": "Juice Monster Voodoo Grape"
+  },
+  "news": {
+    "sectionTitle": "LATEST NEWS",
+    "readMore": "READ MORE",
+    "viewAll": "VIEW ALL NEWS"
+  },
+  "common": {
+    "close": "Close",
+    "langToggle": "عربي"
+  }
+}
