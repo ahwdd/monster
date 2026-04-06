@@ -36,7 +36,9 @@
     "notAvailable": "This item is not available near you.",
     "enterZip": "Enter an address or zip code to see available retailers.",
     "monsterEnergy16oz": "MONSTER ENERGY 16OZ",
-    "flavorDesc": "Flavor: Sweet And Salty Citrus - Monster Energy packs a powerful punch with an Energy Drink that delivers a smooth, easy-drinking flavor. What does it taste like? It tastes uniquely like Monster, setting the standard for Energy Drinks everywhere."
+    "flavorDesc": "Flavor: Sweet And Salty Citrus - Monster Energy packs a powerful punch with an Energy Drink that delivers a smooth, easy-drinking flavor. What does it taste like? It tastes uniquely like Monster, setting the standard for Energy Drinks everywhere.",
+    "selectFlavor": "Select a flavor",
+    "backToFlavors": "Back to flavors"
   },
   "hero": {
     "tagline": "UNLEASH THE BEAST",
