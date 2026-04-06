@@ -32,7 +32,7 @@ export default function NewsSection() {
 
           {/* Center third — title */}
           <div className="w-1/3 shrink-0 flex items-start justify-center px-2.5">
-            <h2 className="font-display font-semibold text-white uppercase text-center w-full inline-block align-middle px-2.5 
+            <h2 className="font-semibold text-white uppercase text-center w-full inline-block align-middle px-2.5 
             -mt-5 text-[4.5rem] leading-6.25">
               {t("sectionTitle")}
             </h2>
@@ -112,7 +112,7 @@ function NewsCard({
           </h3>
 
           {/* 3. Excerpt  1.2rem → header-smaller clamp(1.125–1.3rem) */}
-          <p className="header-smaller text-[#b6b6b6] font-semibold not-italic">
+          <p className="font-proxima header-smaller text-[#b6b6b6] font-semibold not-italic">
             {isAr ? article.excerptAr : article.excerpt}
           </p>
 

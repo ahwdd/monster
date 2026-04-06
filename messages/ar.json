@@ -52,6 +52,38 @@
     "readMore": "اقرأ المزيد",
     "viewAll": "عرض كل الأخبار"
   },
+  "newsletter": {
+    "titleLine1": "UNLEASH THE",
+    "titleAccent": "BEAST",
+    "titleLine1Ar": "أطلق",
+    "titleAccentAr": "الوحش",
+    "desc": "انضم إلى مونستر إنرجي واحصل على تحديثات حصرية حول المنتجات والعروض والفعاليات",
+    "placeholder": "أدخل بريدك الإلكتروني",
+    "submit": "اشترك",
+    "errorInvalid": "يرجى إدخال بريد إلكتروني صحيح.",
+    "success": "تحقق من بريدك الوارد للتأكيد وتخصيص تفضيلاتك."
+  },
+  "footer": {
+    "company": "الشركة",
+    "support": "الدعم",
+    "explore": "استكشف",
+    "aboutUs": "من نحن",
+    "careers": "وظائف",
+    "sustainability": "الاستدامة",
+    "energyInfo": "معلومات مشروب الطاقة",
+    "monsterArmy": "جيش مونستر",
+    "faqs": "الأسئلة الشائعة",
+    "contactUs": "تواصل معنا",
+    "whereToBuy": "أين تشتري",
+    "gaming": "الألعاب",
+    "energyDrinks": "مشروبات الطاقة",
+    "rehabMonster": "ريهاب مونستر",
+    "allRightsReserved": "جميع الحقوق محفوظة.",
+    "privacyPolicy": "سياسة الخصوصية",
+    "cookiesPolicy": "سياسة ملفات الارتباط",
+    "termsOfUse": "شروط الاستخدام",
+    "doNotSell": "لا تبع أو تشارك معلوماتي الشخصية"
+  },
   "common": {
     "close": "إغلاق",
     "langToggle": "EN"

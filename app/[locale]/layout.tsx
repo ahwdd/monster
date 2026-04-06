@@ -3,20 +3,108 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { Teko, Cairo } from 'next/font/google';
+import { Teko, Cairo } from "next/font/google";
+import localFont from "next/font/local";
 import "../globals.css";
 import "flag-icons/css/flag-icons.min.css";
 
 const teko = Teko({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-teko',
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-teko",
 });
 
 const cairo = Cairo({
-  subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-cairo',
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-cairo",
+});
+
+const proximaNova = localFont({
+  src: [
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-thin.otf",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-thinit.otf",
+      weight: "100",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-light.otf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-lightit.otf",
+      weight: "300",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-regularit.otf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-medium.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-mediumit.otf",
+      weight: "500",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-semibold.otf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-semiboldit.otf",
+      weight: "600",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-bold.otf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-boldit.otf",
+      weight: "700",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-extrabold.otf",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-extraboldit.otf",
+      weight: "800",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-black.otf",
+      weight: "900",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/proxima-nova/proximanova-blackit.otf",
+      weight: "900",
+      style: "italic",
+    },
+  ],
+  variable: "--font-proxima",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +120,6 @@ type Props = {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
 
-  // Reject unknown locales → 404
   if (!routing.locales.includes(locale as "en" | "ar")) {
     notFound();
   }
@@ -41,7 +128,12 @@ export default async function LocaleLayout({ children, params }: Props) {
   const isRTL = locale === "ar";
 
   return (
-    <html lang={locale} dir={isRTL ? "rtl" : "ltr"} suppressHydrationWarning  className={`${teko.variable} ${cairo.variable}`}>
+    <html
+      lang={locale}
+      dir={isRTL ? "rtl" : "ltr"}
+      suppressHydrationWarning
+      className={`${teko.variable} ${cairo.variable} ${proximaNova.variable}`}
+    >
       <body className="font-display txt-regular">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}

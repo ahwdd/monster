@@ -17,7 +17,7 @@ export default function FlavorsSection() {
 
       {/* ── Header ── */}
       <div className="text-center mb-6">
-        <h2 className="font-display font-black text-[64px] uppercase leading-none mb-6 text-white">
+        <h2 className="font-black header-huge uppercase leading-none mb-6 text-white">
           {tf("monsterEnergy").split(" ").slice(0, 2).join(" ")}{" "}
           <span className="text-accent">{tn("energyDrinks").split(" ").slice(-1)[0]}</span>
         </h2>
@@ -66,7 +66,7 @@ function FlavorCard({
         {/* Text */}
         <div className="text-center px-2 mb-3">
           <h3
-            className="font-display font-medium text-[22px] uppercase leading-tight text-white mb-0.5"
+            className="header-small font-medium text-[22px]! uppercase text-white mb-0.5"
           >
             {tf(item.nameKey)}
           </h3>

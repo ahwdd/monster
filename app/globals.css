@@ -77,7 +77,10 @@ html[lang="ar"] body {
   .text-accent { color: var(--color-accent); }
   .bg-surface { background: var(--color-surface); }
   .bg-surface-2 { background: var(--color-surface-2); }
+  .font-teko { font-family: var(--font-teko), sans-serif; }
+  .font-cairo { font-family: var(--font-cairo), sans-serif; }
   .font-display { font-family: var(--font-teko), sans-serif; }
+  .font-proxima { font-family: var(--font-proxima), "proxima-nova", sans-serif; }
   html[lang="ar"] .font-display { font-family: var(--font-cairo), sans-serif; }
  
   .line-clamp-3 {
@@ -218,4 +221,17 @@ header .logo::after {
   background-repeat:   no-repeat;
   background-size:     100vw 100vh;
   background-position: -15px 0;
+}
+/* footer */
+.footer-link {
+  background: linear-gradient(to right, #fff, #fff 50%, #b6b6b6 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 100%;
+  background-position: 100%;
+  transition: background-position 275ms ease;
+}
+.footer-link:hover {
+  background-position: 0%;
 }

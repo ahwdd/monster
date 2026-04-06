@@ -158,7 +158,7 @@ export default function Hero() {
                 className="cta-btn absolute top-1/2 -right-23 -translate-y-1/2 -skew-x-15 bg-[#3a5e00] p-[0_3px_3px_0] no-underline 
                 inline-block cursor-pointer z-10"
               >
-                <span className="bg-monster relative z-1 inline-block px-6.25 pt-2.5 pb-1.25 text-white font-display font-bold 
+                <span className="bg-monster relative z-1 inline-block px-6.25 pt-2.5 pb-1.25 text-white font-bold 
                 text-[20px] uppercase tracking-[2px] whitespace-nowrap [text-shadow:0_0_5px_rgba(0,0,0,0.75)]">
                   {t("shopNow")}
                 </span>

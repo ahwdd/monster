@@ -8,8 +8,8 @@ type Props = {
 
 export default function SkewBtn({ href, text, external }: Props) {
   const inner = (
-    <div className="relative bg-black font-display font-medium text-[1.3rem] tracking-[2px] pt-2.5 pr-6.25 pb-1.25 pl-6.25 
-        border border-[#636363] text-white uppercase transition-all duration-300 ease-[0s]">
+    <div className="relative bg-black font-medium header-smaller tracking-[2px] pt-2.5 pr-6.25 pb-1.25 pl-6.25 
+        border border-[#636363] text-white uppercase transition-all duration-300 ease-[0s] hover:border-accent">
       <div className="skew-x-15 -translate-y-px text-center whitespace-nowrap">
         {text}
       </div>

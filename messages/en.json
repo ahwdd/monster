@@ -52,6 +52,38 @@
     "readMore": "READ MORE",
     "viewAll": "VIEW ALL NEWS"
   },
+  "newsletter": {
+    "titleLine1": "UNLEASH THE",
+    "titleAccent": "BEAST",
+    "titleLine1Ar": "أطلق",
+    "titleAccentAr": "الوحش",
+    "desc": "Join Monster Energy and get exclusive updates on products, promotions, and events",
+    "placeholder": "Enter your email",
+    "submit": "Subscribe",
+    "errorInvalid": "Please enter a valid email address.",
+    "success": "Check your inbox for confirmation and to customize your preferences."
+  },
+  "footer": {
+    "company": "Company",
+    "support": "Support",
+    "explore": "Explore",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "sustainability": "Sustainability",
+    "energyInfo": "Energy Drink Info",
+    "monsterArmy": "Monster Army",
+    "faqs": "FAQs",
+    "contactUs": "Contact Us",
+    "whereToBuy": "Where To Buy",
+    "gaming": "Gaming",
+    "energyDrinks": "Energy Drinks",
+    "rehabMonster": "Rehab Monster",
+    "allRightsReserved": "All Rights Reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "cookiesPolicy": "Cookies Policy",
+    "termsOfUse": "Terms of Use",
+    "doNotSell": "Do Not Sell or Share My Personal Information"
+  },
   "common": {
     "close": "Close",
     "langToggle": "عربي"
