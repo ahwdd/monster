@@ -2,28 +2,30 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { locationData, Country } from "@/utils/data/locations";
+import { locationData, Country } from "@/lib/data/locations";
 import { AnimatePresence, motion } from "framer-motion";
 
 type Tab = "americas" | "asia_pacific" | "emea";
 
 export default function LocationPopup({ onClose }: { onClose: () => void }) {
-  const t      = useTranslations("location");
+  const t = useTranslations("location");
   const locale = useLocale();
-  const isRTL  = locale === "ar";
+  const isRTL = locale === "ar";
 
   const [activeTab, setActiveTab] = useState<Tab>("americas");
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "americas",     label: t("americas")    },
+    { key: "americas", label: t("americas") },
     { key: "asia_pacific", label: t("asiaPacific") },
-    { key: "emea",         label: t("emea")        },
+    { key: "emea", label: t("emea") },
   ];
 
   const countries: Country[] =
-    activeTab === "americas"     ? locationData.americas     :
-    activeTab === "asia_pacific" ? locationData.asia_pacific :
-    locationData.emea;
+    activeTab === "americas"
+      ? locationData.americas
+      : activeTab === "asia_pacific"
+        ? locationData.asia_pacific
+        : locationData.emea;
 
   return (
     <AnimatePresence>
@@ -33,17 +35,15 @@ export default function LocationPopup({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        onClick={onClose}
-      >
+        onClick={onClose}>
         <motion.div
           className="relative w-full sm:max-w-4xl sm:mx-4 rounded-t-xl sm:rounded-sm overflow-hidden bg-[#111] border border-[#222] max-h-[92vh] sm:max-h-[90vh] flex flex-col"
           initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0,  opacity: 1 }}
-          exit={{    y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 60, opacity: 0 }}
           transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
           onClick={(e) => e.stopPropagation()}
-          dir={isRTL ? "rtl" : "ltr"}
-        >
+          dir={isRTL ? "rtl" : "ltr"}>
           {/* Drag handle — mobile only */}
           <div className="sm:hidden flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 rounded-full bg-zinc-600" />
@@ -53,8 +53,7 @@ export default function LocationPopup({ onClose }: { onClose: () => void }) {
           <button
             onClick={onClose}
             className="absolute top-3 sm:top-4 inset-e-3 sm:inset-e-4 z-10 txt-larger text-gray-400 hover:text-white font-light leading-none transition-colors"
-            aria-label="Close"
-          >
+            aria-label="Close">
             ✕
           </button>
 
@@ -72,9 +71,10 @@ export default function LocationPopup({ onClose }: { onClose: () => void }) {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-3 sm:px-5 py-3 txt-smaller font-bold tracking-widest uppercase transition-colors relative whitespace-nowrap ${
-                  activeTab === tab.key ? "text-white" : "text-gray-500 hover:text-gray-300"
-                }`}
-              >
+                  activeTab === tab.key
+                    ? "text-white"
+                    : "text-gray-500 hover:text-gray-300"
+                }`}>
                 {tab.label}
                 {activeTab === tab.key && (
                   <motion.span
@@ -93,22 +93,26 @@ export default function LocationPopup({ onClose }: { onClose: () => void }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-4 sm:gap-y-6"
-            >
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-4 sm:gap-y-6">
               {countries.map((c: Country) => (
                 <div key={c.country} className="flex items-start gap-3">
                   <span
                     className={`fi fi-${c.flag} shrink-0 mt-0.5 txt-larger rounded-sm`}
                   />
                   <div>
-                    <p className="text-white font-bold txt-small">{c.country}</p>
+                    <p className="text-white font-bold txt-small">
+                      {c.country}
+                    </p>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {c.languages.map((lang) => (
                         <a
                           key={lang.label}
-                          href={lang.href === "/ar" || lang.href === "/en" ? lang.href : "/en"}
-                          className="txt-smaller text-gray-400 hover:text-white transition-colors"
-                        >
+                          href={
+                            lang.href === "/ar" || lang.href === "/en"
+                              ? lang.href
+                              : "/en"
+                          }
+                          className="txt-smaller text-gray-400 hover:text-white transition-colors">
                           {lang.label}
                         </a>
                       ))}
@@ -118,7 +122,6 @@ export default function LocationPopup({ onClose }: { onClose: () => void }) {
               ))}
             </motion.div>
           </div>
-
         </motion.div>
       </motion.div>
     </AnimatePresence>

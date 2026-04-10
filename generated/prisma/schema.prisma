@@ -1,0 +1,204 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// Enumerations
+// ─────────────────────────────────────────────
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Platform {
+  FACEBOOK
+  INSTAGRAM
+  KICK
+  TIKTOK
+  TWITCH
+  YOUTUBE
+}
+
+enum ContentType {
+  STREAM
+  SHORT
+  REEL
+}
+
+enum Rank {
+  UNRANKED
+  ROOKIE_MONSTER // 100K views / 1 month
+  RISING_MONSTER // 500K views / 4 months
+  ELITE_MONSTER // internal milestone
+  MEGA_MONSTER // internal milestone
+  COLD_MONSTER // 1M views / 7 months
+}
+
+enum MonsterAppearance {
+  MONSTER_THEME
+  LAYOUT
+  LOGO
+  MONSTER_PRODUCTS
+}
+
+enum DiscoverySource {
+  FRIEND_RECOMMENDATION
+  COMMUNITY_MESSAGES
+  SOCIAL_MEDIA_POSTS
+  MONSTER_EVENTS
+}
+
+// Can the creator attend events?
+enum EventAttendance {
+  YES
+  SOMETIMES
+  NO
+}
+
+enum CreatorLevel {
+  LEVEL_1
+  LEVEL_2
+  LEVEL_3
+  LEVEL_4
+  LEVEL_5
+}
+
+model User {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  // Hub linkage
+  externalId String?
+  provider   String?
+
+  // Basic identity
+  email     String?
+  phone     String?
+  phoneKey  String?
+  firstName String
+  lastName  String
+  username  String
+
+  // Auth state
+  isVerified Boolean @default(false)
+  isActive   Boolean @default(true)
+  role       Role    @default(USER)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  lastLogin DateTime?
+
+  // Relations
+  profile     CreatorProfile?
+  submissions Submission[]
+
+  @@unique([email], name: "unique_email")
+  @@unique([phone], name: "unique_phone")
+  @@unique([externalId], name: "unique_external_id")
+  @@index([username])
+  @@map("users")
+}
+
+model CreatorProfile {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique @db.ObjectId
+
+  channelLogo      String?
+  platforms        Platform[]
+  contentType      String
+  socialMediaLink  String
+  followers        Int
+  eventAttendance  EventAttendance
+  discoverySources DiscoverySource[]
+  whyJoin          String
+
+  isApproved Boolean @default(false)
+  isActive   Boolean @default(true)
+
+  // Level system — derived from totalPoints, updated by server after each submission
+  // Thresholds (configurable):
+  //   LEVEL_1:  0       – 999     points
+  //   LEVEL_2:  1000    – 4999    points
+  //   LEVEL_3:  5000    – 14999   points
+  //   LEVEL_4:  15000   – 49999   points
+  //   LEVEL_5:  50000+  points
+  totalPoints  Int          @default(0)
+  currentLevel CreatorLevel @default(LEVEL_1)
+
+  // Progress percentages within current level (0.0 – 1.0)
+  // Computed server-side and cached here for fast display
+  levelProgress Float @default(0.0)
+
+  // Rank (from Form 2 — set by admin per submission review)
+  rank Rank @default(UNRANKED)
+
+  // Content quotas tracker (25 pieces total required)
+  // 10 livestreams + 10 shorts + 5 stories
+  streamCount Int @default(0) // approved streams
+  shortCount  Int @default(0) // approved shorts
+  reelCount   Int @default(0) // approved reels
+
+  // Reach totals (summed from all approved submissions)
+  totalReach Int @default(0)
+  totalViews Int @default(0)
+
+  // Program cohort (month 1–9, 5 creators per month, 30 total)
+  cohortMonth Int? // 1-9
+  joinedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([rank])
+  @@index([currentLevel])
+  @@index([totalPoints])
+  @@map("creator_profiles")
+}
+
+model Submission {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+
+  // Form 2 fields
+  rank               Rank
+  platform           Platform
+  contentLink        String
+  contentTypes       ContentType[]
+  monsterAppearances MonsterAppearance[]
+  totalReach         Int
+  totalViews         Int
+  statsScreenshotUrl String?
+
+  // Points awarded for this submission
+  // Formula: base points from views + reach bonus + appearance bonuses
+  // Base:       1 point  per 1000 views
+  // Reach:      0.5 point per 1000 reach
+  // Appearance: +50 per MonsterAppearance type present
+  // Rank bonus: ROOKIE=1x, RISING=1.5x, ELITE=2x, MEGA=2.5x, COLD=3x multiplier
+  pointsAwarded Int @default(0)
+
+  // Admin metadata
+  adminNotes         String?
+  submittedByAdminId String? @db.ObjectId
+  isApproved         Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([platform])
+  @@index([rank])
+  @@index([createdAt])
+  @@map("submissions")
+}
