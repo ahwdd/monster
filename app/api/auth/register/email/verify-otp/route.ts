@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error('error :>> ', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { success: false, message: "Validation failed", errors: error.flatten().fieldErrors },
