@@ -8,14 +8,19 @@ export async function GET(request: NextRequest) {
   try {
     await requireRole(["ADMIN"], authHeader);
 
-    const params   = new URL(request.url).searchParams;
-    const page     = Math.max(1, parseInt(params.get("page")  ?? "1",  10));
-    const limit    = Math.min(50, parseInt(params.get("limit") ?? "20", 10));
-    const skip     = (page - 1) * limit;
+    const params     = new URL(request.url).searchParams;
+    const page       = Math.max(1, parseInt(params.get("page")  ?? "1",  10));
+    const limit      = Math.min(50, parseInt(params.get("limit") ?? "15", 10));
+    const skip       = (page - 1) * limit;
+    const isApproved = params.get("isApproved");
+
+    const where: any = {};
+    if (isApproved === "true")  where.isApproved = true;
+    if (isApproved === "false") where.isApproved = false;
 
     const [data, total] = await Promise.all([
       prisma.submission.findMany({
-        skip, take: limit,
+        where, skip, take: limit,
         orderBy: { createdAt: "desc" },
         include: {
           user: {
@@ -23,7 +28,7 @@ export async function GET(request: NextRequest) {
           },
         },
       }),
-      prisma.submission.count(),
+      prisma.submission.count({ where }),
     ]);
 
     return NextResponse.json({

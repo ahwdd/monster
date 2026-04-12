@@ -14,19 +14,10 @@ const patchSchema = z.object({
   isApproved:   z.boolean().optional(),
   adminNotes:   z.string().optional(),
   rank: z.enum([
-    "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER",
-    "ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
+    "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER","ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
   ]).optional(),
-  // null  = "clear override, recalculate from rank"
-  // number = explicit override
-  // undefined = not sent at all, keep current behaviour
-  pointsOverride: z.number().int().min(0).nullable().optional(),
+  pointsOverride: z.number().int().min(0).optional(),
 });
-
-const RANK_ORDER = [
-  "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER",
-  "ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
-];
 
 export async function PATCH(
   request: NextRequest,
@@ -39,43 +30,22 @@ export async function PATCH(
 
     const submission = await prisma.submission.findUnique({ where: { id } });
     if (!submission) {
-      return NextResponse.json(
-        { success: false, error: "Submission not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Submission not found" }, { status: 404 });
     }
 
     const body          = await request.json();
     const validatedData = patchSchema.parse(body);
 
-    const effectiveRank = validatedData.rank ?? submission.rank;
-
-    // ── Points resolution ────────────────────────────────────
-    // Priority:
-    // 1. pointsOverride is an explicit number → use it as-is
-    // 2. pointsOverride is null → admin cleared the override, recalculate from rank
-    // 3. rank changed but no pointsOverride sent → recalculate from new rank
-    // 4. nothing changed → keep existing pointsAwarded
-    let pointsAwarded: number;
-
-    if (typeof validatedData.pointsOverride === "number") {
-      // Explicit override
-      pointsAwarded = validatedData.pointsOverride;
-    } else if (
-      validatedData.pointsOverride === null ||
-      (validatedData.rank && validatedData.rank !== submission.rank)
-    ) {
-      // Rank changed or override cleared → recalculate
-      pointsAwarded = calculateSubmissionPoints({
-        totalViews:         submission.totalViews,
-        totalReach:         submission.totalReach,
-        monsterAppearances: submission.monsterAppearances,
-        rank:               effectiveRank,
-      });
-    } else {
-      // Nothing relevant changed → keep current
-      pointsAwarded = submission.pointsAwarded;
-    }
+    // Recalculate points if rank changed or pointsOverride given
+    const effectiveRank   = validatedData.rank ?? submission.rank;
+    const pointsAwarded   = validatedData.pointsOverride != null
+      ? validatedData.pointsOverride
+      : calculateSubmissionPoints({
+          totalViews:         submission.totalViews,
+          totalReach:         submission.totalReach,
+          monsterAppearances: submission.monsterAppearances,
+          rank:               effectiveRank,
+        });
 
     const updated = await prisma.submission.update({
       where: { id },
@@ -87,8 +57,7 @@ export async function PATCH(
       },
     });
 
-    // ── Recompute profile totals from all approved submissions ─
-    // Must run AFTER the update so the new pointsAwarded is in the DB
+    // Recompute creator profile totals from ALL approved submissions
     const approved = await prisma.submission.findMany({
       where: { userId: submission.userId, isApproved: true },
     });
@@ -100,9 +69,13 @@ export async function PATCH(
     const shortCount  = approved.filter((x) => x.contentTypes.includes("SHORT")).length;
     const reelCount   = approved.filter((x) => x.contentTypes.includes("REEL")).length;
 
-    const highestRank = approved.reduce<Rank>(
-      (best, x) => RANK_ORDER.indexOf(x.rank) > RANK_ORDER.indexOf(best) ? x.rank : best,
-    "UNRANKED");
+    // Determine rank from highest approved submission rank
+    const RANK_ORDER = [
+      "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER","ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
+    ];
+    const highestRank = approved.reduce<Rank>((best, x) => {
+      return RANK_ORDER.indexOf(x.rank) > RANK_ORDER.indexOf(best) ? x.rank : best;
+    }, "UNRANKED");
 
     await prisma.creatorProfile.updateMany({
       where: { userId: submission.userId },

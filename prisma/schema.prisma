@@ -117,10 +117,10 @@ model CreatorProfile {
     followers        Int
     eventAttendance  EventAttendance
     discoverySources DiscoverySource[]
-    whyJoin          String
+    whyJoin          String  @default("")
 
-    isApproved Boolean @default(false)
-    isActive   Boolean @default(true)
+    isApproved       Boolean @default(false)
+    isActive         Boolean @default(true)
 
     // Level system — derived from totalPoints, updated by server after each submission
     // Thresholds (configurable):
