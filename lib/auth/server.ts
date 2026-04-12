@@ -1,56 +1,11 @@
-// lib/auth/server.ts
+// src/lib/auth/server.ts
 import { cookies } from "next/headers";
-import { prisma } from "@/lib/prisma";
-import dns from "dns";
+import { prisma }  from "@/lib/prisma";
+export { safeUserSelect } from "@/lib/utils/auth";
 
-// ── Cache ────────────────────────────────────────────────────
 const verificationCache = new Map<string, { ts: number; data: any }>();
-const CACHE_TTL  = Number(process.env.HUB_VERIFY_CACHE_TTL_SEC || 30) * 1000;
+const CACHE_TTL   = Number(process.env.HUB_VERIFY_CACHE_TTL_SEC || 30) * 1000;
 const MAX_RETRIES = 3;
-
-// ── Selects ──────────────────────────────────────────────────
-export const safeUserSelect = {
-  id:         true,
-  email:      true,
-  phone:      true,
-  phoneKey:   true,
-  firstName:  true,
-  lastName:   true,
-  username:   true,
-  profileImage: false, // not in schema — see CreatorProfile.channelLogo
-  role:       true,
-  isVerified: true,
-  isActive:   true,
-  externalId: true,
-  provider:   true,
-  createdAt:  true,
-  updatedAt:  true,
-  lastLogin:  true,
-  profile: {
-    select: {
-      id:             true,
-      channelLogo:    true,
-      platforms:      true,
-      contentType:    true,
-      socialMediaLink: true,
-      followers:      true,
-      eventAttendance: true,
-      rank:           true,
-      currentLevel:   true,
-      totalPoints:    true,
-      levelProgress:  true,
-      streamCount:    true,
-      shortCount:     true,
-      reelCount:      true,
-      totalReach:     true,
-      totalViews:     true,
-      isApproved:     true,
-      isActive:       true,
-      cohortMonth:    true,
-      joinedAt:       true,
-    },
-  },
-} as const;
 
 export type UserSession = {
   id:         string;
@@ -96,7 +51,7 @@ export type UserSession = {
 export async function setAuthCookie(token: string) {
   try {
     const store = await cookies();
-    const opts = {
+    const opts  = {
       httpOnly: false,
       secure:   process.env.NODE_ENV === "production",
       sameSite: "lax" as const,
@@ -106,9 +61,7 @@ export async function setAuthCookie(token: string) {
     store.set("token",      token, opts);
     store.set("auth-token", token, opts);
     return true;
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
 export async function removeAuthCookie() {
@@ -117,18 +70,14 @@ export async function removeAuthCookie() {
     store.delete("token");
     store.delete("auth-token");
     return true;
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
 export async function getAuthToken(): Promise<string | null> {
   try {
     const store = await cookies();
     return store.get("token")?.value ?? store.get("auth-token")?.value ?? null;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
 // ── External Hub verification ────────────────────────────────
@@ -139,10 +88,7 @@ async function fetchWithTimeout(url: string, opts: RequestInit, ms: number) {
     const res = await fetch(url, { ...opts, signal: ctrl.signal });
     clearTimeout(t);
     return res;
-  } catch (e) {
-    clearTimeout(t);
-    throw e;
-  }
+  } catch (e) { clearTimeout(t); throw e; }
 }
 
 async function verifyExternalToken(token: string): Promise<any | null> {
@@ -161,9 +107,7 @@ async function verifyExternalToken(token: string): Promise<any | null> {
         method:  "GET",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       }, timeout);
-
       if (!res.ok) return null;
-
       const body = await res.json().catch(() => null);
       const user = body?.data?.user ?? null;
       verificationCache.set(token, { ts: Date.now(), data: user });
@@ -176,6 +120,8 @@ async function verifyExternalToken(token: string): Promise<any | null> {
 }
 
 // ── getCurrentUser ───────────────────────────────────────────
+import { safeUserSelect as sel } from "@/lib/utils/auth";
+
 export async function getCurrentUser(authHeader?: string): Promise<UserSession | null> {
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.substring(7)
@@ -193,8 +139,8 @@ export async function getCurrentUser(authHeader?: string): Promise<UserSession |
   if (where.length === 0) return null;
 
   const local = await prisma.user.findFirst({
-    where: { OR: where },
-    select: safeUserSelect,
+    where:  { OR: where },
+    select: sel,
   });
 
   if (!local || !local.isActive) return null;

@@ -1,9 +1,11 @@
-// app/api/auth/update-token/route.ts
+// src/app/api/auth/update-token/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth, setAuthCookie } from "@/lib/auth/server";
 
-const schema = z.object({ accessToken: z.string().min(1) });
+const schema = z.object({
+  accessToken: z.string().min(1, "Access token is required"),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,10 +16,13 @@ export async function POST(request: NextRequest) {
     const validatedData = schema.parse(body);
     await setAuthCookie(validatedData.accessToken);
 
-    return NextResponse.json({ success: true, message: "Token updated" });
+    return NextResponse.json({ success: true, message: "Auth token updated successfully" });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ success: false, error: "Validation failed" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "Validation failed", details: error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
     if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });

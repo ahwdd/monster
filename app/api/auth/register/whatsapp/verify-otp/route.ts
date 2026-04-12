@@ -1,4 +1,4 @@
-// app/api/auth/register/whatsapp/verify-otp/route.ts
+// src/app/api/auth/register/whatsapp/verify-otp/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -15,11 +15,14 @@ export async function POST(request: NextRequest) {
     const body          = await request.json();
     const validatedData = schema.parse(body);
 
-    const response = await fetch(`${process.env.HUB_BASE_URL}/api/auth/register/whatsapp/verify-otp`, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body:    JSON.stringify(validatedData),
-    });
+    const response = await fetch(
+      `${process.env.HUB_BASE_URL}/api/auth/register/whatsapp/verify-otp`,
+      {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body:    JSON.stringify(validatedData),
+      }
+    );
     const data = await response.json();
 
     if (data.success && data.data?.user && data.data?.access_token) {
@@ -35,7 +38,10 @@ export async function POST(request: NextRequest) {
         if (match) phoneKey = match[0];
       }
 
-      let localUser = await findUserByContact(ext.email, validatedData.phone);
+      let localUser = await findUserByContact(
+        ext.email ?? null,
+        validatedData.phone
+      );
 
       if (!localUser) {
         localUser = await prisma.user.create({
@@ -43,7 +49,8 @@ export async function POST(request: NextRequest) {
             firstName,
             lastName,
             username:   `${firstName.toLowerCase()}-${Date.now()}`,
-            email:      ext.email ? ext.email.toLowerCase().trim() : `${validatedData.phone}@temp.monster`,
+            // Only set email if Hub returned one — never fabricate
+            email:      ext.email ? ext.email.toLowerCase().trim() : null,
             phone:      validatedData.phone,
             phoneKey,
             isVerified: true,
@@ -56,20 +63,27 @@ export async function POST(request: NextRequest) {
           select: safeUserSelect,
         });
       } else {
+        const updateData: any = {
+          firstName,
+          lastName,
+          phone:      validatedData.phone,
+          phoneKey,
+          isVerified: true,
+          isActive:   true,
+          externalId: ext.id?.toString(),
+          provider:   "whatsapp",
+          lastLogin:  new Date(),
+        };
+        // Only update email if Hub returned one and it won't conflict
+        if (ext.email) {
+          const conflict = await prisma.user.findFirst({
+            where: { email: ext.email.toLowerCase().trim(), id: { not: localUser.id } },
+          });
+          if (!conflict) updateData.email = ext.email.toLowerCase().trim();
+        }
         localUser = await prisma.user.update({
-          where: { id: localUser.id },
-          data: {
-            firstName,
-            lastName,
-            phone:      validatedData.phone,
-            phoneKey,
-            email:      ext.email ? ext.email.toLowerCase().trim() : (localUser.email ?? undefined),
-            isVerified: true,
-            isActive:   true,
-            externalId: ext.id?.toString(),
-            provider:   "whatsapp",
-            lastLogin:  new Date(),
-          },
+          where:  { id: localUser.id },
+          data:   updateData,
           select: safeUserSelect,
         });
       }
@@ -91,8 +105,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ success: false, message: "Validation failed", errors: error.flatten().fieldErrors }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Validation failed", errors: error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

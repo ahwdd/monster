@@ -1,4 +1,4 @@
-// app/api/auth/login/email/verify-otp/route.ts
+// src/app/api/auth/login/email/verify-otp/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -15,11 +15,14 @@ export async function POST(request: NextRequest) {
     const body          = await request.json();
     const validatedData = schema.parse(body);
 
-    const response = await fetch(`${process.env.HUB_BASE_URL}/api/auth/login/email/verify-otp`, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body:    JSON.stringify(validatedData),
-    });
+    const response = await fetch(
+      `${process.env.HUB_BASE_URL}/api/auth/login/email/verify-otp`,
+      {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body:    JSON.stringify(validatedData),
+      }
+    );
     const data = await response.json();
 
     if (data.success && data.data?.user && data.data?.access_token) {
@@ -30,9 +33,15 @@ export async function POST(request: NextRequest) {
       const lastName  = nameParts.slice(1).join(" ") || firstName;
 
       let phoneKey: string | null = null;
-      if (ext.phone?.startsWith("+")) phoneKey = ext.phone.substring(0, 3);
+      if (ext.phone?.startsWith("+")) {
+        const match = ext.phone.match(/^\+\d{1,3}/);
+        if (match) phoneKey = match[0];
+      }
 
-      let localUser = await findUserByContact(validatedData.email, ext.phone);
+      let localUser = await findUserByContact(
+        validatedData.email,
+        ext.phone ?? null
+      );
 
       if (!localUser) {
         localUser = await prisma.user.create({
@@ -54,33 +63,63 @@ export async function POST(request: NextRequest) {
         });
       } else {
         const updateData: any = {
-          firstName, lastName, isVerified: true, lastLogin: new Date(),
-          externalId: ext.id?.toString(), provider: "email",
+          firstName,
+          lastName,
+          isVerified: true,
+          isActive:   true,
+          externalId: ext.id?.toString(),
+          provider:   "email",
+          lastLogin:  new Date(),
         };
+        // Only update email if it changed and won't conflict
         if (ext.email && ext.email !== localUser.email) {
-          const conflict = await prisma.user.findFirst({ where: { email: ext.email.toLowerCase().trim(), id: { not: localUser.id } } });
+          const conflict = await prisma.user.findFirst({
+            where: { email: ext.email.toLowerCase().trim(), id: { not: localUser.id } },
+          });
           if (!conflict) updateData.email = ext.email.toLowerCase().trim();
         }
+        // Only update phone if Hub returned one and it won't conflict
         if (ext.phone && ext.phone !== localUser.phone) {
-          const conflict = await prisma.user.findFirst({ where: { phone: ext.phone, id: { not: localUser.id } } });
-          if (!conflict) { updateData.phone = ext.phone; updateData.phoneKey = phoneKey; }
+          const conflict = await prisma.user.findFirst({
+            where: { phone: ext.phone, id: { not: localUser.id } },
+          });
+          if (!conflict) {
+            updateData.phone    = ext.phone;
+            updateData.phoneKey = phoneKey;
+          }
         }
-        localUser = await prisma.user.update({ where: { id: localUser.id }, data: updateData, select: safeUserSelect });
+        localUser = await prisma.user.update({
+          where:  { id: localUser.id },
+          data:   updateData,
+          select: safeUserSelect,
+        });
       }
 
       await setAuthCookie(data.data.access_token);
 
       return NextResponse.json({
-        success: true, message: data.message,
-        data: { user: localUser, access_token: data.data.access_token, refresh_token: data.data.refresh_token, token_type: data.data.token_type },
+        success: true,
+        message: data.message,
+        data: {
+          user:          localUser,
+          access_token:  data.data.access_token,
+          refresh_token: data.data.refresh_token,
+          token_type:    data.data.token_type,
+        },
       });
     }
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ success: false, message: "Validation failed", errors: error.flatten().fieldErrors }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Validation failed", errors: error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

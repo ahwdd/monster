@@ -1,0 +1,32 @@
+// src/lib/data/countries.ts
+import { Country } from "@/lib/types/countries";
+
+export const countriesList: Country[] = [
+  { key: "SA", label: "Saudi Arabia",        arLabel: "المملكة العربية السعودية", callingCode: "+966", flag: "SA" },
+  { key: "EG", label: "Egypt",               arLabel: "مصر",                      callingCode: "+20",  flag: "EG" },
+  { key: "AE", label: "UAE",                 arLabel: "الإمارات",                 callingCode: "+971", flag: "AE" },
+  { key: "KW", label: "Kuwait",              arLabel: "الكويت",                   callingCode: "+965", flag: "KW" },
+  { key: "QA", label: "Qatar",               arLabel: "قطر",                      callingCode: "+974", flag: "QA" },
+  { key: "BH", label: "Bahrain",             arLabel: "البحرين",                  callingCode: "+973", flag: "BH" },
+  { key: "OM", label: "Oman",                arLabel: "عُمان",                    callingCode: "+968", flag: "OM" },
+  { key: "JO", label: "Jordan",              arLabel: "الأردن",                   callingCode: "+962", flag: "JO" },
+  { key: "IQ", label: "Iraq",                arLabel: "العراق",                   callingCode: "+964", flag: "IQ" },
+  { key: "LB", label: "Lebanon",             arLabel: "لبنان",                    callingCode: "+961", flag: "LB" },
+  { key: "SY", label: "Syria",               arLabel: "سوريا",                    callingCode: "+963", flag: "SY" },
+  { key: "YE", label: "Yemen",               arLabel: "اليمن",                    callingCode: "+967", flag: "YE" },
+  { key: "PS", label: "Palestine",           arLabel: "فلسطين",                   callingCode: "+970", flag: "PS" },
+  { key: "LY", label: "Libya",               arLabel: "ليبيا",                    callingCode: "+218", flag: "LY" },
+  { key: "TN", label: "Tunisia",             arLabel: "تونس",                     callingCode: "+216", flag: "TN" },
+  { key: "DZ", label: "Algeria",             arLabel: "الجزائر",                  callingCode: "+213", flag: "DZ" },
+  { key: "MA", label: "Morocco",             arLabel: "المغرب",                   callingCode: "+212", flag: "MA" },
+  { key: "SD", label: "Sudan",               arLabel: "السودان",                  callingCode: "+249", flag: "SD" },
+  { key: "SO", label: "Somalia",             arLabel: "الصومال",                  callingCode: "+252", flag: "SO" },
+  { key: "MR", label: "Mauritania",          arLabel: "موريتانيا",                callingCode: "+222", flag: "MR" },
+  { key: "TR", label: "Turkey",              arLabel: "تركيا",                    callingCode: "+90",  flag: "TR" },
+  { key: "GB", label: "United Kingdom",      arLabel: "المملكة المتحدة",          callingCode: "+44",  flag: "GB" },
+  { key: "US", label: "United States",       arLabel: "الولايات المتحدة",         callingCode: "+1",   flag: "US" },
+  { key: "DE", label: "Germany",             arLabel: "ألمانيا",                  callingCode: "+49",  flag: "DE" },
+  { key: "FR", label: "France",              arLabel: "فرنسا",                    callingCode: "+33",  flag: "FR" },
+  { key: "CA", label: "Canada",              arLabel: "كندا",                     callingCode: "+1",   flag: "CA" },
+  { key: "AU", label: "Australia",           arLabel: "أستراليا",                 callingCode: "+61",  flag: "AU" },
+];

@@ -1,4 +1,4 @@
-// app/api/auth/login/whatsapp/verify-otp/route.ts
+// src/app/api/auth/login/whatsapp/verify-otp/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -15,29 +15,15 @@ export async function POST(request: NextRequest) {
     const body          = await request.json();
     const validatedData = schema.parse(body);
 
-    // Try login first
-    let response = await fetch(`${process.env.HUB_BASE_URL}/api/auth/login/whatsapp/verify-otp`, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body:    JSON.stringify(validatedData),
-    });
-    let data = await response.json();
-
-    // If hub says "not registered" — auto-register via hub then retry
-    if (!data.success && response.status === 404) {
-      const regResp = await fetch(`${process.env.HUB_BASE_URL}/api/auth/register/whatsapp/send-otp`, {
-        method:  "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body:    JSON.stringify({ phone: validatedData.phone, phone_key: validatedData.phone.substring(0, 3), name: "Monster Creator" }),
-      });
-      // After send, verify again
-      response = await fetch(`${process.env.HUB_BASE_URL}/api/auth/login/whatsapp/verify-otp`, {
+    const response = await fetch(
+      `${process.env.HUB_BASE_URL}/api/auth/login/whatsapp/verify-otp`,
+      {
         method:  "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body:    JSON.stringify(validatedData),
-      });
-      data = await response.json();
-    }
+      }
+    );
+    const data = await response.json();
 
     if (data.success && data.data?.user && data.data?.access_token) {
       const ext = data.data.user;
@@ -52,7 +38,7 @@ export async function POST(request: NextRequest) {
         if (match) phoneKey = match[0];
       }
 
-      let localUser = await findUserByContact(ext.email, validatedData.phone);
+      let localUser = await findUserByContact(ext.email ?? null, validatedData.phone);
 
       if (!localUser) {
         localUser = await prisma.user.create({
@@ -60,7 +46,7 @@ export async function POST(request: NextRequest) {
             firstName,
             lastName,
             username:   `${firstName.toLowerCase()}-${Date.now()}`,
-            email:      ext.email ? ext.email.toLowerCase().trim() : `${validatedData.phone}@temp.monster`,
+            email:      ext.email ? ext.email.toLowerCase().trim() : null,
             phone:      validatedData.phone,
             phoneKey,
             isVerified: true,
@@ -74,30 +60,54 @@ export async function POST(request: NextRequest) {
         });
       } else {
         const updateData: any = {
-          firstName, lastName, isVerified: true, isActive: true,
-          externalId: ext.id?.toString(), provider: "whatsapp",
-          phone: validatedData.phone, phoneKey, lastLogin: new Date(),
+          firstName,
+          lastName,
+          phone:      validatedData.phone,
+          phoneKey,
+          isVerified: true,
+          isActive:   true,
+          externalId: ext.id?.toString(),
+          provider:   "whatsapp",
+          lastLogin:  new Date(),
         };
-        if (ext.email && ext.email !== localUser.email) {
-          const conflict = await prisma.user.findFirst({ where: { email: ext.email.toLowerCase().trim(), id: { not: localUser.id } } });
+        if (ext.email) {
+          const conflict = await prisma.user.findFirst({
+            where: { email: ext.email.toLowerCase().trim(), id: { not: localUser.id } },
+          });
           if (!conflict) updateData.email = ext.email.toLowerCase().trim();
         }
-        localUser = await prisma.user.update({ where: { id: localUser.id }, data: updateData, select: safeUserSelect });
+        localUser = await prisma.user.update({
+          where:  { id: localUser.id },
+          data:   updateData,
+          select: safeUserSelect,
+        });
       }
 
       await setAuthCookie(data.data.access_token);
 
       return NextResponse.json({
-        success: true, message: data.message,
-        data: { user: localUser, access_token: data.data.access_token, refresh_token: data.data.refresh_token, token_type: data.data.token_type },
+        success: true,
+        message: data.message,
+        data: {
+          user:          localUser,
+          access_token:  data.data.access_token,
+          refresh_token: data.data.refresh_token,
+          token_type:    data.data.token_type,
+        },
       });
     }
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ success: false, message: "Validation failed", errors: error.flatten().fieldErrors }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Validation failed", errors: error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
