@@ -3,7 +3,8 @@ import { Country } from "@/lib/types/countries";
 
 export const countriesList: Country[] = [
   { key: "EG", label: "Egypt",               arLabel: "مصر",                      callingCode: "+20",  flag: "eg" },
-//   { key: "SA", label: "Saudi Arabia",        arLabel: "المملكة العربية السعودية", callingCode: "+966", flag: "sa" },
+  { key: "SA", label: "Saudi Arabia",        arLabel: "المملكة العربية السعودية", callingCode: "+966", flag: "sa" },
+  { key: "MA", label: "Morocco",             arLabel: "المغرب",                   callingCode: "+212", flag: "ma" },
 //   { key: "AE", label: "UAE",                 arLabel: "الإمارات",                 callingCode: "+971", flag: "ae" },
 //   { key: "KW", label: "Kuwait",              arLabel: "الكويت",                   callingCode: "+965", flag: "kw" },
 //   { key: "QA", label: "Qatar",               arLabel: "قطر",                      callingCode: "+974", flag: "qa" },
@@ -18,7 +19,6 @@ export const countriesList: Country[] = [
 //   { key: "LY", label: "Libya",               arLabel: "ليبيا",                    callingCode: "+218", flag: "ly" },
 //   { key: "TN", label: "Tunisia",             arLabel: "تونس",                     callingCode: "+216", flag: "tn" },
 //   { key: "DZ", label: "Algeria",             arLabel: "الجزائر",                  callingCode: "+213", flag: "dz" },
-//   { key: "MA", label: "Morocco",             arLabel: "المغرب",                   callingCode: "+212", flag: "ma" },
 //   { key: "SD", label: "Sudan",               arLabel: "السودان",                  callingCode: "+249", flag: "sd" },
 //   { key: "SO", label: "Somalia",             arLabel: "الصومال",                  callingCode: "+252", flag: "so" },
 //   { key: "MR", label: "Mauritania",          arLabel: "موريتانيا",                callingCode: "+222", flag: "mr" },

@@ -1,142 +1,151 @@
 // src/components/ui/CanLevelMeter.tsx
 "use client";
-
 import { motion, useSpring, useTransform } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect }    from "react";
+import { useTranslations } from "next-intl";
 
-type Rank =
-  | "UNRANKED"
-  | "ROOKIE_MONSTER"
-  | "RISING_MONSTER"
-  | "ELITE_MONSTER"
-  | "MEGA_MONSTER"
-  | "COLD_MONSTER";
-
-// Map each rank to its flavor can image.
-// Replace these paths with your actual Cloudinary / public URLs.
-const RANK_CAN: Record<Rank, string> = {
-  UNRANKED:       "/assets/flavors/original.webp",
-  ROOKIE_MONSTER: "/assets/flavors/top.webp",
-  RISING_MONSTER: "/assets/flavors/coffee.webp",
-  ELITE_MONSTER:  "/assets/flavors/juice.webp",
-  MEGA_MONSTER:   "/assets/flavors/tea.webp",
-  COLD_MONSTER:   "/assets/flavors/zero.webp",
-};
-
-const RANK_LABEL: Record<Rank, { en: string; ar: string }> = {
-  UNRANKED:       { en: "Unranked",       ar: "غير مصنّف"       },
-  ROOKIE_MONSTER: { en: "Rookie Monster", ar: "مبتدئ"           },
-  RISING_MONSTER: { en: "Rising Monster", ar: "صاعد"            },
-  ELITE_MONSTER:  { en: "Elite Monster",  ar: "نخبة"            },
-  MEGA_MONSTER:   { en: "Mega Monster",   ar: "ميقا"            },
-  COLD_MONSTER:   { en: "Cold Monster",   ar: "كولد"            },
+// Map level number → flavor can image path
+// Replace with your actual public paths / Cloudinary URLs
+const LEVEL_CAN: Record<number, string> = {
+  1: "/assets/flavors/original.png",
+  2: "/assets/flavors/green.png",
+  3: "/assets/flavors/blue.png",
+  4: "/assets/flavors/purple.png",
+  5: "/assets/flavors/ultra.png",
 };
 
 type Props = {
-  rank:          Rank;
-  progress:      number;   // 0.0 – 1.0 within the current level
-  totalPoints:   number;
-  levelNum:      number;
-  locale?:       string;
-  className?:    string;
+  levelNum:     number;   // 1-5, current level
+  levelProgress:number;   // 0.0-1.0, progress within current level
+  totalPoints:  number;
+  rank:         string;
+  className?:   string;
 };
 
 export default function CanLevelMeter({
-  rank, progress, totalPoints, levelNum, locale = "en", className = "",
+  levelNum, levelProgress, totalPoints, rank, className = "",
 }: Props) {
-  const isAr = locale === "ar";
-  const canImg = RANK_CAN[rank] ?? RANK_CAN.UNRANKED;
-  const label = RANK_LABEL[rank] ?? RANK_LABEL.UNRANKED;
+  const t  = useTranslations("level");
 
-  const fillSpring = useSpring(0, { stiffness: 60, damping: 18 });
+  const TOTAL_LEVELS = 5;
+  const levels = Array.from({ length: TOTAL_LEVELS }, (_, i) => i + 1);
+
+  return (
+    <div className={`flex flex-col items-center gap-2 ${className}`}>
+      {/* Row of cans */}
+      <div className="flex items-end gap-2 sm:gap-3">
+        {levels.map((lvl) => (
+          <CanUnit
+            key={lvl}
+            levelNum={lvl}
+            currentLevel={levelNum}
+            progress={lvl < levelNum ? 1 : lvl === levelNum ? levelProgress : 0}
+            canImg={LEVEL_CAN[lvl] ?? LEVEL_CAN[1]}
+            isCurrent={lvl === levelNum}
+            t={t}
+          />
+        ))}
+      </div>
+
+      {/* Total points + rank */}
+      <div className="text-center mt-1">
+        <p className="font-display font-bold text-white uppercase tracking-wide txt-small">
+          {rank !== "UNRANKED" ? rank.replace(/_/g, " ") : t("unranked")}
+        </p>
+        <p className="txt-smaller text-zinc-500">
+          {totalPoints.toLocaleString()} {t("level")}  {levelNum}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ── Single can ───────────────────────────────────────────────
+function CanUnit({
+  levelNum, currentLevel, progress, canImg, isCurrent, t,
+}: {
+  levelNum:     number;
+  currentLevel: number;
+  progress:     number;  // 0 = empty, 1 = full
+  canImg:       string;
+  isCurrent:    boolean;
+  t:            ReturnType<typeof useTranslations<"level">>;
+}) {
+  const fillSpring = useSpring(0, { stiffness: 55, damping: 20 });
 
   useEffect(() => {
-    if (levelNum > 1) {
-      fillSpring.jump(1);
-      
-      const t1 = setTimeout(() => {
-        fillSpring.jump(0); // Snap to bottom
-        fillSpring.set(Math.min(Math.max(progress, 0), 1)); // Animate up
-      }, 100);
+    const delay = 200 + levelNum * 120; // stagger each can
+    const timer = setTimeout(() => fillSpring.set(progress), delay);
+    return () => clearTimeout(timer);
+  }, [progress, levelNum, fillSpring]);
 
-      return () => clearTimeout(t1);
-    } else {
-      const t2 = setTimeout(() => {
-        fillSpring.set(Math.min(Math.max(progress, 0), 1));
-      }, 300);
-      return () => clearTimeout(t2);
-    }
-  }, [progress, fillSpring, levelNum]);
-
+  // inset(top right bottom left) — shrink from top reveals bottom fill
   const clipInset = useTransform(
     fillSpring,
     (v) => `inset(${Math.round((1 - v) * 100)}% 0% 0% 0%)`
   );
 
-  const pct = Math.round(progress * 100);
+  const isPast    = levelNum < currentLevel;
+  const isFuture  = levelNum > currentLevel;
+  const pct       = Math.round(progress * 100);
+
+  // Size: current can is larger
+  const h = isCurrent ? "h-44 sm:h-52" : "h-32 sm:h-40";
+  const w = isCurrent ? "w-16 sm:w-20" : "w-11 sm:w-14";
 
   return (
-    <div className={`flex flex-col items-center gap-3 select-none ${className}`}>
+    <div className="flex flex-col items-center gap-1.5">
+      {/* Level label above */}
+      <span className={`txt-smaller font-medium ${isCurrent ? "text-[#78be20]" : isFuture ? "text-zinc-700" : "text-zinc-500"}`}>
+        {t("level")} {levelNum}
+      </span>
 
-      {/* Can container */}
-      <div className="relative w-28 h-48 sm:w-32 sm:h-56">
-
-        {/* Back layer — grayscale, always full height */}
+      {/* Can */}
+      <div className={`relative ${w} ${h}`}>
+        {/* Back: always grayscale full height */}
         <img
           src={canImg}
           alt=""
           aria-hidden
-          className="absolute inset-0 w-full h-full object-contain grayscale brightness-45 opacity-70"
-        //   style={{ filter: "grayscale(100%) brightness(0.45)" }}
+          className="absolute inset-0 w-full h-full object-contain"
+          style={{ filter: "grayscale(100%) brightness(0.3)" }}
           draggable={false}
         />
 
-        {/* Front layer — color, clipped bottom-to-top */}
+        {/* Front: color, clipped bottom-to-top by spring */}
         <motion.img
           src={canImg}
-          alt={isAr ? label.ar : label.en}
+          alt={`Level ${levelNum}`}
           className="absolute inset-0 w-full h-full object-contain"
           style={{ clipPath: clipInset }}
           draggable={false}
         />
 
-        {/* Glow when full */}
-        {progress >= 0.99 && (
+        {/* Glow on fully filled cans */}
+        {(isPast || (isCurrent && progress >= 0.99)) && (
           <div
-            className="absolute inset-0 rounded-full pointer-events-none"
+            className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at center, rgba(120,190,32,0.18) 0%, transparent 70%)",
-              animation: "pulse 2s ease-in-out infinite",
+              background: "radial-gradient(ellipse at 50% 80%, rgba(120,190,32,0.15) 0%, transparent 65%)",
             }}
           />
         )}
+      </div>
 
-        {/* Percentage badge */}
-        <div
-          className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-black border border-zinc-700 rounded-full px-2.5 py-0.5 flex items-center gap-1"
-          style={{ whiteSpace: "nowrap" }}
+      {/* Percentage badge below — only for current */}
+      {isCurrent && (
+        <span
+          className="bg-black border border-zinc-700 rounded-full px-2 py-0.5 text-[#78be20] font-display font-bold"
+          style={{ fontSize: "0.68rem" }}
         >
-          <span
-            className="font-display font-bold text-[#78be20]"
-            style={{ fontSize: "0.72rem", lineHeight: 1 }}
-          >
-            {pct}%
-          </span>
-        </div>
-      </div>
+          {pct}%
+        </span>
+      )}
 
-      {/* Labels */}
-      <div className="text-center mt-2">
-        <p className="font-display font-bold text-white uppercase tracking-wider" style={{ fontSize: "0.85rem" }}>
-          {isAr ? label.ar : label.en}
-        </p>
-        <p className="text-zinc-500 mt-0.5" style={{ fontSize: "0.7rem" }}>
-          {isAr ? `المستوى ${levelNum}` : `Level ${levelNum}`}
-          {" · "}
-          {totalPoints.toLocaleString()} pts
-        </p>
-      </div>
-
+      {/* Checkmark for completed levels */}
+      {isPast && (
+        <span className="text-[#78be20]" style={{ fontSize: "0.7rem" }}>✓</span>
+      )}
     </div>
   );
 }

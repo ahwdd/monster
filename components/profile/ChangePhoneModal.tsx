@@ -28,7 +28,7 @@ export default function ChangePhoneModal({ currentPhone, currentPhoneKey, onClos
 
   const [step,     setStep]     = useState<Step>("phone");
   const [phone,    setPhone]    = useState("");
-  const [phoneKey, setPhoneKey] = useState(currentPhoneKey || "+966");
+  const [phoneKey, setPhoneKey] = useState(currentPhoneKey || "+20");
   const [otp,      setOtp]      = useState("");
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState<string | null>(null);

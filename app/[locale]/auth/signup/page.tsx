@@ -43,7 +43,7 @@ export default function SignupPage() {
   const [step, setStep] = useState<Step>("contact");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [phoneKey, setPhoneKey] = useState("+966");
+  const [phoneKey, setPhoneKey] = useState("+20");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
