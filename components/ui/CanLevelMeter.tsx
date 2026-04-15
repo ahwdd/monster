@@ -14,12 +14,12 @@ import {
 } from "@/lib/utils/rank";
 
 const RANK_CAN: Record<string, string> = {
-  UNRANKED: "/assets/program/ranks-can.png",
-  ROOKIE:   "/assets/program/ranks-can.png",
-  MEGA:     "/assets/program/ranks-can.png",
-  RISING:   "/assets/program/ranks-can.png",
-  ELITE:    "/assets/program/ranks-can.png",
-  COLD:     "/assets/program/ranks-can.png",
+  UNRANKED: "/assets/flavors/original.webp",
+  ROOKIE:   "/assets/flavors/top.webp",
+  MEGA:     "/assets/flavors/coffee.webp",
+  RISING:   "/assets/flavors/juice.webp",
+  ELITE:    "/assets/flavors/tea.webp",
+  COLD:     "/assets/flavors/zero.webp",
 };
 
 const RANK_COLOR: Record<string, string> = {

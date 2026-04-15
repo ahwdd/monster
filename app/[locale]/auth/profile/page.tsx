@@ -26,6 +26,7 @@ import {
   RANK_THRESHOLDS,
   getDecorativeTitle,
 } from "@/lib/utils/rank";
+import CanLevelMeter from "@/components/ui/CanLevelMeter";
 
 const PENDING_CAP = 5;
 
@@ -207,20 +208,23 @@ export default function ProfilePage() {
           </motion.div>
         )}
 
-        {/* Rank + progress card — only when approved */}
         {isApproved && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.28 }}
             className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-5 space-y-4"
           >
-            <div className="flex items-center gap-2">
-              <IoTrophyOutline className="size-4 text-[#78be20]" />
-              <span className="txt-regular font-semibold text-white uppercase">{tr(rank.toLowerCase() as any)}</span>
-              {decorativeTitle && (
-                <span className="txt-smaller text-zinc-500 italic">/ {tr(decorativeTitle.toLowerCase() as any)}</span>
-              )}
-            </div>
+            <CanLevelMeter
+              rank={rank}
+              currentRankReach={currentRankReach}
+              approvedAt={approvedAt}
+              content={{
+                pictureCount: profile.pictureCount ?? 0,
+                storyCount: profile.storyCount ?? 0,
+                reelCount: profile.reelCount ?? 0,
+                longVideoCount: profile.longVideoCount ?? 0,
+                postCount: profile.postCount ?? 0,
+              }}
+            />
 
-            {/* Month counter */}
             {approvedAt && (
               <div className="flex items-center gap-2 txt-smaller text-zinc-500">
                 <IoCalendarOutline className="size-3.5" />
@@ -228,60 +232,13 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* Reach progress toward next rank */}
-            {rank !== "COLD" && (
-              <div className="space-y-2">
-                <div className="flex justify-between txt-smaller">
-                  <span className="text-zinc-500">{t("currentRankReach")}</span>
-                  <span className="text-white font-medium">
-                    {formatNumber(currentRankReach)} / {formatNumber(threshold === Infinity ? 0 : threshold)}
-                  </span>
-                </div>
-                <div className="h-2.5 rounded-full bg-zinc-800 overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progressPct}%` }}
-                    transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
-                    className="h-full rounded-full"
-                    style={{ background: "linear-gradient(90deg, #78be20, #a3e635)" }}
-                  />
-                </div>
-                <p className="txt-smaller text-zinc-500">
-                  {progressPct}% {tr("progressLabel", { next: tr(rank === "UNRANKED" ? "rookie" : rank === "ROOKIE" ? "rising" : "cold") })}
-                </p>
-              </div>
-            )}
-
-            {/* COLD rank note */}
-            {rank === "COLD" && (
-              <p className="txt-small text-[#78be20]">{tr("coldNote")}</p>
-            )}
-
-            {/* Total reach all time */}
             <div className="flex justify-between txt-smaller text-zinc-500 pt-1 border-t border-zinc-800">
               <span>{t("totalReach")}</span>
               <span className="text-white font-medium">{formatNumber(totalReachAllTime)}</span>
             </div>
-
-            {/* Content counts */}
-            <div className="grid grid-cols-5 gap-2">
-              {[
-                { label: "Pic",   val: profile.pictureCount    },
-                { label: "Story", val: profile.storyCount      },
-                { label: "Reel",  val: profile.reelCount       },
-                { label: "Video", val: profile.longVideoCount  },
-                { label: "Post",  val: profile.postCount       },
-              ].map(({ label, val }) => (
-                <div key={label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
-                  <p className="txt-small font-bold text-white">{val}</p>
-                  <p className="txt-smaller text-zinc-500 mt-0.5">{label}</p>
-                </div>
-              ))}
-            </div>
           </motion.div>
         )}
 
-        {/* Pending submissions cap warning */}
         {isApproved && !canSubmit && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06, duration: 0.28 }}
             className="bg-yellow-400/5 border border-yellow-400/30 rounded-2xl p-4 flex items-start gap-3"
