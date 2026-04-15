@@ -1,17 +1,25 @@
 {
   "nav": {
-    "energyDrinks": "ENERGY DRINKS",
-    "storeLocator": "STORE LOCATOR",
-    "news": "NEWS",
-    "athletes": "ATHLETES",
-    "promos": "PROMOS",
-    "events": "EVENTS",
-    "shopAllFlavors": "SHOP ALL FLAVORS",
-    "signin": "Sign In",
     "profile": "My Profile",
     "newSubmission": "New Submission",
-    "viewSubmissions": "My Submissions",
-    "logout": "Logout"
+    "logout": "Logout",
+    "ranks": "Ranks",
+    "allRanks": "ALL RANKS",
+    "program": "Program",
+    "leaderboard": "Leaderboard",
+    "news": "News",
+    "rookie": "Rookie Monster",
+    "rookieReach": "0 – 100K Reach",
+    "rising": "Rising Monster",
+    "risingReach": "100K – 500K Reach",
+    "cold": "Cold Monster",
+    "coldReach": "500K – 1M+ Reach",
+    "register": "Register",
+    "submit": "Submit Content",
+    "myProfile": "My Profile",
+    "signin": "Sign In",
+    "signout": "Sign Out",
+    "viewSubmissions": "My Submissions"
   },
   "flavors": {
     "monsterEnergy": "MONSTER ENERGY",
@@ -378,6 +386,15 @@
     "previousAccepted": "Previously accepted"
   },
   "rank": {
+    "pageTitle": "Ranks",
+    "subtitle": "No automatic upgrades. Every level is earned through consistency, reach, and team approval.",
+    "requirements": "Requirements",
+    "rewards": "Rewards",
+    "grandPrize": "Grand Prize",
+    "grandPrizeDesc": "3M views = Full PC credit from AHW Store",
+    "readyTitle": "READY TO START?",
+    "registerCta": "REGISTER NOW",
+    "leaderboardCta": "LEADERBOARD",
     "unranked": "Unranked",
     "rookie": "Rookie",
     "mega": "Mega Monster",
@@ -392,5 +409,10 @@
     "risingNote": "Reach 1M to become Cold",
     "coldNote": "Maximum rank — keep pushing!",
     "decorative": "Also known as: {title}"
+  },
+  "footer": {
+    "program": "Program",
+    "join": "Join",
+    "explore": "Explore"
   }
 }

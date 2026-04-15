@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import Providers from "./providers";
 import "../globals.css";
 import "flag-icons/css/flag-icons.min.css";
+import Footer from "@/components/Footer";
 
 // ── Fonts ────────────────────────────────────────────────────
 const teko = Teko({
@@ -71,6 +72,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body className="font-display txt-regular">
         <Providers locale={locale} messages={messages}>
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

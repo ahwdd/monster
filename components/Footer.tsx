@@ -1,195 +1,124 @@
+// src/components/Footer.tsx
 "use client";
-
-import Image from "next/image";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { IoChevronDown } from "react-icons/io5";
-import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 import {
-  FaFacebookF,
-  FaInstagram,
-  FaYoutube,
-  FaTwitter,
-  FaTiktok,
-  FaSnapchatGhost,
-  FaTwitch,
-} from "react-icons/fa";
+  IoLogoYoutube,
+  IoLogoInstagram,
+  IoLogoTwitch,
+  IoLogoFacebook,
+  IoLogoTiktok,
+} from "react-icons/io5";
+import { SiKick } from "react-icons/si";
+import { footerLinks } from "@/lib/data/navLinks";
 
-const socials = [
-  { icon: FaFacebookF,     href: "https://www.facebook.com/MonsterEnergy/",   label: "Facebook"  },
-  { icon: FaInstagram,     href: "https://www.instagram.com/monsterenergy/",   label: "Instagram" },
-  { icon: FaYoutube,       href: "https://www.youtube.com/monsterenergy",      label: "YouTube"   },
-  { icon: FaTwitter,       href: "https://twitter.com/monsterenergy",          label: "Twitter"   },
-  { icon: FaTiktok,        href: "https://www.tiktok.com/@monsterenergy",      label: "TikTok"    },
-  { icon: FaSnapchatGhost, href: "https://snapchat.com/add/monsterenergy",     label: "Snapchat"  },
-  { icon: FaTwitch,        href: "https://www.twitch.tv/monsterenergy",        label: "Twitch"    },
-];
-
-const companyLinks = [
-  { labelKey: "aboutUs",        href: "#" },
-  { labelKey: "careers",        href: "#" },
-  { labelKey: "sustainability",  href: "#" },
-  { labelKey: "energyInfo",     href: "#" },
-  { labelKey: "monsterArmy",    href: "https://www.monsterarmy.com/" },
-];
-
-const supportLinks = [
-  { labelKey: "faqs",       href: "#" },
-  { labelKey: "contactUs",  href: "#" },
-  { labelKey: "whereToBuy", href: "#" },
-];
-
-const exploreLinks = [
-  { labelKey: "gaming",       href: "https://www.monsterenergy.com/en-us/gaming/" },
-  { labelKey: "energyDrinks", href: "https://www.monsterenergy.com/en-us/energy-drinks/juice-monster/" },
-  { labelKey: "rehabMonster", href: "https://www.monsterenergy.com/en-us/energy-drinks/rehab-monster/" },
-];
-
-const legalLinks = [
-  { labelKey: "privacyPolicy", href: "https://www.monsterenergy.com/en-us/privacy-policy/" },
-  { labelKey: "cookiesPolicy", href: "https://www.monsterenergy.com/en-us/cookie-policy/" },
-  { labelKey: "termsOfUse",    href: "https://www.monsterenergy.com/en-us/terms-of-use/" },
-  { labelKey: "doNotSell",     href: "https://www.monsterenergy.com/en-us/#" },
-];
-
-const colGroups = [
-  { titleKey: "company", links: companyLinks },
-  { titleKey: "support", links: supportLinks },
-  { titleKey: "explore", links: exploreLinks },
+const SOCIALS = [
+  { Icon: IoLogoYoutube, href: "https://youtube.com", label: "YouTube" },
+  { Icon: IoLogoInstagram, href: "https://instagram.com", label: "Instagram" },
+  { Icon: IoLogoTwitch, href: "https://twitch.tv", label: "Twitch" },
+  { Icon: SiKick, href: "https://kick.com", label: "Kick" },
+  { Icon: IoLogoTiktok, href: "https://tiktok.com", label: "TikTok" },
+  { Icon: IoLogoFacebook, href: "https://facebook.com", label: "Facebook" },
 ];
 
 export default function Footer() {
-  const t = useTranslations("footer");
+  const locale = useLocale();
+  const t = useTranslations();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="py-10 md:py-15 font-proxima bg-(--color-bg) border-t border-zinc-900">
-      <div className="container px-4 md:px-6">
-
-        {/* ── Main grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-
-          {/* Col 1 — Logo + socials */}
-          <div className="sm:col-span-2 lg:col-span-1">
+    <footer className="bg-[#050505] border-t border-zinc-900">
+      {/* ── Main grid ── */}
+      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
+        {/* Brand column */}
+        <div className="md:col-span-1">
+          <Link href={`/${locale}`} className="inline-block mb-5">
             <Image
               src="/assets/logo.png"
               alt="Monster Energy"
-              width={187}
-              height={82}
-              className="mb-6 w-36 md:w-46.75 h-auto"
+              width={140}
+              height={60}
+              className="object-contain h-10 w-auto"
             />
-            <ul className="flex flex-wrap items-center justify-start gap-2 mb-4 list-none p-0 m-0 max-w-52">
-              {socials.map(({ icon: Icon, href, label }) => (
-                <li key={label}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 border border-white rounded-full text-[#b6b6b6] hover:text-white hover:border-[#6bd41a] transition-colors duration-200"
-                  >
-                    <Icon className="size-3.5 md:size-4" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          </Link>
+          <p className="font-proxima txt-small text-zinc-500 leading-relaxed mb-6 max-w-xs">
+            {locale === "ar"
+              ? "برنامج تطوير لصناع محتوى الألعاب في منطقة MENA. لا مكافآت مضمونة — كل شيء يُكتسب."
+              : "A gaming content creator development program across MENA. No guaranteed rewards — everything is earned."}
+          </p>
 
-          {/* Cols 2–4 — desktop flat / mobile accordion */}
-          {colGroups.map(({ titleKey, links }) => (
-            <div key={titleKey} className="lg:block">
-              {/* Desktop */}
-              <div className="hidden lg:block">
-                <p className="text-white header-smaller font-medium mb-4">{t(titleKey)}</p>
-                <ul className="list-none p-0 m-0 flex flex-col gap-2">
-                  {links.map(({ labelKey, href }) => (
-                    <li key={labelKey}>
-                      <Link href={href} className="footer-link relative overflow-hidden txt-regular">
-                        {t(labelKey)}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Mobile/tablet accordion */}
-              <FooterAccordion title={t(titleKey)} links={links} t={t} />
-            </div>
-          ))}
-
-        </div>
-
-        {/* ── Legal row ── */}
-        <div className="mt-10 md:mt-12 pt-6 border-t border-zinc-900">
-          {/* Mobile: stacked. md+: flex wrap */}
-          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-3.75">
-            <span className="block txt-smaller text-[#808080]">
-              © Monster Energy Company. {t("allRightsReserved")}
-            </span>
-            {legalLinks.map(({ labelKey, href }) => (
+          {/* Social icons */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {SOCIALS.map(({ Icon, href, label }) => (
               <a
-                key={labelKey}
+                key={label}
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block txt-smaller text-[#808080] hover:text-white transition-colors duration-200"
-              >
-                {t(labelKey)}
+                aria-label={label}
+                className="w-8 h-8 flex items-center justify-center text-zinc-500
+                  hover:text-[#78be20] transition-colors duration-200">
+                <Icon className="size-4.5" />
               </a>
             ))}
           </div>
         </div>
 
-      </div>
-    </footer>
-  );
-}
-
-// ── Mobile accordion for footer columns ─────────────────────────
-function FooterAccordion({
-  title,
-  links,
-  t,
-}: {
-  title: string;
-  links: { labelKey: string; href: string }[];
-  t: ReturnType<typeof useTranslations<"footer">>;
-}) {
-  const [open, setOpen] = useState(true);
-
-  return (
-    <div className="lg:hidden border-b border-zinc-800">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between py-4 text-white header-smaller font-medium"
-      >
-        {title}
-        <IoChevronDown
-          className={`size-4 text-accent transition-transform duration-200 shrink-0 ms-2 ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
-          >
-            <ul className="list-none p-0 pb-4 flex flex-col gap-3">
-              {links.map(({ labelKey, href }) => (
+        {/* Link columns */}
+        {footerLinks.map((col) => (
+          <div key={col.titleKey}>
+            <p className="font-display font-bold text-white uppercase tracking-widest txt-small mb-5">
+              {t(col.titleKey)}
+            </p>
+            <ul className="space-y-3">
+              {col.links.map(({ labelKey, href }) => (
                 <li key={labelKey}>
-                  <Link href={href} className="footer-link relative overflow-hidden txt-regular">
+                  <Link
+                    href={`/${locale}${href}`}
+                    className="font-proxima txt-small text-zinc-500 hover:text-[#78be20]
+                      transition-colors duration-200 flex items-center gap-1.5 group">
+                    <span
+                      className="w-1 h-1 rounded-full bg-zinc-700
+                      group-hover:bg-[#78be20] transition-colors shrink-0"
+                    />
                     {t(labelKey)}
                   </Link>
                 </li>
               ))}
             </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Bottom bar ── */}
+      <div className="border-t border-zinc-900">
+        <div
+          className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center
+          justify-between gap-3 txt-smaller text-zinc-600">
+          <p>
+            © {year} Monster Energy Ambassadors Program.{" "}
+            {locale === "ar" ? "جميع الحقوق محفوظة." : "All rights reserved."}
+          </p>
+          <div className="flex items-center gap-4">
+            <Link
+              href={`/${locale}/program`}
+              className="hover:text-zinc-400 transition-colors">
+              {locale === "ar" ? "عن البرنامج" : "About"}
+            </Link>
+            <Link
+              href={`/${locale}/ranks`}
+              className="hover:text-zinc-400 transition-colors">
+              {locale === "ar" ? "التصنيفات" : "Ranks"}
+            </Link>
+            <Link
+              href={`/${locale}/leaderboard`}
+              className="hover:text-zinc-400 transition-colors">
+              {locale === "ar" ? "لوحة الصدارة" : "Leaderboard"}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }

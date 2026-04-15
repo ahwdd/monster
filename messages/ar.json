@@ -1,17 +1,25 @@
 {
   "nav": {
-    "energyDrinks": "مشروبات الطاقة",
-    "storeLocator": "موقع المتجر",
-    "news": "الأخبار",
-    "athletes": "الرياضيون",
-    "promos": "العروض",
-    "events": "الفعاليات",
-    "shopAllFlavors": "تسوق جميع النكهات",
-    "signin": "تسجيل الدخول",
     "profile": "ملفي الشخصي",
     "newSubmission": "مشاركة جديدة",
-    "viewSubmissions": "مشاركاتي",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "ranks": "التصنيفات",
+    "allRanks": "جميع التصنيفات",
+    "program": "البرنامج",
+    "leaderboard": "لوحة الصدارة",
+    "news": "الأخبار",
+    "rookie": "مبتدئ مونستر",
+    "rookieReach": "0 – 100K وصول",
+    "rising": "صاعد مونستر",
+    "risingReach": "100K – 500K وصول",
+    "cold": "كولد مونستر",
+    "coldReach": "500K – 1M+ وصول",
+    "register": "التسجيل",
+    "submit": "رفع محتوى",
+    "myProfile": "ملفي الشخصي",
+    "signin": "تسجيل الدخول",
+    "signout": "تسجيل الخروج",
+    "viewSubmissions": "مشاركاتي"
   },
   "flavors": {
     "monsterEnergy": "مونستر إنرجي",
@@ -391,6 +399,20 @@
     "rookieNote": "اصل لـ 500K لتصبح Rising",
     "risingNote": "اصل لـ 1M لتصبح Cold",
     "coldNote": "أعلى تصنيف — استمر!",
-    "decorative": "يُعرف أيضاً بـ: {title}"
+    "decorative": "يُعرف أيضاً بـ: {title}",
+    "pageTitle": "التصنيفات",
+    "subtitle": "لا ترقيات تلقائية. كل مستوى يُكتسب بالثبات والوصول وموافقة الفريق.",
+    "requirements": "المتطلبات",
+    "rewards": "المكافآت",
+    "grandPrize": "الجائزة الكبرى",
+    "grandPrizeDesc": "3M مشاهدة = كريدت PC كامل من متجر AHW",
+    "readyTitle": "مستعد للبدء؟",
+    "registerCta": "سجّل الآن",
+    "leaderboardCta": "لوحة الصدارة"
+  },
+  "footer": {
+    "program": "البرنامج",
+    "join": "الانضمام",
+    "explore": "استكشف"
   }
 }

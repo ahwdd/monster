@@ -1,4 +1,5 @@
-// src/app/[locale]/page.tsx"use client";
+// src/app/[locale]/page.tsx
+"use client";
 import Header from "@/components/Header";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import ProgramHero from "@/components/landing/ProgramHero";
