@@ -5,8 +5,8 @@ import { requireRole } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
-  isApproved: z.boolean(),
-  adminNotes: z.string().optional(),
+  status:     z.enum(["APPROVED","REJECTED"]),
+  adminNotes: z.string().optional().nullable(),
 });
 
 export async function PATCH(
@@ -16,20 +16,28 @@ export async function PATCH(
   const authHeader = request.headers.get("authorization") ?? undefined;
   try {
     await requireRole(["ADMIN"], authHeader);
-    const { id }   = await params;
-    const body     = await request.json();
-    const { isApproved, adminNotes } = schema.parse(body);
+    const { id } = await params;
+
+    const profile = await prisma.creatorProfile.findUnique({ where: { id } });
+    if (!profile) {
+      return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+    }
+
+    const body = await request.json();
+    const data = schema.parse(body);
 
     const updated = await prisma.creatorProfile.update({
       where: { id },
-      data:  {
-        isApproved,
-        ...(adminNotes !== undefined ? { whyJoin: adminNotes } : {}),
+      data: {
+        status:     data.status,
+        adminNotes: data.adminNotes ?? null,
+        // Set approvedAt only on first approval (don't reset month clock on re-approve)
+        ...(data.status === "APPROVED" && !profile.approvedAt
+          ? { approvedAt: new Date() }
+          : {}),
       },
       include: {
-        user: {
-          select: { firstName: true, lastName: true, email: true, phone: true },
-        },
+        user: { select: { firstName: true, lastName: true, email: true, phone: true } },
       },
     });
 

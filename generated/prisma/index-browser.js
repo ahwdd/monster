@@ -116,65 +116,79 @@ Prisma.NullTypes = {
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  externalId: 'externalId',
-  provider: 'provider',
-  email: 'email',
-  phone: 'phone',
-  phoneKey: 'phoneKey',
   firstName: 'firstName',
   lastName: 'lastName',
   username: 'username',
+  email: 'email',
+  phone: 'phone',
+  phoneKey: 'phoneKey',
   isVerified: 'isVerified',
   isActive: 'isActive',
   role: 'role',
+  externalId: 'externalId',
+  provider: 'provider',
+  lastLogin: 'lastLogin',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  lastLogin: 'lastLogin'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.CreatorProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  channelLogo: 'channelLogo',
+  realName: 'realName',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
+  nickname: 'nickname',
+  birthDate: 'birthDate',
+  nationality: 'nationality',
+  residency: 'residency',
   platforms: 'platforms',
+  primarySocialLink: 'primarySocialLink',
+  channelLogo: 'channelLogo',
   contentType: 'contentType',
-  socialMediaLink: 'socialMediaLink',
   followers: 'followers',
   eventAttendance: 'eventAttendance',
   discoverySources: 'discoverySources',
   whyJoin: 'whyJoin',
-  isApproved: 'isApproved',
-  isActive: 'isActive',
-  totalPoints: 'totalPoints',
-  currentLevel: 'currentLevel',
-  levelProgress: 'levelProgress',
+  status: 'status',
+  adminNotes: 'adminNotes',
+  approvedAt: 'approvedAt',
   rank: 'rank',
-  streamCount: 'streamCount',
-  shortCount: 'shortCount',
+  currentRankReach: 'currentRankReach',
+  totalReachAllTime: 'totalReachAllTime',
+  pictureCount: 'pictureCount',
+  storyCount: 'storyCount',
   reelCount: 'reelCount',
-  totalReach: 'totalReach',
-  totalViews: 'totalViews',
-  cohortMonth: 'cohortMonth',
+  longVideoCount: 'longVideoCount',
+  postCount: 'postCount',
+  totalPictureCount: 'totalPictureCount',
+  totalStoryCount: 'totalStoryCount',
+  totalReelCount: 'totalReelCount',
+  totalLongVideoCount: 'totalLongVideoCount',
+  totalPostCount: 'totalPostCount',
+  rankedUpAt: 'rankedUpAt',
+  isActive: 'isActive',
   joinedAt: 'joinedAt',
-  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SubmissionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  nickname: 'nickname',
   rank: 'rank',
   platform: 'platform',
   contentLink: 'contentLink',
   contentTypes: 'contentTypes',
   monsterAppearances: 'monsterAppearances',
-  totalReach: 'totalReach',
-  totalViews: 'totalViews',
+  submittedReach: 'submittedReach',
+  acceptedReach: 'acceptedReach',
+  pendingReach: 'pendingReach',
+  previousAcceptedReach: 'previousAcceptedReach',
   statsScreenshotUrl: 'statsScreenshotUrl',
-  pointsAwarded: 'pointsAwarded',
+  status: 'status',
   adminNotes: 'adminNotes',
-  submittedByAdminId: 'submittedByAdminId',
-  isApproved: 'isApproved',
+  isEdited: 'isEdited',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -188,7 +202,7 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-exports.Role = exports.$Enums.Role = {
+exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN'
 };
@@ -199,21 +213,19 @@ exports.EventAttendance = exports.$Enums.EventAttendance = {
   NO: 'NO'
 };
 
-exports.CreatorLevel = exports.$Enums.CreatorLevel = {
-  LEVEL_1: 'LEVEL_1',
-  LEVEL_2: 'LEVEL_2',
-  LEVEL_3: 'LEVEL_3',
-  LEVEL_4: 'LEVEL_4',
-  LEVEL_5: 'LEVEL_5'
+exports.RegistrationStatus = exports.$Enums.RegistrationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
 };
 
-exports.Rank = exports.$Enums.Rank = {
+exports.CreatorRank = exports.$Enums.CreatorRank = {
   UNRANKED: 'UNRANKED',
-  ROOKIE_MONSTER: 'ROOKIE_MONSTER',
-  RISING_MONSTER: 'RISING_MONSTER',
-  ELITE_MONSTER: 'ELITE_MONSTER',
-  MEGA_MONSTER: 'MEGA_MONSTER',
-  COLD_MONSTER: 'COLD_MONSTER'
+  ROOKIE: 'ROOKIE',
+  MEGA: 'MEGA',
+  RISING: 'RISING',
+  ELITE: 'ELITE',
+  COLD: 'COLD'
 };
 
 exports.Platform = exports.$Enums.Platform = {
@@ -232,10 +244,18 @@ exports.DiscoverySource = exports.$Enums.DiscoverySource = {
   MONSTER_EVENTS: 'MONSTER_EVENTS'
 };
 
+exports.SubmissionStatus = exports.$Enums.SubmissionStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.ContentType = exports.$Enums.ContentType = {
-  STREAM: 'STREAM',
-  SHORT: 'SHORT',
-  REEL: 'REEL'
+  PICTURE: 'PICTURE',
+  STORY: 'STORY',
+  REEL: 'REEL',
+  LONG_VIDEO: 'LONG_VIDEO',
+  POST: 'POST'
 };
 
 exports.MonsterAppearance = exports.$Enums.MonsterAppearance = {

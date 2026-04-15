@@ -14,6 +14,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
+ * Model PlatformLink
+ * 
+ */
+export type PlatformLink = $Result.DefaultSelection<Prisma.$PlatformLinkPayload>
+/**
  * Model User
  * 
  */
@@ -33,12 +38,30 @@ export type Submission = $Result.DefaultSelection<Prisma.$SubmissionPayload>
  * Enums
  */
 export namespace $Enums {
-  export const Role: {
+  export const UserRole: {
   USER: 'USER',
   ADMIN: 'ADMIN'
 };
 
-export type Role = (typeof Role)[keyof typeof Role]
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const RegistrationStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type RegistrationStatus = (typeof RegistrationStatus)[keyof typeof RegistrationStatus]
+
+
+export const SubmissionStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type SubmissionStatus = (typeof SubmissionStatus)[keyof typeof SubmissionStatus]
 
 
 export const Platform: {
@@ -54,24 +77,14 @@ export type Platform = (typeof Platform)[keyof typeof Platform]
 
 
 export const ContentType: {
-  STREAM: 'STREAM',
-  SHORT: 'SHORT',
-  REEL: 'REEL'
+  PICTURE: 'PICTURE',
+  STORY: 'STORY',
+  REEL: 'REEL',
+  LONG_VIDEO: 'LONG_VIDEO',
+  POST: 'POST'
 };
 
 export type ContentType = (typeof ContentType)[keyof typeof ContentType]
-
-
-export const Rank: {
-  UNRANKED: 'UNRANKED',
-  ROOKIE_MONSTER: 'ROOKIE_MONSTER',
-  RISING_MONSTER: 'RISING_MONSTER',
-  ELITE_MONSTER: 'ELITE_MONSTER',
-  MEGA_MONSTER: 'MEGA_MONSTER',
-  COLD_MONSTER: 'COLD_MONSTER'
-};
-
-export type Rank = (typeof Rank)[keyof typeof Rank]
 
 
 export const MonsterAppearance: {
@@ -84,6 +97,15 @@ export const MonsterAppearance: {
 export type MonsterAppearance = (typeof MonsterAppearance)[keyof typeof MonsterAppearance]
 
 
+export const EventAttendance: {
+  YES: 'YES',
+  SOMETIMES: 'SOMETIMES',
+  NO: 'NO'
+};
+
+export type EventAttendance = (typeof EventAttendance)[keyof typeof EventAttendance]
+
+
 export const DiscoverySource: {
   FRIEND_RECOMMENDATION: 'FRIEND_RECOMMENDATION',
   COMMUNITY_MESSAGES: 'COMMUNITY_MESSAGES',
@@ -94,30 +116,30 @@ export const DiscoverySource: {
 export type DiscoverySource = (typeof DiscoverySource)[keyof typeof DiscoverySource]
 
 
-export const EventAttendance: {
-  YES: 'YES',
-  SOMETIMES: 'SOMETIMES',
-  NO: 'NO'
+export const CreatorRank: {
+  UNRANKED: 'UNRANKED',
+  ROOKIE: 'ROOKIE',
+  MEGA: 'MEGA',
+  RISING: 'RISING',
+  ELITE: 'ELITE',
+  COLD: 'COLD'
 };
 
-export type EventAttendance = (typeof EventAttendance)[keyof typeof EventAttendance]
-
-
-export const CreatorLevel: {
-  LEVEL_1: 'LEVEL_1',
-  LEVEL_2: 'LEVEL_2',
-  LEVEL_3: 'LEVEL_3',
-  LEVEL_4: 'LEVEL_4',
-  LEVEL_5: 'LEVEL_5'
-};
-
-export type CreatorLevel = (typeof CreatorLevel)[keyof typeof CreatorLevel]
+export type CreatorRank = (typeof CreatorRank)[keyof typeof CreatorRank]
 
 }
 
-export type Role = $Enums.Role
+export type UserRole = $Enums.UserRole
 
-export const Role: typeof $Enums.Role
+export const UserRole: typeof $Enums.UserRole
+
+export type RegistrationStatus = $Enums.RegistrationStatus
+
+export const RegistrationStatus: typeof $Enums.RegistrationStatus
+
+export type SubmissionStatus = $Enums.SubmissionStatus
+
+export const SubmissionStatus: typeof $Enums.SubmissionStatus
 
 export type Platform = $Enums.Platform
 
@@ -127,25 +149,21 @@ export type ContentType = $Enums.ContentType
 
 export const ContentType: typeof $Enums.ContentType
 
-export type Rank = $Enums.Rank
-
-export const Rank: typeof $Enums.Rank
-
 export type MonsterAppearance = $Enums.MonsterAppearance
 
 export const MonsterAppearance: typeof $Enums.MonsterAppearance
-
-export type DiscoverySource = $Enums.DiscoverySource
-
-export const DiscoverySource: typeof $Enums.DiscoverySource
 
 export type EventAttendance = $Enums.EventAttendance
 
 export const EventAttendance: typeof $Enums.EventAttendance
 
-export type CreatorLevel = $Enums.CreatorLevel
+export type DiscoverySource = $Enums.DiscoverySource
 
-export const CreatorLevel: typeof $Enums.CreatorLevel
+export const DiscoverySource: typeof $Enums.DiscoverySource
+
+export type CreatorRank = $Enums.CreatorRank
+
+export const CreatorRank: typeof $Enums.CreatorRank
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1142,6 +1160,69 @@ export namespace Prisma {
    */
 
   /**
+   * Model PlatformLink
+   */
+
+
+
+
+
+  export type PlatformLinkSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    platform?: boolean
+    url?: boolean
+  }, ExtArgs["result"]["platformLink"]>
+
+
+
+  export type PlatformLinkSelectScalar = {
+    platform?: boolean
+    url?: boolean
+  }
+
+  export type PlatformLinkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"platform" | "url", ExtArgs["result"]["platformLink"]>
+
+  export type $PlatformLinkPayload = {
+    name: "PlatformLink"
+    objects: {}
+    scalars: {
+      platform: $Enums.Platform
+      url: string
+    }
+    composites: {}
+  }
+
+  type PlatformLinkGetPayload<S extends boolean | null | undefined | PlatformLinkDefaultArgs> = $Result.GetResult<Prisma.$PlatformLinkPayload, S>
+
+
+
+
+
+  /**
+   * Fields of the PlatformLink model
+   */
+  interface PlatformLinkFieldRefs {
+    readonly platform: FieldRef<"PlatformLink", 'Platform'>
+    readonly url: FieldRef<"PlatformLink", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PlatformLink without action
+   */
+  export type PlatformLinkDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformLink
+     */
+    select?: PlatformLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformLink
+     */
+    omit?: PlatformLinkOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model User
    */
 
@@ -1153,112 +1234,112 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
-    externalId: string | null
-    provider: string | null
-    email: string | null
-    phone: string | null
-    phoneKey: string | null
     firstName: string | null
     lastName: string | null
     username: string | null
+    email: string | null
+    phone: string | null
+    phoneKey: string | null
     isVerified: boolean | null
     isActive: boolean | null
-    role: $Enums.Role | null
+    role: $Enums.UserRole | null
+    externalId: string | null
+    provider: string | null
+    lastLogin: Date | null
     createdAt: Date | null
     updatedAt: Date | null
-    lastLogin: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
-    externalId: string | null
-    provider: string | null
-    email: string | null
-    phone: string | null
-    phoneKey: string | null
     firstName: string | null
     lastName: string | null
     username: string | null
+    email: string | null
+    phone: string | null
+    phoneKey: string | null
     isVerified: boolean | null
     isActive: boolean | null
-    role: $Enums.Role | null
+    role: $Enums.UserRole | null
+    externalId: string | null
+    provider: string | null
+    lastLogin: Date | null
     createdAt: Date | null
     updatedAt: Date | null
-    lastLogin: Date | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
-    externalId: number
-    provider: number
-    email: number
-    phone: number
-    phoneKey: number
     firstName: number
     lastName: number
     username: number
+    email: number
+    phone: number
+    phoneKey: number
     isVerified: number
     isActive: number
     role: number
+    externalId: number
+    provider: number
+    lastLogin: number
     createdAt: number
     updatedAt: number
-    lastLogin: number
     _all: number
   }
 
 
   export type UserMinAggregateInputType = {
     id?: true
-    externalId?: true
-    provider?: true
-    email?: true
-    phone?: true
-    phoneKey?: true
     firstName?: true
     lastName?: true
     username?: true
+    email?: true
+    phone?: true
+    phoneKey?: true
     isVerified?: true
     isActive?: true
     role?: true
+    externalId?: true
+    provider?: true
+    lastLogin?: true
     createdAt?: true
     updatedAt?: true
-    lastLogin?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
-    externalId?: true
-    provider?: true
-    email?: true
-    phone?: true
-    phoneKey?: true
     firstName?: true
     lastName?: true
     username?: true
+    email?: true
+    phone?: true
+    phoneKey?: true
     isVerified?: true
     isActive?: true
     role?: true
+    externalId?: true
+    provider?: true
+    lastLogin?: true
     createdAt?: true
     updatedAt?: true
-    lastLogin?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
-    externalId?: true
-    provider?: true
-    email?: true
-    phone?: true
-    phoneKey?: true
     firstName?: true
     lastName?: true
     username?: true
+    email?: true
+    phone?: true
+    phoneKey?: true
     isVerified?: true
     isActive?: true
     role?: true
+    externalId?: true
+    provider?: true
+    lastLogin?: true
     createdAt?: true
     updatedAt?: true
-    lastLogin?: true
     _all?: true
   }
 
@@ -1336,20 +1417,20 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    externalId: string | null
-    provider: string | null
-    email: string | null
-    phone: string | null
-    phoneKey: string | null
     firstName: string
     lastName: string
     username: string
+    email: string | null
+    phone: string | null
+    phoneKey: string | null
     isVerified: boolean
     isActive: boolean
-    role: $Enums.Role
+    role: $Enums.UserRole
+    externalId: string | null
+    provider: string | null
+    lastLogin: Date | null
     createdAt: Date
     updatedAt: Date
-    lastLogin: Date | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1371,20 +1452,20 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    externalId?: boolean
-    provider?: boolean
-    email?: boolean
-    phone?: boolean
-    phoneKey?: boolean
     firstName?: boolean
     lastName?: boolean
     username?: boolean
+    email?: boolean
+    phone?: boolean
+    phoneKey?: boolean
     isVerified?: boolean
     isActive?: boolean
     role?: boolean
+    externalId?: boolean
+    provider?: boolean
+    lastLogin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    lastLogin?: boolean
     profile?: boolean | User$profileArgs<ExtArgs>
     submissions?: boolean | User$submissionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1394,23 +1475,23 @@ export namespace Prisma {
 
   export type UserSelectScalar = {
     id?: boolean
-    externalId?: boolean
-    provider?: boolean
-    email?: boolean
-    phone?: boolean
-    phoneKey?: boolean
     firstName?: boolean
     lastName?: boolean
     username?: boolean
+    email?: boolean
+    phone?: boolean
+    phoneKey?: boolean
     isVerified?: boolean
     isActive?: boolean
     role?: boolean
+    externalId?: boolean
+    provider?: boolean
+    lastLogin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    lastLogin?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "externalId" | "provider" | "email" | "phone" | "phoneKey" | "firstName" | "lastName" | "username" | "isVerified" | "isActive" | "role" | "createdAt" | "updatedAt" | "lastLogin", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "username" | "email" | "phone" | "phoneKey" | "isVerified" | "isActive" | "role" | "externalId" | "provider" | "lastLogin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     profile?: boolean | User$profileArgs<ExtArgs>
     submissions?: boolean | User$submissionsArgs<ExtArgs>
@@ -1425,20 +1506,20 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      externalId: string | null
-      provider: string | null
-      email: string | null
-      phone: string | null
-      phoneKey: string | null
       firstName: string
       lastName: string
       username: string
+      email: string | null
+      phone: string | null
+      phoneKey: string | null
       isVerified: boolean
       isActive: boolean
-      role: $Enums.Role
+      role: $Enums.UserRole
+      externalId: string | null
+      provider: string | null
+      lastLogin: Date | null
       createdAt: Date
       updatedAt: Date
-      lastLogin: Date | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1834,20 +1915,20 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
-    readonly externalId: FieldRef<"User", 'String'>
-    readonly provider: FieldRef<"User", 'String'>
-    readonly email: FieldRef<"User", 'String'>
-    readonly phone: FieldRef<"User", 'String'>
-    readonly phoneKey: FieldRef<"User", 'String'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
+    readonly email: FieldRef<"User", 'String'>
+    readonly phone: FieldRef<"User", 'String'>
+    readonly phoneKey: FieldRef<"User", 'String'>
     readonly isVerified: FieldRef<"User", 'Boolean'>
     readonly isActive: FieldRef<"User", 'Boolean'>
-    readonly role: FieldRef<"User", 'Role'>
+    readonly role: FieldRef<"User", 'UserRole'>
+    readonly externalId: FieldRef<"User", 'String'>
+    readonly provider: FieldRef<"User", 'String'>
+    readonly lastLogin: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
-    readonly lastLogin: FieldRef<"User", 'DateTime'>
   }
     
 
@@ -2293,105 +2374,149 @@ export namespace Prisma {
 
   export type CreatorProfileAvgAggregateOutputType = {
     followers: number | null
-    totalPoints: number | null
-    levelProgress: number | null
-    streamCount: number | null
-    shortCount: number | null
+    currentRankReach: number | null
+    totalReachAllTime: number | null
+    pictureCount: number | null
+    storyCount: number | null
     reelCount: number | null
-    totalReach: number | null
-    totalViews: number | null
-    cohortMonth: number | null
+    longVideoCount: number | null
+    postCount: number | null
+    totalPictureCount: number | null
+    totalStoryCount: number | null
+    totalReelCount: number | null
+    totalLongVideoCount: number | null
+    totalPostCount: number | null
   }
 
   export type CreatorProfileSumAggregateOutputType = {
     followers: number | null
-    totalPoints: number | null
-    levelProgress: number | null
-    streamCount: number | null
-    shortCount: number | null
+    currentRankReach: number | null
+    totalReachAllTime: number | null
+    pictureCount: number | null
+    storyCount: number | null
     reelCount: number | null
-    totalReach: number | null
-    totalViews: number | null
-    cohortMonth: number | null
+    longVideoCount: number | null
+    postCount: number | null
+    totalPictureCount: number | null
+    totalStoryCount: number | null
+    totalReelCount: number | null
+    totalLongVideoCount: number | null
+    totalPostCount: number | null
   }
 
   export type CreatorProfileMinAggregateOutputType = {
     id: string | null
     userId: string | null
+    realName: string | null
+    contactEmail: string | null
+    contactPhone: string | null
+    nickname: string | null
+    birthDate: string | null
+    nationality: string | null
+    residency: string | null
+    primarySocialLink: string | null
     channelLogo: string | null
     contentType: string | null
-    socialMediaLink: string | null
     followers: number | null
     eventAttendance: $Enums.EventAttendance | null
     whyJoin: string | null
-    isApproved: boolean | null
-    isActive: boolean | null
-    totalPoints: number | null
-    currentLevel: $Enums.CreatorLevel | null
-    levelProgress: number | null
-    rank: $Enums.Rank | null
-    streamCount: number | null
-    shortCount: number | null
+    status: $Enums.RegistrationStatus | null
+    adminNotes: string | null
+    approvedAt: Date | null
+    rank: $Enums.CreatorRank | null
+    currentRankReach: number | null
+    totalReachAllTime: number | null
+    pictureCount: number | null
+    storyCount: number | null
     reelCount: number | null
-    totalReach: number | null
-    totalViews: number | null
-    cohortMonth: number | null
+    longVideoCount: number | null
+    postCount: number | null
+    totalPictureCount: number | null
+    totalStoryCount: number | null
+    totalReelCount: number | null
+    totalLongVideoCount: number | null
+    totalPostCount: number | null
+    rankedUpAt: Date | null
+    isActive: boolean | null
     joinedAt: Date | null
-    createdAt: Date | null
     updatedAt: Date | null
   }
 
   export type CreatorProfileMaxAggregateOutputType = {
     id: string | null
     userId: string | null
+    realName: string | null
+    contactEmail: string | null
+    contactPhone: string | null
+    nickname: string | null
+    birthDate: string | null
+    nationality: string | null
+    residency: string | null
+    primarySocialLink: string | null
     channelLogo: string | null
     contentType: string | null
-    socialMediaLink: string | null
     followers: number | null
     eventAttendance: $Enums.EventAttendance | null
     whyJoin: string | null
-    isApproved: boolean | null
-    isActive: boolean | null
-    totalPoints: number | null
-    currentLevel: $Enums.CreatorLevel | null
-    levelProgress: number | null
-    rank: $Enums.Rank | null
-    streamCount: number | null
-    shortCount: number | null
+    status: $Enums.RegistrationStatus | null
+    adminNotes: string | null
+    approvedAt: Date | null
+    rank: $Enums.CreatorRank | null
+    currentRankReach: number | null
+    totalReachAllTime: number | null
+    pictureCount: number | null
+    storyCount: number | null
     reelCount: number | null
-    totalReach: number | null
-    totalViews: number | null
-    cohortMonth: number | null
+    longVideoCount: number | null
+    postCount: number | null
+    totalPictureCount: number | null
+    totalStoryCount: number | null
+    totalReelCount: number | null
+    totalLongVideoCount: number | null
+    totalPostCount: number | null
+    rankedUpAt: Date | null
+    isActive: boolean | null
     joinedAt: Date | null
-    createdAt: Date | null
     updatedAt: Date | null
   }
 
   export type CreatorProfileCountAggregateOutputType = {
     id: number
     userId: number
-    channelLogo: number
+    realName: number
+    contactEmail: number
+    contactPhone: number
+    nickname: number
+    birthDate: number
+    nationality: number
+    residency: number
     platforms: number
+    primarySocialLink: number
+    channelLogo: number
     contentType: number
-    socialMediaLink: number
     followers: number
     eventAttendance: number
     discoverySources: number
     whyJoin: number
-    isApproved: number
-    isActive: number
-    totalPoints: number
-    currentLevel: number
-    levelProgress: number
+    status: number
+    adminNotes: number
+    approvedAt: number
     rank: number
-    streamCount: number
-    shortCount: number
+    currentRankReach: number
+    totalReachAllTime: number
+    pictureCount: number
+    storyCount: number
     reelCount: number
-    totalReach: number
-    totalViews: number
-    cohortMonth: number
+    longVideoCount: number
+    postCount: number
+    totalPictureCount: number
+    totalStoryCount: number
+    totalReelCount: number
+    totalLongVideoCount: number
+    totalPostCount: number
+    rankedUpAt: number
+    isActive: number
     joinedAt: number
-    createdAt: number
     updatedAt: number
     _all: number
   }
@@ -2399,105 +2524,149 @@ export namespace Prisma {
 
   export type CreatorProfileAvgAggregateInputType = {
     followers?: true
-    totalPoints?: true
-    levelProgress?: true
-    streamCount?: true
-    shortCount?: true
+    currentRankReach?: true
+    totalReachAllTime?: true
+    pictureCount?: true
+    storyCount?: true
     reelCount?: true
-    totalReach?: true
-    totalViews?: true
-    cohortMonth?: true
+    longVideoCount?: true
+    postCount?: true
+    totalPictureCount?: true
+    totalStoryCount?: true
+    totalReelCount?: true
+    totalLongVideoCount?: true
+    totalPostCount?: true
   }
 
   export type CreatorProfileSumAggregateInputType = {
     followers?: true
-    totalPoints?: true
-    levelProgress?: true
-    streamCount?: true
-    shortCount?: true
+    currentRankReach?: true
+    totalReachAllTime?: true
+    pictureCount?: true
+    storyCount?: true
     reelCount?: true
-    totalReach?: true
-    totalViews?: true
-    cohortMonth?: true
+    longVideoCount?: true
+    postCount?: true
+    totalPictureCount?: true
+    totalStoryCount?: true
+    totalReelCount?: true
+    totalLongVideoCount?: true
+    totalPostCount?: true
   }
 
   export type CreatorProfileMinAggregateInputType = {
     id?: true
     userId?: true
+    realName?: true
+    contactEmail?: true
+    contactPhone?: true
+    nickname?: true
+    birthDate?: true
+    nationality?: true
+    residency?: true
+    primarySocialLink?: true
     channelLogo?: true
     contentType?: true
-    socialMediaLink?: true
     followers?: true
     eventAttendance?: true
     whyJoin?: true
-    isApproved?: true
-    isActive?: true
-    totalPoints?: true
-    currentLevel?: true
-    levelProgress?: true
+    status?: true
+    adminNotes?: true
+    approvedAt?: true
     rank?: true
-    streamCount?: true
-    shortCount?: true
+    currentRankReach?: true
+    totalReachAllTime?: true
+    pictureCount?: true
+    storyCount?: true
     reelCount?: true
-    totalReach?: true
-    totalViews?: true
-    cohortMonth?: true
+    longVideoCount?: true
+    postCount?: true
+    totalPictureCount?: true
+    totalStoryCount?: true
+    totalReelCount?: true
+    totalLongVideoCount?: true
+    totalPostCount?: true
+    rankedUpAt?: true
+    isActive?: true
     joinedAt?: true
-    createdAt?: true
     updatedAt?: true
   }
 
   export type CreatorProfileMaxAggregateInputType = {
     id?: true
     userId?: true
+    realName?: true
+    contactEmail?: true
+    contactPhone?: true
+    nickname?: true
+    birthDate?: true
+    nationality?: true
+    residency?: true
+    primarySocialLink?: true
     channelLogo?: true
     contentType?: true
-    socialMediaLink?: true
     followers?: true
     eventAttendance?: true
     whyJoin?: true
-    isApproved?: true
-    isActive?: true
-    totalPoints?: true
-    currentLevel?: true
-    levelProgress?: true
+    status?: true
+    adminNotes?: true
+    approvedAt?: true
     rank?: true
-    streamCount?: true
-    shortCount?: true
+    currentRankReach?: true
+    totalReachAllTime?: true
+    pictureCount?: true
+    storyCount?: true
     reelCount?: true
-    totalReach?: true
-    totalViews?: true
-    cohortMonth?: true
+    longVideoCount?: true
+    postCount?: true
+    totalPictureCount?: true
+    totalStoryCount?: true
+    totalReelCount?: true
+    totalLongVideoCount?: true
+    totalPostCount?: true
+    rankedUpAt?: true
+    isActive?: true
     joinedAt?: true
-    createdAt?: true
     updatedAt?: true
   }
 
   export type CreatorProfileCountAggregateInputType = {
     id?: true
     userId?: true
-    channelLogo?: true
+    realName?: true
+    contactEmail?: true
+    contactPhone?: true
+    nickname?: true
+    birthDate?: true
+    nationality?: true
+    residency?: true
     platforms?: true
+    primarySocialLink?: true
+    channelLogo?: true
     contentType?: true
-    socialMediaLink?: true
     followers?: true
     eventAttendance?: true
     discoverySources?: true
     whyJoin?: true
-    isApproved?: true
-    isActive?: true
-    totalPoints?: true
-    currentLevel?: true
-    levelProgress?: true
+    status?: true
+    adminNotes?: true
+    approvedAt?: true
     rank?: true
-    streamCount?: true
-    shortCount?: true
+    currentRankReach?: true
+    totalReachAllTime?: true
+    pictureCount?: true
+    storyCount?: true
     reelCount?: true
-    totalReach?: true
-    totalViews?: true
-    cohortMonth?: true
+    longVideoCount?: true
+    postCount?: true
+    totalPictureCount?: true
+    totalStoryCount?: true
+    totalReelCount?: true
+    totalLongVideoCount?: true
+    totalPostCount?: true
+    rankedUpAt?: true
+    isActive?: true
     joinedAt?: true
-    createdAt?: true
     updatedAt?: true
     _all?: true
   }
@@ -2591,28 +2760,40 @@ export namespace Prisma {
   export type CreatorProfileGroupByOutputType = {
     id: string
     userId: string
-    channelLogo: string | null
+    realName: string
+    contactEmail: string | null
+    contactPhone: string | null
+    nickname: string
+    birthDate: string
+    nationality: string
+    residency: string
     platforms: $Enums.Platform[]
+    primarySocialLink: string
+    channelLogo: string | null
     contentType: string
-    socialMediaLink: string
     followers: number
     eventAttendance: $Enums.EventAttendance
     discoverySources: $Enums.DiscoverySource[]
-    whyJoin: string
-    isApproved: boolean
-    isActive: boolean
-    totalPoints: number
-    currentLevel: $Enums.CreatorLevel
-    levelProgress: number
-    rank: $Enums.Rank
-    streamCount: number
-    shortCount: number
+    whyJoin: string | null
+    status: $Enums.RegistrationStatus
+    adminNotes: string | null
+    approvedAt: Date | null
+    rank: $Enums.CreatorRank
+    currentRankReach: number
+    totalReachAllTime: number
+    pictureCount: number
+    storyCount: number
     reelCount: number
-    totalReach: number
-    totalViews: number
-    cohortMonth: number | null
-    joinedAt: Date | null
-    createdAt: Date
+    longVideoCount: number
+    postCount: number
+    totalPictureCount: number
+    totalStoryCount: number
+    totalReelCount: number
+    totalLongVideoCount: number
+    totalPostCount: number
+    rankedUpAt: Date | null
+    isActive: boolean
+    joinedAt: Date
     updatedAt: Date
     _count: CreatorProfileCountAggregateOutputType | null
     _avg: CreatorProfileAvgAggregateOutputType | null
@@ -2638,28 +2819,41 @@ export namespace Prisma {
   export type CreatorProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    channelLogo?: boolean
+    realName?: boolean
+    contactEmail?: boolean
+    contactPhone?: boolean
+    nickname?: boolean
+    birthDate?: boolean
+    nationality?: boolean
+    residency?: boolean
     platforms?: boolean
+    platformLinks?: boolean | PlatformLinkDefaultArgs<ExtArgs>
+    primarySocialLink?: boolean
+    channelLogo?: boolean
     contentType?: boolean
-    socialMediaLink?: boolean
     followers?: boolean
     eventAttendance?: boolean
     discoverySources?: boolean
     whyJoin?: boolean
-    isApproved?: boolean
-    isActive?: boolean
-    totalPoints?: boolean
-    currentLevel?: boolean
-    levelProgress?: boolean
+    status?: boolean
+    adminNotes?: boolean
+    approvedAt?: boolean
     rank?: boolean
-    streamCount?: boolean
-    shortCount?: boolean
+    currentRankReach?: boolean
+    totalReachAllTime?: boolean
+    pictureCount?: boolean
+    storyCount?: boolean
     reelCount?: boolean
-    totalReach?: boolean
-    totalViews?: boolean
-    cohortMonth?: boolean
+    longVideoCount?: boolean
+    postCount?: boolean
+    totalPictureCount?: boolean
+    totalStoryCount?: boolean
+    totalReelCount?: boolean
+    totalLongVideoCount?: boolean
+    totalPostCount?: boolean
+    rankedUpAt?: boolean
+    isActive?: boolean
     joinedAt?: boolean
-    createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
@@ -2669,32 +2863,44 @@ export namespace Prisma {
   export type CreatorProfileSelectScalar = {
     id?: boolean
     userId?: boolean
-    channelLogo?: boolean
+    realName?: boolean
+    contactEmail?: boolean
+    contactPhone?: boolean
+    nickname?: boolean
+    birthDate?: boolean
+    nationality?: boolean
+    residency?: boolean
     platforms?: boolean
+    primarySocialLink?: boolean
+    channelLogo?: boolean
     contentType?: boolean
-    socialMediaLink?: boolean
     followers?: boolean
     eventAttendance?: boolean
     discoverySources?: boolean
     whyJoin?: boolean
-    isApproved?: boolean
-    isActive?: boolean
-    totalPoints?: boolean
-    currentLevel?: boolean
-    levelProgress?: boolean
+    status?: boolean
+    adminNotes?: boolean
+    approvedAt?: boolean
     rank?: boolean
-    streamCount?: boolean
-    shortCount?: boolean
+    currentRankReach?: boolean
+    totalReachAllTime?: boolean
+    pictureCount?: boolean
+    storyCount?: boolean
     reelCount?: boolean
-    totalReach?: boolean
-    totalViews?: boolean
-    cohortMonth?: boolean
+    longVideoCount?: boolean
+    postCount?: boolean
+    totalPictureCount?: boolean
+    totalStoryCount?: boolean
+    totalReelCount?: boolean
+    totalLongVideoCount?: boolean
+    totalPostCount?: boolean
+    rankedUpAt?: boolean
+    isActive?: boolean
     joinedAt?: boolean
-    createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "channelLogo" | "platforms" | "contentType" | "socialMediaLink" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "isApproved" | "isActive" | "totalPoints" | "currentLevel" | "levelProgress" | "rank" | "streamCount" | "shortCount" | "reelCount" | "totalReach" | "totalViews" | "cohortMonth" | "joinedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
+  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "realName" | "contactEmail" | "contactPhone" | "nickname" | "birthDate" | "nationality" | "residency" | "platforms" | "platformLinks" | "primarySocialLink" | "channelLogo" | "contentType" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "status" | "adminNotes" | "approvedAt" | "rank" | "currentRankReach" | "totalReachAllTime" | "pictureCount" | "storyCount" | "reelCount" | "longVideoCount" | "postCount" | "totalPictureCount" | "totalStoryCount" | "totalReelCount" | "totalLongVideoCount" | "totalPostCount" | "rankedUpAt" | "isActive" | "joinedAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2707,31 +2913,45 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      channelLogo: string | null
+      realName: string
+      contactEmail: string | null
+      contactPhone: string | null
+      nickname: string
+      birthDate: string
+      nationality: string
+      residency: string
       platforms: $Enums.Platform[]
+      primarySocialLink: string
+      channelLogo: string | null
       contentType: string
-      socialMediaLink: string
       followers: number
       eventAttendance: $Enums.EventAttendance
       discoverySources: $Enums.DiscoverySource[]
-      whyJoin: string
-      isApproved: boolean
-      isActive: boolean
-      totalPoints: number
-      currentLevel: $Enums.CreatorLevel
-      levelProgress: number
-      rank: $Enums.Rank
-      streamCount: number
-      shortCount: number
+      whyJoin: string | null
+      status: $Enums.RegistrationStatus
+      adminNotes: string | null
+      approvedAt: Date | null
+      rank: $Enums.CreatorRank
+      currentRankReach: number
+      totalReachAllTime: number
+      pictureCount: number
+      storyCount: number
       reelCount: number
-      totalReach: number
-      totalViews: number
-      cohortMonth: number | null
-      joinedAt: Date | null
-      createdAt: Date
+      longVideoCount: number
+      postCount: number
+      totalPictureCount: number
+      totalStoryCount: number
+      totalReelCount: number
+      totalLongVideoCount: number
+      totalPostCount: number
+      rankedUpAt: Date | null
+      isActive: boolean
+      joinedAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["creatorProfile"]>
-    composites: {}
+    composites: {
+      platformLinks: Prisma.$PlatformLinkPayload[]
+    }
   }
 
   type CreatorProfileGetPayload<S extends boolean | null | undefined | CreatorProfileDefaultArgs> = $Result.GetResult<Prisma.$CreatorProfilePayload, S>
@@ -3125,28 +3345,40 @@ export namespace Prisma {
   interface CreatorProfileFieldRefs {
     readonly id: FieldRef<"CreatorProfile", 'String'>
     readonly userId: FieldRef<"CreatorProfile", 'String'>
-    readonly channelLogo: FieldRef<"CreatorProfile", 'String'>
+    readonly realName: FieldRef<"CreatorProfile", 'String'>
+    readonly contactEmail: FieldRef<"CreatorProfile", 'String'>
+    readonly contactPhone: FieldRef<"CreatorProfile", 'String'>
+    readonly nickname: FieldRef<"CreatorProfile", 'String'>
+    readonly birthDate: FieldRef<"CreatorProfile", 'String'>
+    readonly nationality: FieldRef<"CreatorProfile", 'String'>
+    readonly residency: FieldRef<"CreatorProfile", 'String'>
     readonly platforms: FieldRef<"CreatorProfile", 'Platform[]'>
+    readonly primarySocialLink: FieldRef<"CreatorProfile", 'String'>
+    readonly channelLogo: FieldRef<"CreatorProfile", 'String'>
     readonly contentType: FieldRef<"CreatorProfile", 'String'>
-    readonly socialMediaLink: FieldRef<"CreatorProfile", 'String'>
     readonly followers: FieldRef<"CreatorProfile", 'Int'>
     readonly eventAttendance: FieldRef<"CreatorProfile", 'EventAttendance'>
     readonly discoverySources: FieldRef<"CreatorProfile", 'DiscoverySource[]'>
     readonly whyJoin: FieldRef<"CreatorProfile", 'String'>
-    readonly isApproved: FieldRef<"CreatorProfile", 'Boolean'>
-    readonly isActive: FieldRef<"CreatorProfile", 'Boolean'>
-    readonly totalPoints: FieldRef<"CreatorProfile", 'Int'>
-    readonly currentLevel: FieldRef<"CreatorProfile", 'CreatorLevel'>
-    readonly levelProgress: FieldRef<"CreatorProfile", 'Float'>
-    readonly rank: FieldRef<"CreatorProfile", 'Rank'>
-    readonly streamCount: FieldRef<"CreatorProfile", 'Int'>
-    readonly shortCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly status: FieldRef<"CreatorProfile", 'RegistrationStatus'>
+    readonly adminNotes: FieldRef<"CreatorProfile", 'String'>
+    readonly approvedAt: FieldRef<"CreatorProfile", 'DateTime'>
+    readonly rank: FieldRef<"CreatorProfile", 'CreatorRank'>
+    readonly currentRankReach: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalReachAllTime: FieldRef<"CreatorProfile", 'Int'>
+    readonly pictureCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly storyCount: FieldRef<"CreatorProfile", 'Int'>
     readonly reelCount: FieldRef<"CreatorProfile", 'Int'>
-    readonly totalReach: FieldRef<"CreatorProfile", 'Int'>
-    readonly totalViews: FieldRef<"CreatorProfile", 'Int'>
-    readonly cohortMonth: FieldRef<"CreatorProfile", 'Int'>
+    readonly longVideoCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly postCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalPictureCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalStoryCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalReelCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalLongVideoCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalPostCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly rankedUpAt: FieldRef<"CreatorProfile", 'DateTime'>
+    readonly isActive: FieldRef<"CreatorProfile", 'Boolean'>
     readonly joinedAt: FieldRef<"CreatorProfile", 'DateTime'>
-    readonly createdAt: FieldRef<"CreatorProfile", 'DateTime'>
     readonly updatedAt: FieldRef<"CreatorProfile", 'DateTime'>
   }
     
@@ -3549,30 +3781,34 @@ export namespace Prisma {
   }
 
   export type SubmissionAvgAggregateOutputType = {
-    totalReach: number | null
-    totalViews: number | null
-    pointsAwarded: number | null
+    submittedReach: number | null
+    acceptedReach: number | null
+    pendingReach: number | null
+    previousAcceptedReach: number | null
   }
 
   export type SubmissionSumAggregateOutputType = {
-    totalReach: number | null
-    totalViews: number | null
-    pointsAwarded: number | null
+    submittedReach: number | null
+    acceptedReach: number | null
+    pendingReach: number | null
+    previousAcceptedReach: number | null
   }
 
   export type SubmissionMinAggregateOutputType = {
     id: string | null
     userId: string | null
-    rank: $Enums.Rank | null
+    nickname: string | null
+    rank: $Enums.CreatorRank | null
     platform: $Enums.Platform | null
     contentLink: string | null
-    totalReach: number | null
-    totalViews: number | null
+    submittedReach: number | null
+    acceptedReach: number | null
+    pendingReach: number | null
+    previousAcceptedReach: number | null
     statsScreenshotUrl: string | null
-    pointsAwarded: number | null
+    status: $Enums.SubmissionStatus | null
     adminNotes: string | null
-    submittedByAdminId: string | null
-    isApproved: boolean | null
+    isEdited: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3580,16 +3816,18 @@ export namespace Prisma {
   export type SubmissionMaxAggregateOutputType = {
     id: string | null
     userId: string | null
-    rank: $Enums.Rank | null
+    nickname: string | null
+    rank: $Enums.CreatorRank | null
     platform: $Enums.Platform | null
     contentLink: string | null
-    totalReach: number | null
-    totalViews: number | null
+    submittedReach: number | null
+    acceptedReach: number | null
+    pendingReach: number | null
+    previousAcceptedReach: number | null
     statsScreenshotUrl: string | null
-    pointsAwarded: number | null
+    status: $Enums.SubmissionStatus | null
     adminNotes: string | null
-    submittedByAdminId: string | null
-    isApproved: boolean | null
+    isEdited: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3597,18 +3835,20 @@ export namespace Prisma {
   export type SubmissionCountAggregateOutputType = {
     id: number
     userId: number
+    nickname: number
     rank: number
     platform: number
     contentLink: number
     contentTypes: number
     monsterAppearances: number
-    totalReach: number
-    totalViews: number
+    submittedReach: number
+    acceptedReach: number
+    pendingReach: number
+    previousAcceptedReach: number
     statsScreenshotUrl: number
-    pointsAwarded: number
+    status: number
     adminNotes: number
-    submittedByAdminId: number
-    isApproved: number
+    isEdited: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -3616,30 +3856,34 @@ export namespace Prisma {
 
 
   export type SubmissionAvgAggregateInputType = {
-    totalReach?: true
-    totalViews?: true
-    pointsAwarded?: true
+    submittedReach?: true
+    acceptedReach?: true
+    pendingReach?: true
+    previousAcceptedReach?: true
   }
 
   export type SubmissionSumAggregateInputType = {
-    totalReach?: true
-    totalViews?: true
-    pointsAwarded?: true
+    submittedReach?: true
+    acceptedReach?: true
+    pendingReach?: true
+    previousAcceptedReach?: true
   }
 
   export type SubmissionMinAggregateInputType = {
     id?: true
     userId?: true
+    nickname?: true
     rank?: true
     platform?: true
     contentLink?: true
-    totalReach?: true
-    totalViews?: true
+    submittedReach?: true
+    acceptedReach?: true
+    pendingReach?: true
+    previousAcceptedReach?: true
     statsScreenshotUrl?: true
-    pointsAwarded?: true
+    status?: true
     adminNotes?: true
-    submittedByAdminId?: true
-    isApproved?: true
+    isEdited?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3647,16 +3891,18 @@ export namespace Prisma {
   export type SubmissionMaxAggregateInputType = {
     id?: true
     userId?: true
+    nickname?: true
     rank?: true
     platform?: true
     contentLink?: true
-    totalReach?: true
-    totalViews?: true
+    submittedReach?: true
+    acceptedReach?: true
+    pendingReach?: true
+    previousAcceptedReach?: true
     statsScreenshotUrl?: true
-    pointsAwarded?: true
+    status?: true
     adminNotes?: true
-    submittedByAdminId?: true
-    isApproved?: true
+    isEdited?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3664,18 +3910,20 @@ export namespace Prisma {
   export type SubmissionCountAggregateInputType = {
     id?: true
     userId?: true
+    nickname?: true
     rank?: true
     platform?: true
     contentLink?: true
     contentTypes?: true
     monsterAppearances?: true
-    totalReach?: true
-    totalViews?: true
+    submittedReach?: true
+    acceptedReach?: true
+    pendingReach?: true
+    previousAcceptedReach?: true
     statsScreenshotUrl?: true
-    pointsAwarded?: true
+    status?: true
     adminNotes?: true
-    submittedByAdminId?: true
-    isApproved?: true
+    isEdited?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -3770,18 +4018,20 @@ export namespace Prisma {
   export type SubmissionGroupByOutputType = {
     id: string
     userId: string
-    rank: $Enums.Rank
+    nickname: string
+    rank: $Enums.CreatorRank
     platform: $Enums.Platform
     contentLink: string
     contentTypes: $Enums.ContentType[]
     monsterAppearances: $Enums.MonsterAppearance[]
-    totalReach: number
-    totalViews: number
+    submittedReach: number
+    acceptedReach: number
+    pendingReach: number | null
+    previousAcceptedReach: number | null
     statsScreenshotUrl: string | null
-    pointsAwarded: number
+    status: $Enums.SubmissionStatus
     adminNotes: string | null
-    submittedByAdminId: string | null
-    isApproved: boolean
+    isEdited: boolean
     createdAt: Date
     updatedAt: Date
     _count: SubmissionCountAggregateOutputType | null
@@ -3808,18 +4058,20 @@ export namespace Prisma {
   export type SubmissionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    nickname?: boolean
     rank?: boolean
     platform?: boolean
     contentLink?: boolean
     contentTypes?: boolean
     monsterAppearances?: boolean
-    totalReach?: boolean
-    totalViews?: boolean
+    submittedReach?: boolean
+    acceptedReach?: boolean
+    pendingReach?: boolean
+    previousAcceptedReach?: boolean
     statsScreenshotUrl?: boolean
-    pointsAwarded?: boolean
+    status?: boolean
     adminNotes?: boolean
-    submittedByAdminId?: boolean
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3830,23 +4082,25 @@ export namespace Prisma {
   export type SubmissionSelectScalar = {
     id?: boolean
     userId?: boolean
+    nickname?: boolean
     rank?: boolean
     platform?: boolean
     contentLink?: boolean
     contentTypes?: boolean
     monsterAppearances?: boolean
-    totalReach?: boolean
-    totalViews?: boolean
+    submittedReach?: boolean
+    acceptedReach?: boolean
+    pendingReach?: boolean
+    previousAcceptedReach?: boolean
     statsScreenshotUrl?: boolean
-    pointsAwarded?: boolean
+    status?: boolean
     adminNotes?: boolean
-    submittedByAdminId?: boolean
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "rank" | "platform" | "contentLink" | "contentTypes" | "monsterAppearances" | "totalReach" | "totalViews" | "statsScreenshotUrl" | "pointsAwarded" | "adminNotes" | "submittedByAdminId" | "isApproved" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
+  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "nickname" | "rank" | "platform" | "contentLink" | "contentTypes" | "monsterAppearances" | "submittedReach" | "acceptedReach" | "pendingReach" | "previousAcceptedReach" | "statsScreenshotUrl" | "status" | "adminNotes" | "isEdited" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
   export type SubmissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3859,18 +4113,20 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      rank: $Enums.Rank
+      nickname: string
+      rank: $Enums.CreatorRank
       platform: $Enums.Platform
       contentLink: string
       contentTypes: $Enums.ContentType[]
       monsterAppearances: $Enums.MonsterAppearance[]
-      totalReach: number
-      totalViews: number
+      submittedReach: number
+      acceptedReach: number
+      pendingReach: number | null
+      previousAcceptedReach: number | null
       statsScreenshotUrl: string | null
-      pointsAwarded: number
+      status: $Enums.SubmissionStatus
       adminNotes: string | null
-      submittedByAdminId: string | null
-      isApproved: boolean
+      isEdited: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["submission"]>
@@ -4268,18 +4524,20 @@ export namespace Prisma {
   interface SubmissionFieldRefs {
     readonly id: FieldRef<"Submission", 'String'>
     readonly userId: FieldRef<"Submission", 'String'>
-    readonly rank: FieldRef<"Submission", 'Rank'>
+    readonly nickname: FieldRef<"Submission", 'String'>
+    readonly rank: FieldRef<"Submission", 'CreatorRank'>
     readonly platform: FieldRef<"Submission", 'Platform'>
     readonly contentLink: FieldRef<"Submission", 'String'>
     readonly contentTypes: FieldRef<"Submission", 'ContentType[]'>
     readonly monsterAppearances: FieldRef<"Submission", 'MonsterAppearance[]'>
-    readonly totalReach: FieldRef<"Submission", 'Int'>
-    readonly totalViews: FieldRef<"Submission", 'Int'>
+    readonly submittedReach: FieldRef<"Submission", 'Int'>
+    readonly acceptedReach: FieldRef<"Submission", 'Int'>
+    readonly pendingReach: FieldRef<"Submission", 'Int'>
+    readonly previousAcceptedReach: FieldRef<"Submission", 'Int'>
     readonly statsScreenshotUrl: FieldRef<"Submission", 'String'>
-    readonly pointsAwarded: FieldRef<"Submission", 'Int'>
+    readonly status: FieldRef<"Submission", 'SubmissionStatus'>
     readonly adminNotes: FieldRef<"Submission", 'String'>
-    readonly submittedByAdminId: FieldRef<"Submission", 'String'>
-    readonly isApproved: FieldRef<"Submission", 'Boolean'>
+    readonly isEdited: FieldRef<"Submission", 'Boolean'>
     readonly createdAt: FieldRef<"Submission", 'DateTime'>
     readonly updatedAt: FieldRef<"Submission", 'DateTime'>
   }
@@ -4676,20 +4934,20 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    externalId: 'externalId',
-    provider: 'provider',
-    email: 'email',
-    phone: 'phone',
-    phoneKey: 'phoneKey',
     firstName: 'firstName',
     lastName: 'lastName',
     username: 'username',
+    email: 'email',
+    phone: 'phone',
+    phoneKey: 'phoneKey',
     isVerified: 'isVerified',
     isActive: 'isActive',
     role: 'role',
+    externalId: 'externalId',
+    provider: 'provider',
+    lastLogin: 'lastLogin',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    lastLogin: 'lastLogin'
+    updatedAt: 'updatedAt'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4698,28 +4956,40 @@ export namespace Prisma {
   export const CreatorProfileScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    channelLogo: 'channelLogo',
+    realName: 'realName',
+    contactEmail: 'contactEmail',
+    contactPhone: 'contactPhone',
+    nickname: 'nickname',
+    birthDate: 'birthDate',
+    nationality: 'nationality',
+    residency: 'residency',
     platforms: 'platforms',
+    primarySocialLink: 'primarySocialLink',
+    channelLogo: 'channelLogo',
     contentType: 'contentType',
-    socialMediaLink: 'socialMediaLink',
     followers: 'followers',
     eventAttendance: 'eventAttendance',
     discoverySources: 'discoverySources',
     whyJoin: 'whyJoin',
-    isApproved: 'isApproved',
-    isActive: 'isActive',
-    totalPoints: 'totalPoints',
-    currentLevel: 'currentLevel',
-    levelProgress: 'levelProgress',
+    status: 'status',
+    adminNotes: 'adminNotes',
+    approvedAt: 'approvedAt',
     rank: 'rank',
-    streamCount: 'streamCount',
-    shortCount: 'shortCount',
+    currentRankReach: 'currentRankReach',
+    totalReachAllTime: 'totalReachAllTime',
+    pictureCount: 'pictureCount',
+    storyCount: 'storyCount',
     reelCount: 'reelCount',
-    totalReach: 'totalReach',
-    totalViews: 'totalViews',
-    cohortMonth: 'cohortMonth',
+    longVideoCount: 'longVideoCount',
+    postCount: 'postCount',
+    totalPictureCount: 'totalPictureCount',
+    totalStoryCount: 'totalStoryCount',
+    totalReelCount: 'totalReelCount',
+    totalLongVideoCount: 'totalLongVideoCount',
+    totalPostCount: 'totalPostCount',
+    rankedUpAt: 'rankedUpAt',
+    isActive: 'isActive',
     joinedAt: 'joinedAt',
-    createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
@@ -4729,18 +4999,20 @@ export namespace Prisma {
   export const SubmissionScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
+    nickname: 'nickname',
     rank: 'rank',
     platform: 'platform',
     contentLink: 'contentLink',
     contentTypes: 'contentTypes',
     monsterAppearances: 'monsterAppearances',
-    totalReach: 'totalReach',
-    totalViews: 'totalViews',
+    submittedReach: 'submittedReach',
+    acceptedReach: 'acceptedReach',
+    pendingReach: 'pendingReach',
+    previousAcceptedReach: 'previousAcceptedReach',
     statsScreenshotUrl: 'statsScreenshotUrl',
-    pointsAwarded: 'pointsAwarded',
+    status: 'status',
     adminNotes: 'adminNotes',
-    submittedByAdminId: 'submittedByAdminId',
-    isApproved: 'isApproved',
+    isEdited: 'isEdited',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -4791,16 +5063,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Role'
+   * Reference to a field of type 'UserRole'
    */
-  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+  export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
     
 
 
   /**
-   * Reference to a field of type 'Role[]'
+   * Reference to a field of type 'UserRole[]'
    */
-  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
+  export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
     
 
 
@@ -4875,44 +5147,30 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'CreatorLevel'
+   * Reference to a field of type 'RegistrationStatus'
    */
-  export type EnumCreatorLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CreatorLevel'>
+  export type EnumRegistrationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RegistrationStatus'>
     
 
 
   /**
-   * Reference to a field of type 'CreatorLevel[]'
+   * Reference to a field of type 'RegistrationStatus[]'
    */
-  export type ListEnumCreatorLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CreatorLevel[]'>
+  export type ListEnumRegistrationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RegistrationStatus[]'>
     
 
 
   /**
-   * Reference to a field of type 'Float'
+   * Reference to a field of type 'CreatorRank'
    */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+  export type EnumCreatorRankFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CreatorRank'>
     
 
 
   /**
-   * Reference to a field of type 'Float[]'
+   * Reference to a field of type 'CreatorRank[]'
    */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Rank'
-   */
-  export type EnumRankFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Rank'>
-    
-
-
-  /**
-   * Reference to a field of type 'Rank[]'
-   */
-  export type ListEnumRankFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Rank[]'>
+  export type ListEnumCreatorRankFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CreatorRank[]'>
     
 
 
@@ -4942,6 +5200,34 @@ export namespace Prisma {
    */
   export type EnumMonsterAppearanceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MonsterAppearance'>
     
+
+
+  /**
+   * Reference to a field of type 'SubmissionStatus'
+   */
+  export type EnumSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SubmissionStatus[]'
+   */
+  export type ListEnumSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
   /**
    * Deep Input Types
    */
@@ -4952,83 +5238,83 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
-    externalId?: StringNullableFilter<"User"> | string | null
-    provider?: StringNullableFilter<"User"> | string | null
-    email?: StringNullableFilter<"User"> | string | null
-    phone?: StringNullableFilter<"User"> | string | null
-    phoneKey?: StringNullableFilter<"User"> | string | null
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
     username?: StringFilter<"User"> | string
+    email?: StringNullableFilter<"User"> | string | null
+    phone?: StringNullableFilter<"User"> | string | null
+    phoneKey?: StringNullableFilter<"User"> | string | null
     isVerified?: BoolFilter<"User"> | boolean
     isActive?: BoolFilter<"User"> | boolean
-    role?: EnumRoleFilter<"User"> | $Enums.Role
+    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
+    externalId?: StringNullableFilter<"User"> | string | null
+    provider?: StringNullableFilter<"User"> | string | null
+    lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
     profile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
     submissions?: SubmissionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    externalId?: SortOrder
-    provider?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    phoneKey?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    phoneKey?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     role?: SortOrder
+    externalId?: SortOrder
+    provider?: SortOrder
+    lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    lastLogin?: SortOrder
     profile?: CreatorProfileOrderByWithRelationInput
     submissions?: SubmissionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    externalId?: string
+    username?: string
     email?: string
     phone?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    provider?: StringNullableFilter<"User"> | string | null
-    phoneKey?: StringNullableFilter<"User"> | string | null
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
-    username?: StringFilter<"User"> | string
+    phoneKey?: StringNullableFilter<"User"> | string | null
     isVerified?: BoolFilter<"User"> | boolean
     isActive?: BoolFilter<"User"> | boolean
-    role?: EnumRoleFilter<"User"> | $Enums.Role
+    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
+    externalId?: StringNullableFilter<"User"> | string | null
+    provider?: StringNullableFilter<"User"> | string | null
+    lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
     profile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
     submissions?: SubmissionListRelationFilter
-  }, "id" | "unique_email" | "unique_phone" | "unique_external_id">
+  }, "id" | "username" | "email" | "phone">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    externalId?: SortOrder
-    provider?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    phoneKey?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    phoneKey?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     role?: SortOrder
+    externalId?: SortOrder
+    provider?: SortOrder
+    lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    lastLogin?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -5039,20 +5325,20 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
-    externalId?: StringNullableWithAggregatesFilter<"User"> | string | null
-    provider?: StringNullableWithAggregatesFilter<"User"> | string | null
-    email?: StringNullableWithAggregatesFilter<"User"> | string | null
-    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
-    phoneKey?: StringNullableWithAggregatesFilter<"User"> | string | null
     firstName?: StringWithAggregatesFilter<"User"> | string
     lastName?: StringWithAggregatesFilter<"User"> | string
     username?: StringWithAggregatesFilter<"User"> | string
+    email?: StringNullableWithAggregatesFilter<"User"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    phoneKey?: StringNullableWithAggregatesFilter<"User"> | string | null
     isVerified?: BoolWithAggregatesFilter<"User"> | boolean
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
-    role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+    role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+    externalId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    provider?: StringNullableWithAggregatesFilter<"User"> | string | null
+    lastLogin?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
-    lastLogin?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   }
 
   export type CreatorProfileWhereInput = {
@@ -5061,28 +5347,41 @@ export namespace Prisma {
     NOT?: CreatorProfileWhereInput | CreatorProfileWhereInput[]
     id?: StringFilter<"CreatorProfile"> | string
     userId?: StringFilter<"CreatorProfile"> | string
-    channelLogo?: StringNullableFilter<"CreatorProfile"> | string | null
+    realName?: StringFilter<"CreatorProfile"> | string
+    contactEmail?: StringNullableFilter<"CreatorProfile"> | string | null
+    contactPhone?: StringNullableFilter<"CreatorProfile"> | string | null
+    nickname?: StringFilter<"CreatorProfile"> | string
+    birthDate?: StringFilter<"CreatorProfile"> | string
+    nationality?: StringFilter<"CreatorProfile"> | string
+    residency?: StringFilter<"CreatorProfile"> | string
     platforms?: EnumPlatformNullableListFilter<"CreatorProfile">
+    platformLinks?: PlatformLinkCompositeListFilter | PlatformLinkObjectEqualityInput[]
+    primarySocialLink?: StringFilter<"CreatorProfile"> | string
+    channelLogo?: StringNullableFilter<"CreatorProfile"> | string | null
     contentType?: StringFilter<"CreatorProfile"> | string
-    socialMediaLink?: StringFilter<"CreatorProfile"> | string
     followers?: IntFilter<"CreatorProfile"> | number
     eventAttendance?: EnumEventAttendanceFilter<"CreatorProfile"> | $Enums.EventAttendance
     discoverySources?: EnumDiscoverySourceNullableListFilter<"CreatorProfile">
-    whyJoin?: StringFilter<"CreatorProfile"> | string
-    isApproved?: BoolFilter<"CreatorProfile"> | boolean
-    isActive?: BoolFilter<"CreatorProfile"> | boolean
-    totalPoints?: IntFilter<"CreatorProfile"> | number
-    currentLevel?: EnumCreatorLevelFilter<"CreatorProfile"> | $Enums.CreatorLevel
-    levelProgress?: FloatFilter<"CreatorProfile"> | number
-    rank?: EnumRankFilter<"CreatorProfile"> | $Enums.Rank
-    streamCount?: IntFilter<"CreatorProfile"> | number
-    shortCount?: IntFilter<"CreatorProfile"> | number
+    whyJoin?: StringNullableFilter<"CreatorProfile"> | string | null
+    status?: EnumRegistrationStatusFilter<"CreatorProfile"> | $Enums.RegistrationStatus
+    adminNotes?: StringNullableFilter<"CreatorProfile"> | string | null
+    approvedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    rank?: EnumCreatorRankFilter<"CreatorProfile"> | $Enums.CreatorRank
+    currentRankReach?: IntFilter<"CreatorProfile"> | number
+    totalReachAllTime?: IntFilter<"CreatorProfile"> | number
+    pictureCount?: IntFilter<"CreatorProfile"> | number
+    storyCount?: IntFilter<"CreatorProfile"> | number
     reelCount?: IntFilter<"CreatorProfile"> | number
-    totalReach?: IntFilter<"CreatorProfile"> | number
-    totalViews?: IntFilter<"CreatorProfile"> | number
-    cohortMonth?: IntNullableFilter<"CreatorProfile"> | number | null
-    joinedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
-    createdAt?: DateTimeFilter<"CreatorProfile"> | Date | string
+    longVideoCount?: IntFilter<"CreatorProfile"> | number
+    postCount?: IntFilter<"CreatorProfile"> | number
+    totalPictureCount?: IntFilter<"CreatorProfile"> | number
+    totalStoryCount?: IntFilter<"CreatorProfile"> | number
+    totalReelCount?: IntFilter<"CreatorProfile"> | number
+    totalLongVideoCount?: IntFilter<"CreatorProfile"> | number
+    totalPostCount?: IntFilter<"CreatorProfile"> | number
+    rankedUpAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    isActive?: BoolFilter<"CreatorProfile"> | boolean
+    joinedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     updatedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -5090,28 +5389,41 @@ export namespace Prisma {
   export type CreatorProfileOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    channelLogo?: SortOrder
+    realName?: SortOrder
+    contactEmail?: SortOrder
+    contactPhone?: SortOrder
+    nickname?: SortOrder
+    birthDate?: SortOrder
+    nationality?: SortOrder
+    residency?: SortOrder
     platforms?: SortOrder
+    platformLinks?: PlatformLinkOrderByCompositeAggregateInput
+    primarySocialLink?: SortOrder
+    channelLogo?: SortOrder
     contentType?: SortOrder
-    socialMediaLink?: SortOrder
     followers?: SortOrder
     eventAttendance?: SortOrder
     discoverySources?: SortOrder
     whyJoin?: SortOrder
-    isApproved?: SortOrder
-    isActive?: SortOrder
-    totalPoints?: SortOrder
-    currentLevel?: SortOrder
-    levelProgress?: SortOrder
+    status?: SortOrder
+    adminNotes?: SortOrder
+    approvedAt?: SortOrder
     rank?: SortOrder
-    streamCount?: SortOrder
-    shortCount?: SortOrder
+    currentRankReach?: SortOrder
+    totalReachAllTime?: SortOrder
+    pictureCount?: SortOrder
+    storyCount?: SortOrder
     reelCount?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    cohortMonth?: SortOrder
+    longVideoCount?: SortOrder
+    postCount?: SortOrder
+    totalPictureCount?: SortOrder
+    totalStoryCount?: SortOrder
+    totalReelCount?: SortOrder
+    totalLongVideoCount?: SortOrder
+    totalPostCount?: SortOrder
+    rankedUpAt?: SortOrder
+    isActive?: SortOrder
     joinedAt?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
   }
@@ -5122,28 +5434,41 @@ export namespace Prisma {
     AND?: CreatorProfileWhereInput | CreatorProfileWhereInput[]
     OR?: CreatorProfileWhereInput[]
     NOT?: CreatorProfileWhereInput | CreatorProfileWhereInput[]
-    channelLogo?: StringNullableFilter<"CreatorProfile"> | string | null
+    realName?: StringFilter<"CreatorProfile"> | string
+    contactEmail?: StringNullableFilter<"CreatorProfile"> | string | null
+    contactPhone?: StringNullableFilter<"CreatorProfile"> | string | null
+    nickname?: StringFilter<"CreatorProfile"> | string
+    birthDate?: StringFilter<"CreatorProfile"> | string
+    nationality?: StringFilter<"CreatorProfile"> | string
+    residency?: StringFilter<"CreatorProfile"> | string
     platforms?: EnumPlatformNullableListFilter<"CreatorProfile">
+    platformLinks?: PlatformLinkCompositeListFilter | PlatformLinkObjectEqualityInput[]
+    primarySocialLink?: StringFilter<"CreatorProfile"> | string
+    channelLogo?: StringNullableFilter<"CreatorProfile"> | string | null
     contentType?: StringFilter<"CreatorProfile"> | string
-    socialMediaLink?: StringFilter<"CreatorProfile"> | string
     followers?: IntFilter<"CreatorProfile"> | number
     eventAttendance?: EnumEventAttendanceFilter<"CreatorProfile"> | $Enums.EventAttendance
     discoverySources?: EnumDiscoverySourceNullableListFilter<"CreatorProfile">
-    whyJoin?: StringFilter<"CreatorProfile"> | string
-    isApproved?: BoolFilter<"CreatorProfile"> | boolean
-    isActive?: BoolFilter<"CreatorProfile"> | boolean
-    totalPoints?: IntFilter<"CreatorProfile"> | number
-    currentLevel?: EnumCreatorLevelFilter<"CreatorProfile"> | $Enums.CreatorLevel
-    levelProgress?: FloatFilter<"CreatorProfile"> | number
-    rank?: EnumRankFilter<"CreatorProfile"> | $Enums.Rank
-    streamCount?: IntFilter<"CreatorProfile"> | number
-    shortCount?: IntFilter<"CreatorProfile"> | number
+    whyJoin?: StringNullableFilter<"CreatorProfile"> | string | null
+    status?: EnumRegistrationStatusFilter<"CreatorProfile"> | $Enums.RegistrationStatus
+    adminNotes?: StringNullableFilter<"CreatorProfile"> | string | null
+    approvedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    rank?: EnumCreatorRankFilter<"CreatorProfile"> | $Enums.CreatorRank
+    currentRankReach?: IntFilter<"CreatorProfile"> | number
+    totalReachAllTime?: IntFilter<"CreatorProfile"> | number
+    pictureCount?: IntFilter<"CreatorProfile"> | number
+    storyCount?: IntFilter<"CreatorProfile"> | number
     reelCount?: IntFilter<"CreatorProfile"> | number
-    totalReach?: IntFilter<"CreatorProfile"> | number
-    totalViews?: IntFilter<"CreatorProfile"> | number
-    cohortMonth?: IntNullableFilter<"CreatorProfile"> | number | null
-    joinedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
-    createdAt?: DateTimeFilter<"CreatorProfile"> | Date | string
+    longVideoCount?: IntFilter<"CreatorProfile"> | number
+    postCount?: IntFilter<"CreatorProfile"> | number
+    totalPictureCount?: IntFilter<"CreatorProfile"> | number
+    totalStoryCount?: IntFilter<"CreatorProfile"> | number
+    totalReelCount?: IntFilter<"CreatorProfile"> | number
+    totalLongVideoCount?: IntFilter<"CreatorProfile"> | number
+    totalPostCount?: IntFilter<"CreatorProfile"> | number
+    rankedUpAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    isActive?: BoolFilter<"CreatorProfile"> | boolean
+    joinedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     updatedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
@@ -5151,28 +5476,40 @@ export namespace Prisma {
   export type CreatorProfileOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    channelLogo?: SortOrder
+    realName?: SortOrder
+    contactEmail?: SortOrder
+    contactPhone?: SortOrder
+    nickname?: SortOrder
+    birthDate?: SortOrder
+    nationality?: SortOrder
+    residency?: SortOrder
     platforms?: SortOrder
+    primarySocialLink?: SortOrder
+    channelLogo?: SortOrder
     contentType?: SortOrder
-    socialMediaLink?: SortOrder
     followers?: SortOrder
     eventAttendance?: SortOrder
     discoverySources?: SortOrder
     whyJoin?: SortOrder
-    isApproved?: SortOrder
-    isActive?: SortOrder
-    totalPoints?: SortOrder
-    currentLevel?: SortOrder
-    levelProgress?: SortOrder
+    status?: SortOrder
+    adminNotes?: SortOrder
+    approvedAt?: SortOrder
     rank?: SortOrder
-    streamCount?: SortOrder
-    shortCount?: SortOrder
+    currentRankReach?: SortOrder
+    totalReachAllTime?: SortOrder
+    pictureCount?: SortOrder
+    storyCount?: SortOrder
     reelCount?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    cohortMonth?: SortOrder
+    longVideoCount?: SortOrder
+    postCount?: SortOrder
+    totalPictureCount?: SortOrder
+    totalStoryCount?: SortOrder
+    totalReelCount?: SortOrder
+    totalLongVideoCount?: SortOrder
+    totalPostCount?: SortOrder
+    rankedUpAt?: SortOrder
+    isActive?: SortOrder
     joinedAt?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: CreatorProfileCountOrderByAggregateInput
     _avg?: CreatorProfileAvgOrderByAggregateInput
@@ -5187,28 +5524,40 @@ export namespace Prisma {
     NOT?: CreatorProfileScalarWhereWithAggregatesInput | CreatorProfileScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"CreatorProfile"> | string
     userId?: StringWithAggregatesFilter<"CreatorProfile"> | string
-    channelLogo?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    realName?: StringWithAggregatesFilter<"CreatorProfile"> | string
+    contactEmail?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    contactPhone?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    nickname?: StringWithAggregatesFilter<"CreatorProfile"> | string
+    birthDate?: StringWithAggregatesFilter<"CreatorProfile"> | string
+    nationality?: StringWithAggregatesFilter<"CreatorProfile"> | string
+    residency?: StringWithAggregatesFilter<"CreatorProfile"> | string
     platforms?: EnumPlatformNullableListFilter<"CreatorProfile">
+    primarySocialLink?: StringWithAggregatesFilter<"CreatorProfile"> | string
+    channelLogo?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
     contentType?: StringWithAggregatesFilter<"CreatorProfile"> | string
-    socialMediaLink?: StringWithAggregatesFilter<"CreatorProfile"> | string
     followers?: IntWithAggregatesFilter<"CreatorProfile"> | number
     eventAttendance?: EnumEventAttendanceWithAggregatesFilter<"CreatorProfile"> | $Enums.EventAttendance
     discoverySources?: EnumDiscoverySourceNullableListFilter<"CreatorProfile">
-    whyJoin?: StringWithAggregatesFilter<"CreatorProfile"> | string
-    isApproved?: BoolWithAggregatesFilter<"CreatorProfile"> | boolean
-    isActive?: BoolWithAggregatesFilter<"CreatorProfile"> | boolean
-    totalPoints?: IntWithAggregatesFilter<"CreatorProfile"> | number
-    currentLevel?: EnumCreatorLevelWithAggregatesFilter<"CreatorProfile"> | $Enums.CreatorLevel
-    levelProgress?: FloatWithAggregatesFilter<"CreatorProfile"> | number
-    rank?: EnumRankWithAggregatesFilter<"CreatorProfile"> | $Enums.Rank
-    streamCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
-    shortCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    whyJoin?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    status?: EnumRegistrationStatusWithAggregatesFilter<"CreatorProfile"> | $Enums.RegistrationStatus
+    adminNotes?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
+    rank?: EnumCreatorRankWithAggregatesFilter<"CreatorProfile"> | $Enums.CreatorRank
+    currentRankReach?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalReachAllTime?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    pictureCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    storyCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     reelCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
-    totalReach?: IntWithAggregatesFilter<"CreatorProfile"> | number
-    totalViews?: IntWithAggregatesFilter<"CreatorProfile"> | number
-    cohortMonth?: IntNullableWithAggregatesFilter<"CreatorProfile"> | number | null
-    joinedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"CreatorProfile"> | Date | string
+    longVideoCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    postCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalPictureCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalStoryCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalReelCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalLongVideoCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalPostCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    rankedUpAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
+    isActive?: BoolWithAggregatesFilter<"CreatorProfile"> | boolean
+    joinedAt?: DateTimeWithAggregatesFilter<"CreatorProfile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CreatorProfile"> | Date | string
   }
 
@@ -5218,18 +5567,20 @@ export namespace Prisma {
     NOT?: SubmissionWhereInput | SubmissionWhereInput[]
     id?: StringFilter<"Submission"> | string
     userId?: StringFilter<"Submission"> | string
-    rank?: EnumRankFilter<"Submission"> | $Enums.Rank
+    nickname?: StringFilter<"Submission"> | string
+    rank?: EnumCreatorRankFilter<"Submission"> | $Enums.CreatorRank
     platform?: EnumPlatformFilter<"Submission"> | $Enums.Platform
     contentLink?: StringFilter<"Submission"> | string
     contentTypes?: EnumContentTypeNullableListFilter<"Submission">
     monsterAppearances?: EnumMonsterAppearanceNullableListFilter<"Submission">
-    totalReach?: IntFilter<"Submission"> | number
-    totalViews?: IntFilter<"Submission"> | number
+    submittedReach?: IntFilter<"Submission"> | number
+    acceptedReach?: IntFilter<"Submission"> | number
+    pendingReach?: IntNullableFilter<"Submission"> | number | null
+    previousAcceptedReach?: IntNullableFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableFilter<"Submission"> | string | null
-    pointsAwarded?: IntFilter<"Submission"> | number
+    status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
-    submittedByAdminId?: StringNullableFilter<"Submission"> | string | null
-    isApproved?: BoolFilter<"Submission"> | boolean
+    isEdited?: BoolFilter<"Submission"> | boolean
     createdAt?: DateTimeFilter<"Submission"> | Date | string
     updatedAt?: DateTimeFilter<"Submission"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -5238,18 +5589,20 @@ export namespace Prisma {
   export type SubmissionOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
+    nickname?: SortOrder
     rank?: SortOrder
     platform?: SortOrder
     contentLink?: SortOrder
     contentTypes?: SortOrder
     monsterAppearances?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
+    submittedReach?: SortOrder
+    acceptedReach?: SortOrder
+    pendingReach?: SortOrder
+    previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
-    pointsAwarded?: SortOrder
+    status?: SortOrder
     adminNotes?: SortOrder
-    submittedByAdminId?: SortOrder
-    isApproved?: SortOrder
+    isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -5261,18 +5614,20 @@ export namespace Prisma {
     OR?: SubmissionWhereInput[]
     NOT?: SubmissionWhereInput | SubmissionWhereInput[]
     userId?: StringFilter<"Submission"> | string
-    rank?: EnumRankFilter<"Submission"> | $Enums.Rank
+    nickname?: StringFilter<"Submission"> | string
+    rank?: EnumCreatorRankFilter<"Submission"> | $Enums.CreatorRank
     platform?: EnumPlatformFilter<"Submission"> | $Enums.Platform
     contentLink?: StringFilter<"Submission"> | string
     contentTypes?: EnumContentTypeNullableListFilter<"Submission">
     monsterAppearances?: EnumMonsterAppearanceNullableListFilter<"Submission">
-    totalReach?: IntFilter<"Submission"> | number
-    totalViews?: IntFilter<"Submission"> | number
+    submittedReach?: IntFilter<"Submission"> | number
+    acceptedReach?: IntFilter<"Submission"> | number
+    pendingReach?: IntNullableFilter<"Submission"> | number | null
+    previousAcceptedReach?: IntNullableFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableFilter<"Submission"> | string | null
-    pointsAwarded?: IntFilter<"Submission"> | number
+    status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
-    submittedByAdminId?: StringNullableFilter<"Submission"> | string | null
-    isApproved?: BoolFilter<"Submission"> | boolean
+    isEdited?: BoolFilter<"Submission"> | boolean
     createdAt?: DateTimeFilter<"Submission"> | Date | string
     updatedAt?: DateTimeFilter<"Submission"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -5281,18 +5636,20 @@ export namespace Prisma {
   export type SubmissionOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
+    nickname?: SortOrder
     rank?: SortOrder
     platform?: SortOrder
     contentLink?: SortOrder
     contentTypes?: SortOrder
     monsterAppearances?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
+    submittedReach?: SortOrder
+    acceptedReach?: SortOrder
+    pendingReach?: SortOrder
+    previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
-    pointsAwarded?: SortOrder
+    status?: SortOrder
     adminNotes?: SortOrder
-    submittedByAdminId?: SortOrder
-    isApproved?: SortOrder
+    isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: SubmissionCountOrderByAggregateInput
@@ -5308,176 +5665,191 @@ export namespace Prisma {
     NOT?: SubmissionScalarWhereWithAggregatesInput | SubmissionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Submission"> | string
     userId?: StringWithAggregatesFilter<"Submission"> | string
-    rank?: EnumRankWithAggregatesFilter<"Submission"> | $Enums.Rank
+    nickname?: StringWithAggregatesFilter<"Submission"> | string
+    rank?: EnumCreatorRankWithAggregatesFilter<"Submission"> | $Enums.CreatorRank
     platform?: EnumPlatformWithAggregatesFilter<"Submission"> | $Enums.Platform
     contentLink?: StringWithAggregatesFilter<"Submission"> | string
     contentTypes?: EnumContentTypeNullableListFilter<"Submission">
     monsterAppearances?: EnumMonsterAppearanceNullableListFilter<"Submission">
-    totalReach?: IntWithAggregatesFilter<"Submission"> | number
-    totalViews?: IntWithAggregatesFilter<"Submission"> | number
+    submittedReach?: IntWithAggregatesFilter<"Submission"> | number
+    acceptedReach?: IntWithAggregatesFilter<"Submission"> | number
+    pendingReach?: IntNullableWithAggregatesFilter<"Submission"> | number | null
+    previousAcceptedReach?: IntNullableWithAggregatesFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableWithAggregatesFilter<"Submission"> | string | null
-    pointsAwarded?: IntWithAggregatesFilter<"Submission"> | number
+    status?: EnumSubmissionStatusWithAggregatesFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableWithAggregatesFilter<"Submission"> | string | null
-    submittedByAdminId?: StringNullableWithAggregatesFilter<"Submission"> | string | null
-    isApproved?: BoolWithAggregatesFilter<"Submission"> | boolean
+    isEdited?: BoolWithAggregatesFilter<"Submission"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Submission"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Submission"> | Date | string
   }
 
   export type UserCreateInput = {
     id?: string
-    externalId?: string | null
-    provider?: string | null
-    email?: string | null
-    phone?: string | null
-    phoneKey?: string | null
     firstName: string
     lastName: string
     username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
     isVerified?: boolean
     isActive?: boolean
-    role?: $Enums.Role
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    lastLogin?: Date | string | null
     profile?: CreatorProfileCreateNestedOneWithoutUserInput
     submissions?: SubmissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
-    externalId?: string | null
-    provider?: string | null
-    email?: string | null
-    phone?: string | null
-    phoneKey?: string | null
     firstName: string
     lastName: string
     username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
     isVerified?: boolean
     isActive?: boolean
-    role?: $Enums.Role
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    lastLogin?: Date | string | null
     profile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
     submissions?: SubmissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     profile?: CreatorProfileUpdateOneWithoutUserNestedInput
     submissions?: SubmissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     profile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
     submissions?: SubmissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
-    externalId?: string | null
-    provider?: string | null
-    email?: string | null
-    phone?: string | null
-    phoneKey?: string | null
     firstName: string
     lastName: string
     username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
     isVerified?: boolean
     isActive?: boolean
-    role?: $Enums.Role
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    lastLogin?: Date | string | null
   }
 
   export type UserUpdateManyMutationInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CreatorProfileCreateInput = {
     id?: string
-    channelLogo?: string | null
+    realName: string
+    contactEmail?: string | null
+    contactPhone?: string | null
+    nickname: string
+    birthDate: string
+    nationality: string
+    residency: string
     platforms?: CreatorProfileCreateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListCreateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink: string
+    channelLogo?: string | null
     contentType: string
-    socialMediaLink: string
-    followers: number
+    followers?: number
     eventAttendance: $Enums.EventAttendance
     discoverySources?: CreatorProfileCreatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin: string
-    isApproved?: boolean
-    isActive?: boolean
-    totalPoints?: number
-    currentLevel?: $Enums.CreatorLevel
-    levelProgress?: number
-    rank?: $Enums.Rank
-    streamCount?: number
-    shortCount?: number
+    whyJoin?: string | null
+    status?: $Enums.RegistrationStatus
+    adminNotes?: string | null
+    approvedAt?: Date | string | null
+    rank?: $Enums.CreatorRank
+    currentRankReach?: number
+    totalReachAllTime?: number
+    pictureCount?: number
+    storyCount?: number
     reelCount?: number
-    totalReach?: number
-    totalViews?: number
-    cohortMonth?: number | null
-    joinedAt?: Date | string | null
-    createdAt?: Date | string
+    longVideoCount?: number
+    postCount?: number
+    totalPictureCount?: number
+    totalStoryCount?: number
+    totalReelCount?: number
+    totalLongVideoCount?: number
+    totalPostCount?: number
+    rankedUpAt?: Date | string | null
+    isActive?: boolean
+    joinedAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutProfileInput
   }
@@ -5485,180 +5857,260 @@ export namespace Prisma {
   export type CreatorProfileUncheckedCreateInput = {
     id?: string
     userId: string
-    channelLogo?: string | null
+    realName: string
+    contactEmail?: string | null
+    contactPhone?: string | null
+    nickname: string
+    birthDate: string
+    nationality: string
+    residency: string
     platforms?: CreatorProfileCreateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListCreateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink: string
+    channelLogo?: string | null
     contentType: string
-    socialMediaLink: string
-    followers: number
+    followers?: number
     eventAttendance: $Enums.EventAttendance
     discoverySources?: CreatorProfileCreatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin: string
-    isApproved?: boolean
-    isActive?: boolean
-    totalPoints?: number
-    currentLevel?: $Enums.CreatorLevel
-    levelProgress?: number
-    rank?: $Enums.Rank
-    streamCount?: number
-    shortCount?: number
+    whyJoin?: string | null
+    status?: $Enums.RegistrationStatus
+    adminNotes?: string | null
+    approvedAt?: Date | string | null
+    rank?: $Enums.CreatorRank
+    currentRankReach?: number
+    totalReachAllTime?: number
+    pictureCount?: number
+    storyCount?: number
     reelCount?: number
-    totalReach?: number
-    totalViews?: number
-    cohortMonth?: number | null
-    joinedAt?: Date | string | null
-    createdAt?: Date | string
+    longVideoCount?: number
+    postCount?: number
+    totalPictureCount?: number
+    totalStoryCount?: number
+    totalReelCount?: number
+    totalLongVideoCount?: number
+    totalPostCount?: number
+    rankedUpAt?: Date | string | null
+    isActive?: boolean
+    joinedAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type CreatorProfileUpdateInput = {
-    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    realName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    nickname?: StringFieldUpdateOperationsInput | string
+    birthDate?: StringFieldUpdateOperationsInput | string
+    nationality?: StringFieldUpdateOperationsInput | string
+    residency?: StringFieldUpdateOperationsInput | string
     platforms?: CreatorProfileUpdateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListUpdateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink?: StringFieldUpdateOperationsInput | string
+    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
     contentType?: StringFieldUpdateOperationsInput | string
-    socialMediaLink?: StringFieldUpdateOperationsInput | string
     followers?: IntFieldUpdateOperationsInput | number
     eventAttendance?: EnumEventAttendanceFieldUpdateOperationsInput | $Enums.EventAttendance
     discoverySources?: CreatorProfileUpdatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin?: StringFieldUpdateOperationsInput | string
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    totalPoints?: IntFieldUpdateOperationsInput | number
-    currentLevel?: EnumCreatorLevelFieldUpdateOperationsInput | $Enums.CreatorLevel
-    levelProgress?: FloatFieldUpdateOperationsInput | number
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
-    streamCount?: IntFieldUpdateOperationsInput | number
-    shortCount?: IntFieldUpdateOperationsInput | number
+    whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
+    currentRankReach?: IntFieldUpdateOperationsInput | number
+    totalReachAllTime?: IntFieldUpdateOperationsInput | number
+    pictureCount?: IntFieldUpdateOperationsInput | number
+    storyCount?: IntFieldUpdateOperationsInput | number
     reelCount?: IntFieldUpdateOperationsInput | number
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    cohortMonth?: NullableIntFieldUpdateOperationsInput | number | null
-    joinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    longVideoCount?: IntFieldUpdateOperationsInput | number
+    postCount?: IntFieldUpdateOperationsInput | number
+    totalPictureCount?: IntFieldUpdateOperationsInput | number
+    totalStoryCount?: IntFieldUpdateOperationsInput | number
+    totalReelCount?: IntFieldUpdateOperationsInput | number
+    totalLongVideoCount?: IntFieldUpdateOperationsInput | number
+    totalPostCount?: IntFieldUpdateOperationsInput | number
+    rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProfileNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateInput = {
     userId?: StringFieldUpdateOperationsInput | string
-    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    realName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    nickname?: StringFieldUpdateOperationsInput | string
+    birthDate?: StringFieldUpdateOperationsInput | string
+    nationality?: StringFieldUpdateOperationsInput | string
+    residency?: StringFieldUpdateOperationsInput | string
     platforms?: CreatorProfileUpdateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListUpdateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink?: StringFieldUpdateOperationsInput | string
+    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
     contentType?: StringFieldUpdateOperationsInput | string
-    socialMediaLink?: StringFieldUpdateOperationsInput | string
     followers?: IntFieldUpdateOperationsInput | number
     eventAttendance?: EnumEventAttendanceFieldUpdateOperationsInput | $Enums.EventAttendance
     discoverySources?: CreatorProfileUpdatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin?: StringFieldUpdateOperationsInput | string
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    totalPoints?: IntFieldUpdateOperationsInput | number
-    currentLevel?: EnumCreatorLevelFieldUpdateOperationsInput | $Enums.CreatorLevel
-    levelProgress?: FloatFieldUpdateOperationsInput | number
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
-    streamCount?: IntFieldUpdateOperationsInput | number
-    shortCount?: IntFieldUpdateOperationsInput | number
+    whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
+    currentRankReach?: IntFieldUpdateOperationsInput | number
+    totalReachAllTime?: IntFieldUpdateOperationsInput | number
+    pictureCount?: IntFieldUpdateOperationsInput | number
+    storyCount?: IntFieldUpdateOperationsInput | number
     reelCount?: IntFieldUpdateOperationsInput | number
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    cohortMonth?: NullableIntFieldUpdateOperationsInput | number | null
-    joinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    longVideoCount?: IntFieldUpdateOperationsInput | number
+    postCount?: IntFieldUpdateOperationsInput | number
+    totalPictureCount?: IntFieldUpdateOperationsInput | number
+    totalStoryCount?: IntFieldUpdateOperationsInput | number
+    totalReelCount?: IntFieldUpdateOperationsInput | number
+    totalLongVideoCount?: IntFieldUpdateOperationsInput | number
+    totalPostCount?: IntFieldUpdateOperationsInput | number
+    rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CreatorProfileCreateManyInput = {
     id?: string
     userId: string
-    channelLogo?: string | null
+    realName: string
+    contactEmail?: string | null
+    contactPhone?: string | null
+    nickname: string
+    birthDate: string
+    nationality: string
+    residency: string
     platforms?: CreatorProfileCreateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListCreateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink: string
+    channelLogo?: string | null
     contentType: string
-    socialMediaLink: string
-    followers: number
+    followers?: number
     eventAttendance: $Enums.EventAttendance
     discoverySources?: CreatorProfileCreatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin: string
-    isApproved?: boolean
-    isActive?: boolean
-    totalPoints?: number
-    currentLevel?: $Enums.CreatorLevel
-    levelProgress?: number
-    rank?: $Enums.Rank
-    streamCount?: number
-    shortCount?: number
+    whyJoin?: string | null
+    status?: $Enums.RegistrationStatus
+    adminNotes?: string | null
+    approvedAt?: Date | string | null
+    rank?: $Enums.CreatorRank
+    currentRankReach?: number
+    totalReachAllTime?: number
+    pictureCount?: number
+    storyCount?: number
     reelCount?: number
-    totalReach?: number
-    totalViews?: number
-    cohortMonth?: number | null
-    joinedAt?: Date | string | null
-    createdAt?: Date | string
+    longVideoCount?: number
+    postCount?: number
+    totalPictureCount?: number
+    totalStoryCount?: number
+    totalReelCount?: number
+    totalLongVideoCount?: number
+    totalPostCount?: number
+    rankedUpAt?: Date | string | null
+    isActive?: boolean
+    joinedAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type CreatorProfileUpdateManyMutationInput = {
-    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    realName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    nickname?: StringFieldUpdateOperationsInput | string
+    birthDate?: StringFieldUpdateOperationsInput | string
+    nationality?: StringFieldUpdateOperationsInput | string
+    residency?: StringFieldUpdateOperationsInput | string
     platforms?: CreatorProfileUpdateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListUpdateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink?: StringFieldUpdateOperationsInput | string
+    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
     contentType?: StringFieldUpdateOperationsInput | string
-    socialMediaLink?: StringFieldUpdateOperationsInput | string
     followers?: IntFieldUpdateOperationsInput | number
     eventAttendance?: EnumEventAttendanceFieldUpdateOperationsInput | $Enums.EventAttendance
     discoverySources?: CreatorProfileUpdatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin?: StringFieldUpdateOperationsInput | string
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    totalPoints?: IntFieldUpdateOperationsInput | number
-    currentLevel?: EnumCreatorLevelFieldUpdateOperationsInput | $Enums.CreatorLevel
-    levelProgress?: FloatFieldUpdateOperationsInput | number
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
-    streamCount?: IntFieldUpdateOperationsInput | number
-    shortCount?: IntFieldUpdateOperationsInput | number
+    whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
+    currentRankReach?: IntFieldUpdateOperationsInput | number
+    totalReachAllTime?: IntFieldUpdateOperationsInput | number
+    pictureCount?: IntFieldUpdateOperationsInput | number
+    storyCount?: IntFieldUpdateOperationsInput | number
     reelCount?: IntFieldUpdateOperationsInput | number
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    cohortMonth?: NullableIntFieldUpdateOperationsInput | number | null
-    joinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    longVideoCount?: IntFieldUpdateOperationsInput | number
+    postCount?: IntFieldUpdateOperationsInput | number
+    totalPictureCount?: IntFieldUpdateOperationsInput | number
+    totalStoryCount?: IntFieldUpdateOperationsInput | number
+    totalReelCount?: IntFieldUpdateOperationsInput | number
+    totalLongVideoCount?: IntFieldUpdateOperationsInput | number
+    totalPostCount?: IntFieldUpdateOperationsInput | number
+    rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CreatorProfileUncheckedUpdateManyInput = {
     userId?: StringFieldUpdateOperationsInput | string
-    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    realName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    nickname?: StringFieldUpdateOperationsInput | string
+    birthDate?: StringFieldUpdateOperationsInput | string
+    nationality?: StringFieldUpdateOperationsInput | string
+    residency?: StringFieldUpdateOperationsInput | string
     platforms?: CreatorProfileUpdateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListUpdateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink?: StringFieldUpdateOperationsInput | string
+    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
     contentType?: StringFieldUpdateOperationsInput | string
-    socialMediaLink?: StringFieldUpdateOperationsInput | string
     followers?: IntFieldUpdateOperationsInput | number
     eventAttendance?: EnumEventAttendanceFieldUpdateOperationsInput | $Enums.EventAttendance
     discoverySources?: CreatorProfileUpdatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin?: StringFieldUpdateOperationsInput | string
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    totalPoints?: IntFieldUpdateOperationsInput | number
-    currentLevel?: EnumCreatorLevelFieldUpdateOperationsInput | $Enums.CreatorLevel
-    levelProgress?: FloatFieldUpdateOperationsInput | number
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
-    streamCount?: IntFieldUpdateOperationsInput | number
-    shortCount?: IntFieldUpdateOperationsInput | number
+    whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
+    currentRankReach?: IntFieldUpdateOperationsInput | number
+    totalReachAllTime?: IntFieldUpdateOperationsInput | number
+    pictureCount?: IntFieldUpdateOperationsInput | number
+    storyCount?: IntFieldUpdateOperationsInput | number
     reelCount?: IntFieldUpdateOperationsInput | number
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    cohortMonth?: NullableIntFieldUpdateOperationsInput | number | null
-    joinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    longVideoCount?: IntFieldUpdateOperationsInput | number
+    postCount?: IntFieldUpdateOperationsInput | number
+    totalPictureCount?: IntFieldUpdateOperationsInput | number
+    totalStoryCount?: IntFieldUpdateOperationsInput | number
+    totalReelCount?: IntFieldUpdateOperationsInput | number
+    totalLongVideoCount?: IntFieldUpdateOperationsInput | number
+    totalPostCount?: IntFieldUpdateOperationsInput | number
+    rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubmissionCreateInput = {
     id?: string
-    rank: $Enums.Rank
+    nickname: string
+    rank: $Enums.CreatorRank
     platform: $Enums.Platform
     contentLink: string
     contentTypes?: SubmissionCreatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionCreatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach: number
-    totalViews: number
+    submittedReach?: number
+    acceptedReach?: number
+    pendingReach?: number | null
+    previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
-    pointsAwarded?: number
+    status?: $Enums.SubmissionStatus
     adminNotes?: string | null
-    submittedByAdminId?: string | null
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutSubmissionsInput
@@ -5667,35 +6119,39 @@ export namespace Prisma {
   export type SubmissionUncheckedCreateInput = {
     id?: string
     userId: string
-    rank: $Enums.Rank
+    nickname: string
+    rank: $Enums.CreatorRank
     platform: $Enums.Platform
     contentLink: string
     contentTypes?: SubmissionCreatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionCreatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach: number
-    totalViews: number
+    submittedReach?: number
+    acceptedReach?: number
+    pendingReach?: number | null
+    previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
-    pointsAwarded?: number
+    status?: $Enums.SubmissionStatus
     adminNotes?: string | null
-    submittedByAdminId?: string | null
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type SubmissionUpdateInput = {
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
+    nickname?: StringFieldUpdateOperationsInput | string
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
     contentLink?: StringFieldUpdateOperationsInput | string
     contentTypes?: SubmissionUpdatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionUpdatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
+    submittedReach?: IntFieldUpdateOperationsInput | number
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
+    previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    submittedByAdminId?: NullableStringFieldUpdateOperationsInput | string | null
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutSubmissionsNestedInput
@@ -5703,18 +6159,20 @@ export namespace Prisma {
 
   export type SubmissionUncheckedUpdateInput = {
     userId?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
+    nickname?: StringFieldUpdateOperationsInput | string
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
     contentLink?: StringFieldUpdateOperationsInput | string
     contentTypes?: SubmissionUpdatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionUpdatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
+    submittedReach?: IntFieldUpdateOperationsInput | number
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
+    previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    submittedByAdminId?: NullableStringFieldUpdateOperationsInput | string | null
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5722,53 +6180,59 @@ export namespace Prisma {
   export type SubmissionCreateManyInput = {
     id?: string
     userId: string
-    rank: $Enums.Rank
+    nickname: string
+    rank: $Enums.CreatorRank
     platform: $Enums.Platform
     contentLink: string
     contentTypes?: SubmissionCreatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionCreatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach: number
-    totalViews: number
+    submittedReach?: number
+    acceptedReach?: number
+    pendingReach?: number | null
+    previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
-    pointsAwarded?: number
+    status?: $Enums.SubmissionStatus
     adminNotes?: string | null
-    submittedByAdminId?: string | null
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type SubmissionUpdateManyMutationInput = {
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
+    nickname?: StringFieldUpdateOperationsInput | string
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
     contentLink?: StringFieldUpdateOperationsInput | string
     contentTypes?: SubmissionUpdatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionUpdatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
+    submittedReach?: IntFieldUpdateOperationsInput | number
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
+    previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    submittedByAdminId?: NullableStringFieldUpdateOperationsInput | string | null
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubmissionUncheckedUpdateManyInput = {
     userId?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
+    nickname?: StringFieldUpdateOperationsInput | string
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
     contentLink?: StringFieldUpdateOperationsInput | string
     contentTypes?: SubmissionUpdatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionUpdatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
+    submittedReach?: IntFieldUpdateOperationsInput | number
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
+    previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    submittedByAdminId?: NullableStringFieldUpdateOperationsInput | string | null
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5809,22 +6273,11 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type EnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  export type EnumUserRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
   }
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -5837,6 +6290,17 @@ export namespace Prisma {
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
     isSet?: boolean
+  }
+
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type CreatorProfileNullableScalarRelationFilter = {
@@ -5856,56 +6320,56 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
-    externalId?: SortOrder
-    provider?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    phoneKey?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    phoneKey?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     role?: SortOrder
+    externalId?: SortOrder
+    provider?: SortOrder
+    lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    lastLogin?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
-    externalId?: SortOrder
-    provider?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    phoneKey?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    phoneKey?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     role?: SortOrder
+    externalId?: SortOrder
+    provider?: SortOrder
+    lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    lastLogin?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
-    externalId?: SortOrder
-    provider?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    phoneKey?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    phoneKey?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     role?: SortOrder
+    externalId?: SortOrder
+    provider?: SortOrder
+    lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    lastLogin?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -5953,28 +6417,14 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+  export type EnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
+    _min?: NestedEnumUserRoleFilter<$PrismaModel>
+    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5992,12 +6442,40 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type EnumPlatformNullableListFilter<$PrismaModel = never> = {
     equals?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel> | null
     has?: $Enums.Platform | EnumPlatformFieldRefInput<$PrismaModel> | null
     hasEvery?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
     hasSome?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
     isEmpty?: boolean
+  }
+
+  export type PlatformLinkCompositeListFilter = {
+    equals?: PlatformLinkObjectEqualityInput[]
+    every?: PlatformLinkWhereInput
+    some?: PlatformLinkWhereInput
+    none?: PlatformLinkWhereInput
+    isEmpty?: boolean
+    isSet?: boolean
+  }
+
+  export type PlatformLinkObjectEqualityInput = {
+    platform: $Enums.Platform
+    url: string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -6026,41 +6504,18 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
-  export type EnumCreatorLevelFilter<$PrismaModel = never> = {
-    equals?: $Enums.CreatorLevel | EnumCreatorLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumCreatorLevelFilter<$PrismaModel> | $Enums.CreatorLevel
+  export type EnumRegistrationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationStatus | EnumRegistrationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRegistrationStatusFilter<$PrismaModel> | $Enums.RegistrationStatus
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type EnumRankFilter<$PrismaModel = never> = {
-    equals?: $Enums.Rank | EnumRankFieldRefInput<$PrismaModel>
-    in?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    not?: NestedEnumRankFilter<$PrismaModel> | $Enums.Rank
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-    isSet?: boolean
+  export type EnumCreatorRankFilter<$PrismaModel = never> = {
+    equals?: $Enums.CreatorRank | EnumCreatorRankFieldRefInput<$PrismaModel>
+    in?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    not?: NestedEnumCreatorRankFilter<$PrismaModel> | $Enums.CreatorRank
   }
 
   export type UserScalarRelationFilter = {
@@ -6068,108 +6523,156 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
+  export type PlatformLinkOrderByCompositeAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type CreatorProfileCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    channelLogo?: SortOrder
+    realName?: SortOrder
+    contactEmail?: SortOrder
+    contactPhone?: SortOrder
+    nickname?: SortOrder
+    birthDate?: SortOrder
+    nationality?: SortOrder
+    residency?: SortOrder
     platforms?: SortOrder
+    primarySocialLink?: SortOrder
+    channelLogo?: SortOrder
     contentType?: SortOrder
-    socialMediaLink?: SortOrder
     followers?: SortOrder
     eventAttendance?: SortOrder
     discoverySources?: SortOrder
     whyJoin?: SortOrder
-    isApproved?: SortOrder
-    isActive?: SortOrder
-    totalPoints?: SortOrder
-    currentLevel?: SortOrder
-    levelProgress?: SortOrder
+    status?: SortOrder
+    adminNotes?: SortOrder
+    approvedAt?: SortOrder
     rank?: SortOrder
-    streamCount?: SortOrder
-    shortCount?: SortOrder
+    currentRankReach?: SortOrder
+    totalReachAllTime?: SortOrder
+    pictureCount?: SortOrder
+    storyCount?: SortOrder
     reelCount?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    cohortMonth?: SortOrder
+    longVideoCount?: SortOrder
+    postCount?: SortOrder
+    totalPictureCount?: SortOrder
+    totalStoryCount?: SortOrder
+    totalReelCount?: SortOrder
+    totalLongVideoCount?: SortOrder
+    totalPostCount?: SortOrder
+    rankedUpAt?: SortOrder
+    isActive?: SortOrder
     joinedAt?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type CreatorProfileAvgOrderByAggregateInput = {
     followers?: SortOrder
-    totalPoints?: SortOrder
-    levelProgress?: SortOrder
-    streamCount?: SortOrder
-    shortCount?: SortOrder
+    currentRankReach?: SortOrder
+    totalReachAllTime?: SortOrder
+    pictureCount?: SortOrder
+    storyCount?: SortOrder
     reelCount?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    cohortMonth?: SortOrder
+    longVideoCount?: SortOrder
+    postCount?: SortOrder
+    totalPictureCount?: SortOrder
+    totalStoryCount?: SortOrder
+    totalReelCount?: SortOrder
+    totalLongVideoCount?: SortOrder
+    totalPostCount?: SortOrder
   }
 
   export type CreatorProfileMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    realName?: SortOrder
+    contactEmail?: SortOrder
+    contactPhone?: SortOrder
+    nickname?: SortOrder
+    birthDate?: SortOrder
+    nationality?: SortOrder
+    residency?: SortOrder
+    primarySocialLink?: SortOrder
     channelLogo?: SortOrder
     contentType?: SortOrder
-    socialMediaLink?: SortOrder
     followers?: SortOrder
     eventAttendance?: SortOrder
     whyJoin?: SortOrder
-    isApproved?: SortOrder
-    isActive?: SortOrder
-    totalPoints?: SortOrder
-    currentLevel?: SortOrder
-    levelProgress?: SortOrder
+    status?: SortOrder
+    adminNotes?: SortOrder
+    approvedAt?: SortOrder
     rank?: SortOrder
-    streamCount?: SortOrder
-    shortCount?: SortOrder
+    currentRankReach?: SortOrder
+    totalReachAllTime?: SortOrder
+    pictureCount?: SortOrder
+    storyCount?: SortOrder
     reelCount?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    cohortMonth?: SortOrder
+    longVideoCount?: SortOrder
+    postCount?: SortOrder
+    totalPictureCount?: SortOrder
+    totalStoryCount?: SortOrder
+    totalReelCount?: SortOrder
+    totalLongVideoCount?: SortOrder
+    totalPostCount?: SortOrder
+    rankedUpAt?: SortOrder
+    isActive?: SortOrder
     joinedAt?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type CreatorProfileMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    realName?: SortOrder
+    contactEmail?: SortOrder
+    contactPhone?: SortOrder
+    nickname?: SortOrder
+    birthDate?: SortOrder
+    nationality?: SortOrder
+    residency?: SortOrder
+    primarySocialLink?: SortOrder
     channelLogo?: SortOrder
     contentType?: SortOrder
-    socialMediaLink?: SortOrder
     followers?: SortOrder
     eventAttendance?: SortOrder
     whyJoin?: SortOrder
-    isApproved?: SortOrder
-    isActive?: SortOrder
-    totalPoints?: SortOrder
-    currentLevel?: SortOrder
-    levelProgress?: SortOrder
+    status?: SortOrder
+    adminNotes?: SortOrder
+    approvedAt?: SortOrder
     rank?: SortOrder
-    streamCount?: SortOrder
-    shortCount?: SortOrder
+    currentRankReach?: SortOrder
+    totalReachAllTime?: SortOrder
+    pictureCount?: SortOrder
+    storyCount?: SortOrder
     reelCount?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    cohortMonth?: SortOrder
+    longVideoCount?: SortOrder
+    postCount?: SortOrder
+    totalPictureCount?: SortOrder
+    totalStoryCount?: SortOrder
+    totalReelCount?: SortOrder
+    totalLongVideoCount?: SortOrder
+    totalPostCount?: SortOrder
+    rankedUpAt?: SortOrder
+    isActive?: SortOrder
     joinedAt?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type CreatorProfileSumOrderByAggregateInput = {
     followers?: SortOrder
-    totalPoints?: SortOrder
-    levelProgress?: SortOrder
-    streamCount?: SortOrder
-    shortCount?: SortOrder
+    currentRankReach?: SortOrder
+    totalReachAllTime?: SortOrder
+    pictureCount?: SortOrder
+    storyCount?: SortOrder
     reelCount?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    cohortMonth?: SortOrder
+    longVideoCount?: SortOrder
+    postCount?: SortOrder
+    totalPictureCount?: SortOrder
+    totalStoryCount?: SortOrder
+    totalReelCount?: SortOrder
+    totalLongVideoCount?: SortOrder
+    totalPostCount?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -6198,57 +6701,24 @@ export namespace Prisma {
     _max?: NestedEnumEventAttendanceFilter<$PrismaModel>
   }
 
-  export type EnumCreatorLevelWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CreatorLevel | EnumCreatorLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumCreatorLevelWithAggregatesFilter<$PrismaModel> | $Enums.CreatorLevel
+  export type EnumRegistrationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationStatus | EnumRegistrationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRegistrationStatusWithAggregatesFilter<$PrismaModel> | $Enums.RegistrationStatus
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCreatorLevelFilter<$PrismaModel>
-    _max?: NestedEnumCreatorLevelFilter<$PrismaModel>
+    _min?: NestedEnumRegistrationStatusFilter<$PrismaModel>
+    _max?: NestedEnumRegistrationStatusFilter<$PrismaModel>
   }
 
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+  export type EnumCreatorRankWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CreatorRank | EnumCreatorRankFieldRefInput<$PrismaModel>
+    in?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    not?: NestedEnumCreatorRankWithAggregatesFilter<$PrismaModel> | $Enums.CreatorRank
     _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type EnumRankWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Rank | EnumRankFieldRefInput<$PrismaModel>
-    in?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    not?: NestedEnumRankWithAggregatesFilter<$PrismaModel> | $Enums.Rank
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRankFilter<$PrismaModel>
-    _max?: NestedEnumRankFilter<$PrismaModel>
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-    isSet?: boolean
+    _min?: NestedEnumCreatorRankFilter<$PrismaModel>
+    _max?: NestedEnumCreatorRankFilter<$PrismaModel>
   }
 
   export type EnumPlatformFilter<$PrismaModel = never> = {
@@ -6274,44 +6744,68 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
+  }
+
+  export type EnumSubmissionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionStatus | EnumSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubmissionStatusFilter<$PrismaModel> | $Enums.SubmissionStatus
+  }
+
   export type SubmissionCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    nickname?: SortOrder
     rank?: SortOrder
     platform?: SortOrder
     contentLink?: SortOrder
     contentTypes?: SortOrder
     monsterAppearances?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
+    submittedReach?: SortOrder
+    acceptedReach?: SortOrder
+    pendingReach?: SortOrder
+    previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
-    pointsAwarded?: SortOrder
+    status?: SortOrder
     adminNotes?: SortOrder
-    submittedByAdminId?: SortOrder
-    isApproved?: SortOrder
+    isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type SubmissionAvgOrderByAggregateInput = {
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    pointsAwarded?: SortOrder
+    submittedReach?: SortOrder
+    acceptedReach?: SortOrder
+    pendingReach?: SortOrder
+    previousAcceptedReach?: SortOrder
   }
 
   export type SubmissionMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    nickname?: SortOrder
     rank?: SortOrder
     platform?: SortOrder
     contentLink?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
+    submittedReach?: SortOrder
+    acceptedReach?: SortOrder
+    pendingReach?: SortOrder
+    previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
-    pointsAwarded?: SortOrder
+    status?: SortOrder
     adminNotes?: SortOrder
-    submittedByAdminId?: SortOrder
-    isApproved?: SortOrder
+    isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -6319,24 +6813,27 @@ export namespace Prisma {
   export type SubmissionMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    nickname?: SortOrder
     rank?: SortOrder
     platform?: SortOrder
     contentLink?: SortOrder
-    totalReach?: SortOrder
-    totalViews?: SortOrder
+    submittedReach?: SortOrder
+    acceptedReach?: SortOrder
+    pendingReach?: SortOrder
+    previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
-    pointsAwarded?: SortOrder
+    status?: SortOrder
     adminNotes?: SortOrder
-    submittedByAdminId?: SortOrder
-    isApproved?: SortOrder
+    isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type SubmissionSumOrderByAggregateInput = {
-    totalReach?: SortOrder
-    totalViews?: SortOrder
-    pointsAwarded?: SortOrder
+    submittedReach?: SortOrder
+    acceptedReach?: SortOrder
+    pendingReach?: SortOrder
+    previousAcceptedReach?: SortOrder
   }
 
   export type EnumPlatformWithAggregatesFilter<$PrismaModel = never> = {
@@ -6347,6 +6844,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPlatformFilter<$PrismaModel>
     _max?: NestedEnumPlatformFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
+  export type EnumSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionStatus | EnumSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubmissionStatusWithAggregatesFilter<$PrismaModel> | $Enums.SubmissionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSubmissionStatusFilter<$PrismaModel>
+    _max?: NestedEnumSubmissionStatusFilter<$PrismaModel>
   }
 
   export type CreatorProfileCreateNestedOneWithoutUserInput = {
@@ -6375,30 +6899,30 @@ export namespace Prisma {
     connect?: SubmissionWhereUniqueInput | SubmissionWhereUniqueInput[]
   }
 
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
     unset?: boolean
-  }
-
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
   }
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
 
-  export type EnumRoleFieldUpdateOperationsInput = {
-    set?: $Enums.Role
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
+  export type EnumUserRoleFieldUpdateOperationsInput = {
+    set?: $Enums.UserRole
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
     unset?: boolean
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type CreatorProfileUpdateOneWithoutUserNestedInput = {
@@ -6453,6 +6977,15 @@ export namespace Prisma {
     set: $Enums.Platform[]
   }
 
+  export type PlatformLinkListCreateEnvelopeInput = {
+    set?: PlatformLinkCreateInput | PlatformLinkCreateInput[]
+  }
+
+  export type PlatformLinkCreateInput = {
+    platform: $Enums.Platform
+    url: string
+  }
+
   export type CreatorProfileCreatediscoverySourcesInput = {
     set: $Enums.DiscoverySource[]
   }
@@ -6466,6 +6999,13 @@ export namespace Prisma {
   export type CreatorProfileUpdateplatformsInput = {
     set?: $Enums.Platform[]
     push?: $Enums.Platform | $Enums.Platform[]
+  }
+
+  export type PlatformLinkListUpdateEnvelopeInput = {
+    set?: PlatformLinkCreateInput | PlatformLinkCreateInput[]
+    push?: PlatformLinkCreateInput | PlatformLinkCreateInput[]
+    updateMany?: PlatformLinkUpdateManyInput
+    deleteMany?: PlatformLinkDeleteManyInput
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -6485,29 +7025,12 @@ export namespace Prisma {
     push?: $Enums.DiscoverySource | $Enums.DiscoverySource[]
   }
 
-  export type EnumCreatorLevelFieldUpdateOperationsInput = {
-    set?: $Enums.CreatorLevel
+  export type EnumRegistrationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.RegistrationStatus
   }
 
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type EnumRankFieldUpdateOperationsInput = {
-    set?: $Enums.Rank
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-    unset?: boolean
+  export type EnumCreatorRankFieldUpdateOperationsInput = {
+    set?: $Enums.CreatorRank
   }
 
   export type UserUpdateOneRequiredWithoutProfileNestedInput = {
@@ -6544,6 +7067,19 @@ export namespace Prisma {
   export type SubmissionUpdatemonsterAppearancesInput = {
     set?: $Enums.MonsterAppearance[]
     push?: $Enums.MonsterAppearance | $Enums.MonsterAppearance[]
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+    unset?: boolean
+  }
+
+  export type EnumSubmissionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SubmissionStatus
   }
 
   export type UserUpdateOneRequiredWithoutSubmissionsNestedInput = {
@@ -6588,22 +7124,11 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type NestedEnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  export type NestedEnumUserRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
   }
 
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
@@ -6616,6 +7141,17 @@ export namespace Prisma {
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
     isSet?: boolean
+  }
+
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -6684,28 +7220,14 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+  export type NestedEnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
+    _min?: NestedEnumUserRoleFilter<$PrismaModel>
+    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6723,6 +7245,28 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type PlatformLinkWhereInput = {
+    AND?: PlatformLinkWhereInput | PlatformLinkWhereInput[]
+    OR?: PlatformLinkWhereInput[]
+    NOT?: PlatformLinkWhereInput | PlatformLinkWhereInput[]
+    platform?: EnumPlatformFilter<"PlatformLink"> | $Enums.Platform
+    url?: StringFilter<"PlatformLink"> | string
+  }
+
   export type NestedEnumEventAttendanceFilter<$PrismaModel = never> = {
     equals?: $Enums.EventAttendance | EnumEventAttendanceFieldRefInput<$PrismaModel>
     in?: $Enums.EventAttendance[] | ListEnumEventAttendanceFieldRefInput<$PrismaModel>
@@ -6730,29 +7274,18 @@ export namespace Prisma {
     not?: NestedEnumEventAttendanceFilter<$PrismaModel> | $Enums.EventAttendance
   }
 
-  export type NestedEnumCreatorLevelFilter<$PrismaModel = never> = {
-    equals?: $Enums.CreatorLevel | EnumCreatorLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumCreatorLevelFilter<$PrismaModel> | $Enums.CreatorLevel
+  export type NestedEnumRegistrationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationStatus | EnumRegistrationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRegistrationStatusFilter<$PrismaModel> | $Enums.RegistrationStatus
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedEnumRankFilter<$PrismaModel = never> = {
-    equals?: $Enums.Rank | EnumRankFieldRefInput<$PrismaModel>
-    in?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    not?: NestedEnumRankFilter<$PrismaModel> | $Enums.Rank
+  export type NestedEnumCreatorRankFilter<$PrismaModel = never> = {
+    equals?: $Enums.CreatorRank | EnumCreatorRankFieldRefInput<$PrismaModel>
+    in?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    not?: NestedEnumCreatorRankFilter<$PrismaModel> | $Enums.CreatorRank
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -6771,6 +7304,17 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedEnumEventAttendanceWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.EventAttendance | EnumEventAttendanceFieldRefInput<$PrismaModel>
     in?: $Enums.EventAttendance[] | ListEnumEventAttendanceFieldRefInput<$PrismaModel>
@@ -6781,40 +7325,48 @@ export namespace Prisma {
     _max?: NestedEnumEventAttendanceFilter<$PrismaModel>
   }
 
-  export type NestedEnumCreatorLevelWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CreatorLevel | EnumCreatorLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CreatorLevel[] | ListEnumCreatorLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumCreatorLevelWithAggregatesFilter<$PrismaModel> | $Enums.CreatorLevel
+  export type NestedEnumRegistrationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationStatus | EnumRegistrationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RegistrationStatus[] | ListEnumRegistrationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRegistrationStatusWithAggregatesFilter<$PrismaModel> | $Enums.RegistrationStatus
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCreatorLevelFilter<$PrismaModel>
-    _max?: NestedEnumCreatorLevelFilter<$PrismaModel>
+    _min?: NestedEnumRegistrationStatusFilter<$PrismaModel>
+    _max?: NestedEnumRegistrationStatusFilter<$PrismaModel>
   }
 
-  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+  export type NestedEnumCreatorRankWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CreatorRank | EnumCreatorRankFieldRefInput<$PrismaModel>
+    in?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
+    not?: NestedEnumCreatorRankWithAggregatesFilter<$PrismaModel> | $Enums.CreatorRank
     _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedEnumCreatorRankFilter<$PrismaModel>
+    _max?: NestedEnumCreatorRankFilter<$PrismaModel>
   }
 
-  export type NestedEnumRankWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Rank | EnumRankFieldRefInput<$PrismaModel>
-    in?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Rank[] | ListEnumRankFieldRefInput<$PrismaModel>
-    not?: NestedEnumRankWithAggregatesFilter<$PrismaModel> | $Enums.Rank
+  export type NestedEnumPlatformFilter<$PrismaModel = never> = {
+    equals?: $Enums.Platform | EnumPlatformFieldRefInput<$PrismaModel>
+    in?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
+    not?: NestedEnumPlatformFilter<$PrismaModel> | $Enums.Platform
+  }
+
+  export type NestedEnumSubmissionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionStatus | EnumSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubmissionStatusFilter<$PrismaModel> | $Enums.SubmissionStatus
+  }
+
+  export type NestedEnumPlatformWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Platform | EnumPlatformFieldRefInput<$PrismaModel>
+    in?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
+    not?: NestedEnumPlatformWithAggregatesFilter<$PrismaModel> | $Enums.Platform
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRankFilter<$PrismaModel>
-    _max?: NestedEnumRankFilter<$PrismaModel>
+    _min?: NestedEnumPlatformFilter<$PrismaModel>
+    _max?: NestedEnumPlatformFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6846,74 +7398,93 @@ export namespace Prisma {
     isSet?: boolean
   }
 
-  export type NestedEnumPlatformFilter<$PrismaModel = never> = {
-    equals?: $Enums.Platform | EnumPlatformFieldRefInput<$PrismaModel>
-    in?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
-    not?: NestedEnumPlatformFilter<$PrismaModel> | $Enums.Platform
-  }
-
-  export type NestedEnumPlatformWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Platform | EnumPlatformFieldRefInput<$PrismaModel>
-    in?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
-    not?: NestedEnumPlatformWithAggregatesFilter<$PrismaModel> | $Enums.Platform
+  export type NestedEnumSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionStatus | EnumSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubmissionStatusWithAggregatesFilter<$PrismaModel> | $Enums.SubmissionStatus
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumPlatformFilter<$PrismaModel>
-    _max?: NestedEnumPlatformFilter<$PrismaModel>
+    _min?: NestedEnumSubmissionStatusFilter<$PrismaModel>
+    _max?: NestedEnumSubmissionStatusFilter<$PrismaModel>
   }
 
   export type CreatorProfileCreateWithoutUserInput = {
     id?: string
-    channelLogo?: string | null
+    realName: string
+    contactEmail?: string | null
+    contactPhone?: string | null
+    nickname: string
+    birthDate: string
+    nationality: string
+    residency: string
     platforms?: CreatorProfileCreateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListCreateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink: string
+    channelLogo?: string | null
     contentType: string
-    socialMediaLink: string
-    followers: number
+    followers?: number
     eventAttendance: $Enums.EventAttendance
     discoverySources?: CreatorProfileCreatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin: string
-    isApproved?: boolean
-    isActive?: boolean
-    totalPoints?: number
-    currentLevel?: $Enums.CreatorLevel
-    levelProgress?: number
-    rank?: $Enums.Rank
-    streamCount?: number
-    shortCount?: number
+    whyJoin?: string | null
+    status?: $Enums.RegistrationStatus
+    adminNotes?: string | null
+    approvedAt?: Date | string | null
+    rank?: $Enums.CreatorRank
+    currentRankReach?: number
+    totalReachAllTime?: number
+    pictureCount?: number
+    storyCount?: number
     reelCount?: number
-    totalReach?: number
-    totalViews?: number
-    cohortMonth?: number | null
-    joinedAt?: Date | string | null
-    createdAt?: Date | string
+    longVideoCount?: number
+    postCount?: number
+    totalPictureCount?: number
+    totalStoryCount?: number
+    totalReelCount?: number
+    totalLongVideoCount?: number
+    totalPostCount?: number
+    rankedUpAt?: Date | string | null
+    isActive?: boolean
+    joinedAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type CreatorProfileUncheckedCreateWithoutUserInput = {
     id?: string
-    channelLogo?: string | null
+    realName: string
+    contactEmail?: string | null
+    contactPhone?: string | null
+    nickname: string
+    birthDate: string
+    nationality: string
+    residency: string
     platforms?: CreatorProfileCreateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListCreateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink: string
+    channelLogo?: string | null
     contentType: string
-    socialMediaLink: string
-    followers: number
+    followers?: number
     eventAttendance: $Enums.EventAttendance
     discoverySources?: CreatorProfileCreatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin: string
-    isApproved?: boolean
-    isActive?: boolean
-    totalPoints?: number
-    currentLevel?: $Enums.CreatorLevel
-    levelProgress?: number
-    rank?: $Enums.Rank
-    streamCount?: number
-    shortCount?: number
+    whyJoin?: string | null
+    status?: $Enums.RegistrationStatus
+    adminNotes?: string | null
+    approvedAt?: Date | string | null
+    rank?: $Enums.CreatorRank
+    currentRankReach?: number
+    totalReachAllTime?: number
+    pictureCount?: number
+    storyCount?: number
     reelCount?: number
-    totalReach?: number
-    totalViews?: number
-    cohortMonth?: number | null
-    joinedAt?: Date | string | null
-    createdAt?: Date | string
+    longVideoCount?: number
+    postCount?: number
+    totalPictureCount?: number
+    totalStoryCount?: number
+    totalReelCount?: number
+    totalLongVideoCount?: number
+    totalPostCount?: number
+    rankedUpAt?: Date | string | null
+    isActive?: boolean
+    joinedAt?: Date | string
     updatedAt?: Date | string
   }
 
@@ -6924,36 +7495,40 @@ export namespace Prisma {
 
   export type SubmissionCreateWithoutUserInput = {
     id?: string
-    rank: $Enums.Rank
+    nickname: string
+    rank: $Enums.CreatorRank
     platform: $Enums.Platform
     contentLink: string
     contentTypes?: SubmissionCreatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionCreatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach: number
-    totalViews: number
+    submittedReach?: number
+    acceptedReach?: number
+    pendingReach?: number | null
+    previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
-    pointsAwarded?: number
+    status?: $Enums.SubmissionStatus
     adminNotes?: string | null
-    submittedByAdminId?: string | null
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type SubmissionUncheckedCreateWithoutUserInput = {
     id?: string
-    rank: $Enums.Rank
+    nickname: string
+    rank: $Enums.CreatorRank
     platform: $Enums.Platform
     contentLink: string
     contentTypes?: SubmissionCreatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionCreatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach: number
-    totalViews: number
+    submittedReach?: number
+    acceptedReach?: number
+    pendingReach?: number | null
+    previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
-    pointsAwarded?: number
+    status?: $Enums.SubmissionStatus
     adminNotes?: string | null
-    submittedByAdminId?: string | null
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -6979,54 +7554,80 @@ export namespace Prisma {
   }
 
   export type CreatorProfileUpdateWithoutUserInput = {
-    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    realName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    nickname?: StringFieldUpdateOperationsInput | string
+    birthDate?: StringFieldUpdateOperationsInput | string
+    nationality?: StringFieldUpdateOperationsInput | string
+    residency?: StringFieldUpdateOperationsInput | string
     platforms?: CreatorProfileUpdateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListUpdateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink?: StringFieldUpdateOperationsInput | string
+    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
     contentType?: StringFieldUpdateOperationsInput | string
-    socialMediaLink?: StringFieldUpdateOperationsInput | string
     followers?: IntFieldUpdateOperationsInput | number
     eventAttendance?: EnumEventAttendanceFieldUpdateOperationsInput | $Enums.EventAttendance
     discoverySources?: CreatorProfileUpdatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin?: StringFieldUpdateOperationsInput | string
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    totalPoints?: IntFieldUpdateOperationsInput | number
-    currentLevel?: EnumCreatorLevelFieldUpdateOperationsInput | $Enums.CreatorLevel
-    levelProgress?: FloatFieldUpdateOperationsInput | number
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
-    streamCount?: IntFieldUpdateOperationsInput | number
-    shortCount?: IntFieldUpdateOperationsInput | number
+    whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
+    currentRankReach?: IntFieldUpdateOperationsInput | number
+    totalReachAllTime?: IntFieldUpdateOperationsInput | number
+    pictureCount?: IntFieldUpdateOperationsInput | number
+    storyCount?: IntFieldUpdateOperationsInput | number
     reelCount?: IntFieldUpdateOperationsInput | number
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    cohortMonth?: NullableIntFieldUpdateOperationsInput | number | null
-    joinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    longVideoCount?: IntFieldUpdateOperationsInput | number
+    postCount?: IntFieldUpdateOperationsInput | number
+    totalPictureCount?: IntFieldUpdateOperationsInput | number
+    totalStoryCount?: IntFieldUpdateOperationsInput | number
+    totalReelCount?: IntFieldUpdateOperationsInput | number
+    totalLongVideoCount?: IntFieldUpdateOperationsInput | number
+    totalPostCount?: IntFieldUpdateOperationsInput | number
+    rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CreatorProfileUncheckedUpdateWithoutUserInput = {
-    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    realName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    nickname?: StringFieldUpdateOperationsInput | string
+    birthDate?: StringFieldUpdateOperationsInput | string
+    nationality?: StringFieldUpdateOperationsInput | string
+    residency?: StringFieldUpdateOperationsInput | string
     platforms?: CreatorProfileUpdateplatformsInput | $Enums.Platform[]
+    platformLinks?: XOR<PlatformLinkListUpdateEnvelopeInput, PlatformLinkCreateInput> | PlatformLinkCreateInput[]
+    primarySocialLink?: StringFieldUpdateOperationsInput | string
+    channelLogo?: NullableStringFieldUpdateOperationsInput | string | null
     contentType?: StringFieldUpdateOperationsInput | string
-    socialMediaLink?: StringFieldUpdateOperationsInput | string
     followers?: IntFieldUpdateOperationsInput | number
     eventAttendance?: EnumEventAttendanceFieldUpdateOperationsInput | $Enums.EventAttendance
     discoverySources?: CreatorProfileUpdatediscoverySourcesInput | $Enums.DiscoverySource[]
-    whyJoin?: StringFieldUpdateOperationsInput | string
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    totalPoints?: IntFieldUpdateOperationsInput | number
-    currentLevel?: EnumCreatorLevelFieldUpdateOperationsInput | $Enums.CreatorLevel
-    levelProgress?: FloatFieldUpdateOperationsInput | number
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
-    streamCount?: IntFieldUpdateOperationsInput | number
-    shortCount?: IntFieldUpdateOperationsInput | number
+    whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
+    currentRankReach?: IntFieldUpdateOperationsInput | number
+    totalReachAllTime?: IntFieldUpdateOperationsInput | number
+    pictureCount?: IntFieldUpdateOperationsInput | number
+    storyCount?: IntFieldUpdateOperationsInput | number
     reelCount?: IntFieldUpdateOperationsInput | number
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    cohortMonth?: NullableIntFieldUpdateOperationsInput | number | null
-    joinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    longVideoCount?: IntFieldUpdateOperationsInput | number
+    postCount?: IntFieldUpdateOperationsInput | number
+    totalPictureCount?: IntFieldUpdateOperationsInput | number
+    totalStoryCount?: IntFieldUpdateOperationsInput | number
+    totalReelCount?: IntFieldUpdateOperationsInput | number
+    totalLongVideoCount?: IntFieldUpdateOperationsInput | number
+    totalPostCount?: IntFieldUpdateOperationsInput | number
+    rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7052,63 +7653,74 @@ export namespace Prisma {
     NOT?: SubmissionScalarWhereInput | SubmissionScalarWhereInput[]
     id?: StringFilter<"Submission"> | string
     userId?: StringFilter<"Submission"> | string
-    rank?: EnumRankFilter<"Submission"> | $Enums.Rank
+    nickname?: StringFilter<"Submission"> | string
+    rank?: EnumCreatorRankFilter<"Submission"> | $Enums.CreatorRank
     platform?: EnumPlatformFilter<"Submission"> | $Enums.Platform
     contentLink?: StringFilter<"Submission"> | string
     contentTypes?: EnumContentTypeNullableListFilter<"Submission">
     monsterAppearances?: EnumMonsterAppearanceNullableListFilter<"Submission">
-    totalReach?: IntFilter<"Submission"> | number
-    totalViews?: IntFilter<"Submission"> | number
+    submittedReach?: IntFilter<"Submission"> | number
+    acceptedReach?: IntFilter<"Submission"> | number
+    pendingReach?: IntNullableFilter<"Submission"> | number | null
+    previousAcceptedReach?: IntNullableFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableFilter<"Submission"> | string | null
-    pointsAwarded?: IntFilter<"Submission"> | number
+    status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
-    submittedByAdminId?: StringNullableFilter<"Submission"> | string | null
-    isApproved?: BoolFilter<"Submission"> | boolean
+    isEdited?: BoolFilter<"Submission"> | boolean
     createdAt?: DateTimeFilter<"Submission"> | Date | string
     updatedAt?: DateTimeFilter<"Submission"> | Date | string
   }
 
   export type UserCreateWithoutProfileInput = {
     id?: string
-    externalId?: string | null
-    provider?: string | null
-    email?: string | null
-    phone?: string | null
-    phoneKey?: string | null
     firstName: string
     lastName: string
     username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
     isVerified?: boolean
     isActive?: boolean
-    role?: $Enums.Role
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    lastLogin?: Date | string | null
     submissions?: SubmissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProfileInput = {
     id?: string
-    externalId?: string | null
-    provider?: string | null
-    email?: string | null
-    phone?: string | null
-    phoneKey?: string | null
     firstName: string
     lastName: string
     username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
     isVerified?: boolean
     isActive?: boolean
-    role?: $Enums.Role
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    lastLogin?: Date | string | null
     submissions?: SubmissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProfileInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+  }
+
+  export type PlatformLinkUpdateManyInput = {
+    where: PlatformLinkWhereInput
+    data: PlatformLinkUpdateInput
+  }
+
+  export type PlatformLinkDeleteManyInput = {
+    where: PlatformLinkWhereInput
   }
 
   export type UserUpsertWithoutProfileInput = {
@@ -7123,76 +7735,76 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutProfileInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     submissions?: SubmissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProfileInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     submissions?: SubmissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSubmissionsInput = {
     id?: string
-    externalId?: string | null
-    provider?: string | null
-    email?: string | null
-    phone?: string | null
-    phoneKey?: string | null
     firstName: string
     lastName: string
     username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
     isVerified?: boolean
     isActive?: boolean
-    role?: $Enums.Role
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    lastLogin?: Date | string | null
     profile?: CreatorProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSubmissionsInput = {
     id?: string
-    externalId?: string | null
-    provider?: string | null
-    email?: string | null
-    phone?: string | null
-    phoneKey?: string | null
     firstName: string
     lastName: string
     username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
     isVerified?: boolean
     isActive?: boolean
-    role?: $Enums.Role
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    lastLogin?: Date | string | null
     profile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
@@ -7213,108 +7825,121 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutSubmissionsInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     profile?: CreatorProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmissionsInput = {
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     profile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type SubmissionCreateManyUserInput = {
     id?: string
-    rank: $Enums.Rank
+    nickname: string
+    rank: $Enums.CreatorRank
     platform: $Enums.Platform
     contentLink: string
     contentTypes?: SubmissionCreatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionCreatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach: number
-    totalViews: number
+    submittedReach?: number
+    acceptedReach?: number
+    pendingReach?: number | null
+    previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
-    pointsAwarded?: number
+    status?: $Enums.SubmissionStatus
     adminNotes?: string | null
-    submittedByAdminId?: string | null
-    isApproved?: boolean
+    isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type SubmissionUpdateWithoutUserInput = {
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
+    nickname?: StringFieldUpdateOperationsInput | string
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
     contentLink?: StringFieldUpdateOperationsInput | string
     contentTypes?: SubmissionUpdatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionUpdatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
+    submittedReach?: IntFieldUpdateOperationsInput | number
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
+    previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    submittedByAdminId?: NullableStringFieldUpdateOperationsInput | string | null
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubmissionUncheckedUpdateWithoutUserInput = {
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
+    nickname?: StringFieldUpdateOperationsInput | string
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
     contentLink?: StringFieldUpdateOperationsInput | string
     contentTypes?: SubmissionUpdatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionUpdatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
+    submittedReach?: IntFieldUpdateOperationsInput | number
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
+    previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    submittedByAdminId?: NullableStringFieldUpdateOperationsInput | string | null
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubmissionUncheckedUpdateManyWithoutUserInput = {
-    rank?: EnumRankFieldUpdateOperationsInput | $Enums.Rank
+    nickname?: StringFieldUpdateOperationsInput | string
+    rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
     contentLink?: StringFieldUpdateOperationsInput | string
     contentTypes?: SubmissionUpdatecontentTypesInput | $Enums.ContentType[]
     monsterAppearances?: SubmissionUpdatemonsterAppearancesInput | $Enums.MonsterAppearance[]
-    totalReach?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
+    submittedReach?: IntFieldUpdateOperationsInput | number
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
+    previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    submittedByAdminId?: NullableStringFieldUpdateOperationsInput | string | null
-    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlatformLinkUpdateInput = {
+    platform?: EnumPlatformFieldUpdateOperationsInput | $Enums.Platform
+    url?: StringFieldUpdateOperationsInput | string
   }
 
 

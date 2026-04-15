@@ -1,22 +1,16 @@
-// src/app/api/admin/submissions/[id]/route.ts
+// src/app/api/submissions/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireRole } from "@/lib/auth/server";
+import { requireAuth } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
-import {
-  calculateSubmissionPoints,
-  getLevelFromPoints,
-  getLevelProgress,
-} from "@/lib/utils/points";
-import { Rank } from "@/generated/prisma";
 
-const patchSchema = z.object({
-  isApproved:   z.boolean().optional(),
-  adminNotes:   z.string().optional(),
-  rank: z.enum([
-    "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER","ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
-  ]).optional(),
-  pointsOverride: z.number().int().min(0).optional(),
+const editSchema = z.object({
+  platform:           z.enum(["FACEBOOK","INSTAGRAM","KICK","TIKTOK","TWITCH","YOUTUBE"]).optional(),
+  contentLink:        z.string().url().optional(),
+  contentTypes:       z.array(z.enum(["PICTURE","STORY","REEL","LONG_VIDEO","POST"])).min(1).optional(),
+  monsterAppearances: z.array(z.enum(["MONSTER_THEME","LAYOUT","LOGO","MONSTER_PRODUCTS"])).min(1).optional(),
+  statsScreenshotUrl: z.string().url().nullable().optional(),
+  submittedReach:     z.number().int().min(0).optional(),
 });
 
 export async function PATCH(
@@ -25,71 +19,40 @@ export async function PATCH(
 ) {
   const authHeader = request.headers.get("authorization") ?? undefined;
   try {
-    await requireRole(["ADMIN"], authHeader);
-    const { id } = await params;
+    const currentUser = await requireAuth(authHeader);
+    const { id }      = await params;
 
     const submission = await prisma.submission.findUnique({ where: { id } });
     if (!submission) {
-      return NextResponse.json({ success: false, error: "Submission not found" }, { status: 404 });
+      return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+    }
+    if (submission.userId !== currentUser.id) {
+      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
-    const body          = await request.json();
-    const validatedData = patchSchema.parse(body);
+    const body = await request.json();
+    const data = editSchema.parse(body);
 
-    // Recalculate points if rank changed or pointsOverride given
-    const effectiveRank   = validatedData.rank ?? submission.rank;
-    const pointsAwarded   = validatedData.pointsOverride != null
-      ? validatedData.pointsOverride
-      : calculateSubmissionPoints({
-          totalViews:         submission.totalViews,
-          totalReach:         submission.totalReach,
-          monsterAppearances: submission.monsterAppearances,
-          rank:               effectiveRank,
-        });
+    const updateData: any = {
+      status:   "PENDING",
+      isEdited: true,
+    };
+
+    if (data.platform           !== undefined) updateData.platform           = data.platform;
+    if (data.contentLink        !== undefined) updateData.contentLink        = data.contentLink;
+    if (data.contentTypes       !== undefined) updateData.contentTypes       = data.contentTypes;
+    if (data.monsterAppearances !== undefined) updateData.monsterAppearances = data.monsterAppearances;
+    if (data.statsScreenshotUrl !== undefined) updateData.statsScreenshotUrl = data.statsScreenshotUrl;
+
+    if (data.submittedReach !== undefined) {
+      updateData.submittedReach          = data.submittedReach;
+      updateData.pendingReach            = data.submittedReach;
+      updateData.previousAcceptedReach   = submission.acceptedReach; // snapshot
+    }
 
     const updated = await prisma.submission.update({
       where: { id },
-      data: {
-        isApproved:    validatedData.isApproved  ?? submission.isApproved,
-        adminNotes:    validatedData.adminNotes  ?? submission.adminNotes,
-        rank:          effectiveRank,
-        pointsAwarded,
-      },
-    });
-
-    // Recompute creator profile totals from ALL approved submissions
-    const approved = await prisma.submission.findMany({
-      where: { userId: submission.userId, isApproved: true },
-    });
-
-    const totalPoints = approved.reduce((s, x) => s + x.pointsAwarded, 0);
-    const totalViews  = approved.reduce((s, x) => s + x.totalViews,    0);
-    const totalReach  = approved.reduce((s, x) => s + x.totalReach,    0);
-    const streamCount = approved.filter((x) => x.contentTypes.includes("STREAM")).length;
-    const shortCount  = approved.filter((x) => x.contentTypes.includes("SHORT")).length;
-    const reelCount   = approved.filter((x) => x.contentTypes.includes("REEL")).length;
-
-    // Determine rank from highest approved submission rank
-    const RANK_ORDER = [
-      "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER","ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
-    ];
-    const highestRank = approved.reduce<Rank>((best, x) => {
-      return RANK_ORDER.indexOf(x.rank) > RANK_ORDER.indexOf(best) ? x.rank : best;
-    }, "UNRANKED");
-
-    await prisma.creatorProfile.updateMany({
-      where: { userId: submission.userId },
-      data: {
-        totalPoints,
-        totalViews,
-        totalReach,
-        streamCount,
-        shortCount,
-        reelCount,
-        rank:          highestRank,
-        currentLevel:  getLevelFromPoints(totalPoints),
-        levelProgress: getLevelProgress(totalPoints),
-      },
+      data:  updateData,
     });
 
     return NextResponse.json({ success: true, data: updated });
@@ -103,26 +66,28 @@ export async function PATCH(
     if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
     }
-    if (error instanceof Error && error.message === "Insufficient permissions") {
-      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
-    }
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
 
-export async function DELETE(
+export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const authHeader = request.headers.get("authorization") ?? undefined;
   try {
-    await requireRole(["ADMIN"], authHeader);
-    const { id } = await params;
-    await prisma.submission.delete({ where: { id } });
-    return NextResponse.json({ success: true });
+    const currentUser = await requireAuth(authHeader);
+    const { id }      = await params;
+
+    const submission = await prisma.submission.findUnique({ where: { id } });
+    if (!submission || submission.userId !== currentUser.id) {
+      return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, data: submission });
   } catch (error) {
-    if (error instanceof Error && error.message === "Insufficient permissions") {
-      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
+    if (error instanceof Error && error.message === "Authentication required") {
+      return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
     }
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }

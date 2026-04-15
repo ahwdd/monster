@@ -88,65 +88,79 @@ Prisma.NullTypes = {
  */
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  externalId: 'externalId',
-  provider: 'provider',
-  email: 'email',
-  phone: 'phone',
-  phoneKey: 'phoneKey',
   firstName: 'firstName',
   lastName: 'lastName',
   username: 'username',
+  email: 'email',
+  phone: 'phone',
+  phoneKey: 'phoneKey',
   isVerified: 'isVerified',
   isActive: 'isActive',
   role: 'role',
+  externalId: 'externalId',
+  provider: 'provider',
+  lastLogin: 'lastLogin',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  lastLogin: 'lastLogin'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.CreatorProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  channelLogo: 'channelLogo',
+  realName: 'realName',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
+  nickname: 'nickname',
+  birthDate: 'birthDate',
+  nationality: 'nationality',
+  residency: 'residency',
   platforms: 'platforms',
+  primarySocialLink: 'primarySocialLink',
+  channelLogo: 'channelLogo',
   contentType: 'contentType',
-  socialMediaLink: 'socialMediaLink',
   followers: 'followers',
   eventAttendance: 'eventAttendance',
   discoverySources: 'discoverySources',
   whyJoin: 'whyJoin',
-  isApproved: 'isApproved',
-  isActive: 'isActive',
-  totalPoints: 'totalPoints',
-  currentLevel: 'currentLevel',
-  levelProgress: 'levelProgress',
+  status: 'status',
+  adminNotes: 'adminNotes',
+  approvedAt: 'approvedAt',
   rank: 'rank',
-  streamCount: 'streamCount',
-  shortCount: 'shortCount',
+  currentRankReach: 'currentRankReach',
+  totalReachAllTime: 'totalReachAllTime',
+  pictureCount: 'pictureCount',
+  storyCount: 'storyCount',
   reelCount: 'reelCount',
-  totalReach: 'totalReach',
-  totalViews: 'totalViews',
-  cohortMonth: 'cohortMonth',
+  longVideoCount: 'longVideoCount',
+  postCount: 'postCount',
+  totalPictureCount: 'totalPictureCount',
+  totalStoryCount: 'totalStoryCount',
+  totalReelCount: 'totalReelCount',
+  totalLongVideoCount: 'totalLongVideoCount',
+  totalPostCount: 'totalPostCount',
+  rankedUpAt: 'rankedUpAt',
+  isActive: 'isActive',
   joinedAt: 'joinedAt',
-  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SubmissionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  nickname: 'nickname',
   rank: 'rank',
   platform: 'platform',
   contentLink: 'contentLink',
   contentTypes: 'contentTypes',
   monsterAppearances: 'monsterAppearances',
-  totalReach: 'totalReach',
-  totalViews: 'totalViews',
+  submittedReach: 'submittedReach',
+  acceptedReach: 'acceptedReach',
+  pendingReach: 'pendingReach',
+  previousAcceptedReach: 'previousAcceptedReach',
   statsScreenshotUrl: 'statsScreenshotUrl',
-  pointsAwarded: 'pointsAwarded',
+  status: 'status',
   adminNotes: 'adminNotes',
-  submittedByAdminId: 'submittedByAdminId',
-  isApproved: 'isApproved',
+  isEdited: 'isEdited',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -160,9 +174,21 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-exports.Role = exports.$Enums.Role = {
+exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN'
+};
+
+exports.RegistrationStatus = exports.$Enums.RegistrationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+exports.SubmissionStatus = exports.$Enums.SubmissionStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
 };
 
 exports.Platform = exports.$Enums.Platform = {
@@ -175,18 +201,11 @@ exports.Platform = exports.$Enums.Platform = {
 };
 
 exports.ContentType = exports.$Enums.ContentType = {
-  STREAM: 'STREAM',
-  SHORT: 'SHORT',
-  REEL: 'REEL'
-};
-
-exports.Rank = exports.$Enums.Rank = {
-  UNRANKED: 'UNRANKED',
-  ROOKIE_MONSTER: 'ROOKIE_MONSTER',
-  RISING_MONSTER: 'RISING_MONSTER',
-  ELITE_MONSTER: 'ELITE_MONSTER',
-  MEGA_MONSTER: 'MEGA_MONSTER',
-  COLD_MONSTER: 'COLD_MONSTER'
+  PICTURE: 'PICTURE',
+  STORY: 'STORY',
+  REEL: 'REEL',
+  LONG_VIDEO: 'LONG_VIDEO',
+  POST: 'POST'
 };
 
 exports.MonsterAppearance = exports.$Enums.MonsterAppearance = {
@@ -196,6 +215,12 @@ exports.MonsterAppearance = exports.$Enums.MonsterAppearance = {
   MONSTER_PRODUCTS: 'MONSTER_PRODUCTS'
 };
 
+exports.EventAttendance = exports.$Enums.EventAttendance = {
+  YES: 'YES',
+  SOMETIMES: 'SOMETIMES',
+  NO: 'NO'
+};
+
 exports.DiscoverySource = exports.$Enums.DiscoverySource = {
   FRIEND_RECOMMENDATION: 'FRIEND_RECOMMENDATION',
   COMMUNITY_MESSAGES: 'COMMUNITY_MESSAGES',
@@ -203,18 +228,13 @@ exports.DiscoverySource = exports.$Enums.DiscoverySource = {
   MONSTER_EVENTS: 'MONSTER_EVENTS'
 };
 
-exports.EventAttendance = exports.$Enums.EventAttendance = {
-  YES: 'YES',
-  SOMETIMES: 'SOMETIMES',
-  NO: 'NO'
-};
-
-exports.CreatorLevel = exports.$Enums.CreatorLevel = {
-  LEVEL_1: 'LEVEL_1',
-  LEVEL_2: 'LEVEL_2',
-  LEVEL_3: 'LEVEL_3',
-  LEVEL_4: 'LEVEL_4',
-  LEVEL_5: 'LEVEL_5'
+exports.CreatorRank = exports.$Enums.CreatorRank = {
+  UNRANKED: 'UNRANKED',
+  ROOKIE: 'ROOKIE',
+  MEGA: 'MEGA',
+  RISING: 'RISING',
+  ELITE: 'ELITE',
+  COLD: 'COLD'
 };
 
 exports.Prisma.ModelName = {
@@ -270,13 +290,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// prisma/schema.prisma\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ─────────────────────────────────────────────\n// Enumerations\n// ─────────────────────────────────────────────\n\nenum Role {\n  USER\n  ADMIN\n}\n\nenum Platform {\n  FACEBOOK\n  INSTAGRAM\n  KICK\n  TIKTOK\n  TWITCH\n  YOUTUBE\n}\n\nenum ContentType {\n  STREAM\n  SHORT\n  REEL\n}\n\nenum Rank {\n  UNRANKED\n  ROOKIE_MONSTER // 100K views / 1 month\n  RISING_MONSTER // 500K views / 4 months\n  ELITE_MONSTER // internal milestone\n  MEGA_MONSTER // internal milestone\n  COLD_MONSTER // 1M views / 7 months\n}\n\nenum MonsterAppearance {\n  MONSTER_THEME\n  LAYOUT\n  LOGO\n  MONSTER_PRODUCTS\n}\n\nenum DiscoverySource {\n  FRIEND_RECOMMENDATION\n  COMMUNITY_MESSAGES\n  SOCIAL_MEDIA_POSTS\n  MONSTER_EVENTS\n}\n\n// Can the creator attend events?\nenum EventAttendance {\n  YES\n  SOMETIMES\n  NO\n}\n\nenum CreatorLevel {\n  LEVEL_1\n  LEVEL_2\n  LEVEL_3\n  LEVEL_4\n  LEVEL_5\n}\n\nmodel User {\n  id         String  @id @default(auto()) @map(\"_id\") @db.ObjectId\n  // Hub linkage\n  externalId String?\n  provider   String?\n\n  // Basic identity\n  email     String?\n  phone     String?\n  phoneKey  String?\n  firstName String\n  lastName  String\n  username  String\n\n  // Auth state\n  isVerified Boolean @default(false)\n  isActive   Boolean @default(true)\n  role       Role    @default(USER)\n\n  createdAt DateTime  @default(now())\n  updatedAt DateTime  @updatedAt\n  lastLogin DateTime?\n\n  // Relations\n  profile     CreatorProfile?\n  submissions Submission[]\n\n  @@unique([email], name: \"unique_email\")\n  @@unique([phone], name: \"unique_phone\")\n  @@unique([externalId], name: \"unique_external_id\")\n  @@index([username])\n  @@map(\"users\")\n}\n\nmodel CreatorProfile {\n  id     String @id @default(auto()) @map(\"_id\") @db.ObjectId\n  userId String @unique @db.ObjectId\n\n  channelLogo      String?\n  platforms        Platform[]\n  contentType      String\n  socialMediaLink  String\n  followers        Int\n  eventAttendance  EventAttendance\n  discoverySources DiscoverySource[]\n  whyJoin          String\n\n  isApproved Boolean @default(false)\n  isActive   Boolean @default(true)\n\n  // Level system — derived from totalPoints, updated by server after each submission\n  // Thresholds (configurable):\n  //   LEVEL_1:  0       – 999     points\n  //   LEVEL_2:  1000    – 4999    points\n  //   LEVEL_3:  5000    – 14999   points\n  //   LEVEL_4:  15000   – 49999   points\n  //   LEVEL_5:  50000+  points\n  totalPoints  Int          @default(0)\n  currentLevel CreatorLevel @default(LEVEL_1)\n\n  // Progress percentages within current level (0.0 – 1.0)\n  // Computed server-side and cached here for fast display\n  levelProgress Float @default(0.0)\n\n  // Rank (from Form 2 — set by admin per submission review)\n  rank Rank @default(UNRANKED)\n\n  // Content quotas tracker (25 pieces total required)\n  // 10 livestreams + 10 shorts + 5 stories\n  streamCount Int @default(0) // approved streams\n  shortCount  Int @default(0) // approved shorts\n  reelCount   Int @default(0) // approved reels\n\n  // Reach totals (summed from all approved submissions)\n  totalReach Int @default(0)\n  totalViews Int @default(0)\n\n  // Program cohort (month 1–9, 5 creators per month, 30 total)\n  cohortMonth Int? // 1-9\n  joinedAt    DateTime?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([rank])\n  @@index([currentLevel])\n  @@index([totalPoints])\n  @@map(\"creator_profiles\")\n}\n\nmodel Submission {\n  id     String @id @default(auto()) @map(\"_id\") @db.ObjectId\n  userId String @db.ObjectId\n\n  // Form 2 fields\n  rank               Rank\n  platform           Platform\n  contentLink        String\n  contentTypes       ContentType[]\n  monsterAppearances MonsterAppearance[]\n  totalReach         Int\n  totalViews         Int\n  statsScreenshotUrl String?\n\n  // Points awarded for this submission\n  // Formula: base points from views + reach bonus + appearance bonuses\n  // Base:       1 point  per 1000 views\n  // Reach:      0.5 point per 1000 reach\n  // Appearance: +50 per MonsterAppearance type present\n  // Rank bonus: ROOKIE=1x, RISING=1.5x, ELITE=2x, MEGA=2.5x, COLD=3x multiplier\n  pointsAwarded Int @default(0)\n\n  // Admin metadata\n  adminNotes         String?\n  submittedByAdminId String? @db.ObjectId\n  isApproved         Boolean @default(true)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@index([platform])\n  @@index([rank])\n  @@index([createdAt])\n  @@map(\"submissions\")\n}\n",
-  "inlineSchemaHash": "6e1f425e4413650bf691517aeb1260a251c5abc2c70bc429e6cb099d49b27cc0",
+  "inlineSchema": "// prisma/schema.prisma\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum UserRole {\n  USER\n  ADMIN\n}\n\nenum RegistrationStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nenum SubmissionStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nenum Platform {\n  FACEBOOK\n  INSTAGRAM\n  KICK\n  TIKTOK\n  TWITCH\n  YOUTUBE\n}\n\nenum ContentType {\n  PICTURE\n  STORY\n  REEL\n  LONG_VIDEO\n  POST\n}\n\nenum MonsterAppearance {\n  MONSTER_THEME\n  LAYOUT\n  LOGO\n  MONSTER_PRODUCTS\n}\n\nenum EventAttendance {\n  YES\n  SOMETIMES\n  NO\n}\n\nenum DiscoverySource {\n  FRIEND_RECOMMENDATION\n  COMMUNITY_MESSAGES\n  SOCIAL_MEDIA_POSTS\n  MONSTER_EVENTS\n}\n\nenum CreatorRank {\n  UNRANKED\n  ROOKIE // ≥ 100k total reach\n  MEGA // decorative sub-rank between Rookie and Rising\n  RISING // ≥ 500k total reach (reach resets on rank-up)\n  ELITE // decorative sub-rank between Rising and Cold\n  COLD // ≥ 1M total reach (reach never resets here)\n}\n\nmodel User {\n  id         String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  firstName  String\n  lastName   String\n  username   String    @unique\n  email      String?   @unique\n  phone      String?   @unique\n  phoneKey   String?\n  isVerified Boolean   @default(false)\n  isActive   Boolean   @default(true)\n  role       UserRole  @default(USER)\n  externalId String?\n  provider   String?\n  lastLogin  DateTime?\n  createdAt  DateTime  @default(now())\n  updatedAt  DateTime  @updatedAt\n\n  profile     CreatorProfile?\n  submissions Submission[]\n}\n\ntype PlatformLink {\n  platform Platform\n  url      String\n}\n\nmodel CreatorProfile {\n  id     String @id @default(auto()) @map(\"_id\") @db.ObjectId\n  userId String @unique @db.ObjectId\n  user   User   @relation(fields: [userId], references: [id])\n\n  realName          String\n  contactEmail      String?\n  contactPhone      String?\n  nickname          String\n  birthDate         String\n  nationality       String\n  residency         String\n  platforms         Platform[]\n  platformLinks     PlatformLink[]\n  primarySocialLink String\n  channelLogo       String?\n  contentType       String\n  followers         Int               @default(0)\n  eventAttendance   EventAttendance\n  discoverySources  DiscoverySource[]\n  whyJoin           String?\n\n  status     RegistrationStatus @default(PENDING)\n  adminNotes String?\n  approvedAt DateTime?\n\n  rank              CreatorRank @default(UNRANKED)\n  currentRankReach  Int         @default(0)\n  totalReachAllTime Int         @default(0)\n\n  pictureCount   Int @default(0)\n  storyCount     Int @default(0)\n  reelCount      Int @default(0)\n  longVideoCount Int @default(0)\n  postCount      Int @default(0)\n\n  totalPictureCount   Int @default(0)\n  totalStoryCount     Int @default(0)\n  totalReelCount      Int @default(0)\n  totalLongVideoCount Int @default(0)\n  totalPostCount      Int @default(0)\n\n  rankedUpAt DateTime?\n\n  isActive  Boolean  @default(true)\n  joinedAt  DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Submission {\n  id     String @id @default(auto()) @map(\"_id\") @db.ObjectId\n  userId String @db.ObjectId\n  user   User   @relation(fields: [userId], references: [id])\n\n  nickname           String\n  rank               CreatorRank\n  platform           Platform\n  contentLink        String\n  contentTypes       ContentType[]\n  monsterAppearances MonsterAppearance[]\n\n  submittedReach        Int  @default(0)\n  acceptedReach         Int  @default(0)\n  pendingReach          Int? // null = no pending edit\n  previousAcceptedReach Int? // null = no previous\n\n  statsScreenshotUrl String?\n\n  status     SubmissionStatus @default(PENDING)\n  adminNotes String?\n\n  isEdited Boolean @default(false)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
+  "inlineSchemaHash": "36ec3237879ac1cbbd5e3ef6c76c2e8c8f732c0d3d79dbce2f2a7ef9b867d796",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"externalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"profile\",\"kind\":\"object\",\"type\":\"CreatorProfile\",\"relationName\":\"CreatorProfileToUser\"},{\"name\":\"submissions\",\"kind\":\"object\",\"type\":\"Submission\",\"relationName\":\"SubmissionToUser\"}],\"dbName\":\"users\"},\"CreatorProfile\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"channelLogo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"platforms\",\"kind\":\"enum\",\"type\":\"Platform\"},{\"name\":\"contentType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"socialMediaLink\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"followers\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"eventAttendance\",\"kind\":\"enum\",\"type\":\"EventAttendance\"},{\"name\":\"discoverySources\",\"kind\":\"enum\",\"type\":\"DiscoverySource\"},{\"name\":\"whyJoin\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isApproved\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"totalPoints\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"currentLevel\",\"kind\":\"enum\",\"type\":\"CreatorLevel\"},{\"name\":\"levelProgress\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"rank\",\"kind\":\"enum\",\"type\":\"Rank\"},{\"name\":\"streamCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"shortCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"reelCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalReach\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalViews\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"cohortMonth\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"joinedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CreatorProfileToUser\"}],\"dbName\":\"creator_profiles\"},\"Submission\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rank\",\"kind\":\"enum\",\"type\":\"Rank\"},{\"name\":\"platform\",\"kind\":\"enum\",\"type\":\"Platform\"},{\"name\":\"contentLink\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contentTypes\",\"kind\":\"enum\",\"type\":\"ContentType\"},{\"name\":\"monsterAppearances\",\"kind\":\"enum\",\"type\":\"MonsterAppearance\"},{\"name\":\"totalReach\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalViews\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"statsScreenshotUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pointsAwarded\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"adminNotes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"submittedByAdminId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isApproved\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SubmissionToUser\"}],\"dbName\":\"submissions\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"externalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"profile\",\"kind\":\"object\",\"type\":\"CreatorProfile\",\"relationName\":\"CreatorProfileToUser\"},{\"name\":\"submissions\",\"kind\":\"object\",\"type\":\"Submission\",\"relationName\":\"SubmissionToUser\"}],\"dbName\":null},\"CreatorProfile\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CreatorProfileToUser\"},{\"name\":\"realName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contactEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contactPhone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nickname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"birthDate\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nationality\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"residency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"platforms\",\"kind\":\"enum\",\"type\":\"Platform\"},{\"name\":\"platformLinks\",\"kind\":\"object\",\"type\":\"PlatformLink\"},{\"name\":\"primarySocialLink\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"channelLogo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contentType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"followers\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"eventAttendance\",\"kind\":\"enum\",\"type\":\"EventAttendance\"},{\"name\":\"discoverySources\",\"kind\":\"enum\",\"type\":\"DiscoverySource\"},{\"name\":\"whyJoin\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"RegistrationStatus\"},{\"name\":\"adminNotes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"approvedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"rank\",\"kind\":\"enum\",\"type\":\"CreatorRank\"},{\"name\":\"currentRankReach\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalReachAllTime\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"pictureCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"storyCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"reelCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"longVideoCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"postCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalPictureCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalStoryCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalReelCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalLongVideoCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalPostCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"rankedUpAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"joinedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Submission\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SubmissionToUser\"},{\"name\":\"nickname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rank\",\"kind\":\"enum\",\"type\":\"CreatorRank\"},{\"name\":\"platform\",\"kind\":\"enum\",\"type\":\"Platform\"},{\"name\":\"contentLink\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contentTypes\",\"kind\":\"enum\",\"type\":\"ContentType\"},{\"name\":\"monsterAppearances\",\"kind\":\"enum\",\"type\":\"MonsterAppearance\"},{\"name\":\"submittedReach\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"acceptedReach\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"pendingReach\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"previousAcceptedReach\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"statsScreenshotUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"SubmissionStatus\"},{\"name\":\"adminNotes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isEdited\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

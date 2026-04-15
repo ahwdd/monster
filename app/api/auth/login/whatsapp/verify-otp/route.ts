@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { setAuthCookie } from "@/lib/auth/server";
-import { findUserByContact, safeUserSelect } from "@/lib/utils/auth";
+import { findUserByContact, safeUserSelect, sanitizeEmail } from "@/lib/utils/auth";
+import { extractPhoneKey } from "@/lib/utils/phoneKey";
 
 const schema = z.object({
   phone: z.string().min(10, "Valid phone number is required"),
@@ -31,14 +32,13 @@ export async function POST(request: NextRequest) {
       const nameParts = ext.name ? String(ext.name).trim().split(/\s+/) : ["Unknown", "User"];
       const firstName = nameParts[0] ?? "Unknown";
       const lastName  = nameParts.slice(1).join(" ") || firstName;
+      const phoneKey  = extractPhoneKey(validatedData.phone);
 
-      let phoneKey = "+20";
-      if (ext.phone?.startsWith("+")) {
-        const match = ext.phone.match(/^\+\d{1,3}/);
-        if (match) phoneKey = match[0];
-      }
+      // Sanitize email — discard Hub auto-generated fake emails
+      const cleanEmail = sanitizeEmail(ext.email, validatedData.phone);
 
-      let localUser = await findUserByContact(ext.email ?? null, validatedData.phone);
+      // Search by clean email (if real) + phone
+      let localUser = await findUserByContact(cleanEmail, validatedData.phone);
 
       if (!localUser) {
         localUser = await prisma.user.create({
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
             firstName,
             lastName,
             username:   `${firstName.toLowerCase()}-${Date.now()}`,
-            email:      ext.email ? ext.email.toLowerCase().trim() : null,
+            email:      cleanEmail,         // null if fake
             phone:      validatedData.phone,
             phoneKey,
             isVerified: true,
@@ -70,12 +70,16 @@ export async function POST(request: NextRequest) {
           provider:   "whatsapp",
           lastLogin:  new Date(),
         };
-        if (ext.email) {
+
+        // Only update email if Hub returned a REAL email (not fake)
+        // and it doesn't conflict with another user
+        if (cleanEmail && cleanEmail !== localUser.email) {
           const conflict = await prisma.user.findFirst({
-            where: { email: ext.email.toLowerCase().trim(), id: { not: localUser.id } },
+            where: { email: cleanEmail, id: { not: localUser.id } },
           });
-          if (!conflict) updateData.email = ext.email.toLowerCase().trim();
+          if (!conflict) updateData.email = cleanEmail;
         }
+
         localUser = await prisma.user.update({
           where:  { id: localUser.id },
           data:   updateData,
@@ -99,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('error :>> ', error);
+    console.error("login/whatsapp/verify-otp error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { success: false, message: "Validation failed", errors: error.flatten().fieldErrors },

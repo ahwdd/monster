@@ -3,21 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
-import {
-  calculateSubmissionPoints,
-  getLevelFromPoints,
-  getLevelProgress,
-} from "@/lib/utils/points";
 
 const PENDING_CAP = 5;
 
 const schema = z.object({
   platform:           z.enum(["FACEBOOK","INSTAGRAM","KICK","TIKTOK","TWITCH","YOUTUBE"]),
-  contentLink:        z.string().url("Content link must be a valid URL"),
-  contentTypes:       z.array(z.enum(["STREAM","SHORT","REEL"])).min(1),
+  contentLink:        z.string().url(),
+  contentTypes:       z.array(z.enum(["PICTURE","STORY","REEL","LONG_VIDEO","POST"])).min(1),
   monsterAppearances: z.array(z.enum(["MONSTER_THEME","LAYOUT","LOGO","MONSTER_PRODUCTS"])).min(1),
-  totalReach:         z.number().int().min(0),
-  totalViews:         z.number().int().min(0),
+  submittedReach:     z.number().int().min(0),
   statsScreenshotUrl: z.string().url().optional().nullable(),
 });
 
@@ -26,56 +20,44 @@ export async function POST(request: NextRequest) {
   try {
     const currentUser = await requireAuth(authHeader);
 
-    // Must have completed Form 1
     const profile = await prisma.creatorProfile.findUnique({
       where: { userId: currentUser.id },
     });
     if (!profile) {
-      return NextResponse.json(
-        { success: false, error: "Complete your creator registration first." },
-        { status: 403 }
-      );
+      return NextResponse.json({ success: false, error: "Complete registration first." }, { status: 403 });
+    }
+    if (profile.status !== "APPROVED") {
+      return NextResponse.json({ success: false, error: "Registration not yet approved." }, { status: 403 });
     }
 
-    // ── 5-pending cap ────────────────────────────────────────
     const pendingCount = await prisma.submission.count({
-      where: { userId: currentUser.id, isApproved: false },
+      where: { userId: currentUser.id, status: "PENDING" },
     });
     if (pendingCount >= PENDING_CAP) {
       return NextResponse.json(
-        {
-          success:      false,
-          error:        "PENDING_LIMIT_REACHED",
-          pendingCount,
-          cap:          PENDING_CAP,
-        },
+        { success: false, error: "PENDING_LIMIT_REACHED", pendingCount, cap: PENDING_CAP },
         { status: 429 }
       );
     }
 
-    const body          = await request.json();
-    const validatedData = schema.parse(body);
-
-    const points = calculateSubmissionPoints({
-      totalViews:         validatedData.totalViews,
-      totalReach:         validatedData.totalReach,
-      monsterAppearances: validatedData.monsterAppearances,
-      rank:               profile.rank,
-    });
+    const body = await request.json();
+    const data = schema.parse(body);
 
     const submission = await prisma.submission.create({
       data: {
         userId:             currentUser.id,
+        nickname:           profile.nickname,
         rank:               profile.rank,
-        platform:           validatedData.platform,
-        contentLink:        validatedData.contentLink,
-        contentTypes:       validatedData.contentTypes,
-        monsterAppearances: validatedData.monsterAppearances,
-        totalReach:         validatedData.totalReach,
-        totalViews:         validatedData.totalViews,
-        statsScreenshotUrl: validatedData.statsScreenshotUrl ?? null,
-        pointsAwarded:      points,
-        isApproved:         false,
+        platform:           data.platform,
+        contentLink:        data.contentLink,
+        contentTypes:       data.contentTypes,
+        monsterAppearances: data.monsterAppearances,
+        submittedReach:     data.submittedReach,
+        acceptedReach:      0,
+        pendingReach:       null,
+        statsScreenshotUrl: data.statsScreenshotUrl ?? null,
+        status:             "PENDING",
+        isEdited:           false,
       },
     });
 
@@ -90,6 +72,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
     }
+    console.error("Submission error:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
@@ -104,13 +87,13 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    const pendingCount = submissions.filter((s) => !s.isApproved).length;
+    const pendingCount = submissions.filter((s) => s.status === "PENDING").length;
 
     return NextResponse.json({
       success: true,
-      data:    submissions,
+      data: submissions,
       pendingCount,
-      cap:     PENDING_CAP,
+      cap:      PENDING_CAP,
       canSubmit: pendingCount < PENDING_CAP,
     });
   } catch (error) {

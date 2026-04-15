@@ -8,16 +8,17 @@ import FileUpload from "@/components/ui/FileUpload";
 import { useToast } from "@/contexts/ToastContext";
 
 type Platform   = "FACEBOOK"|"INSTAGRAM"|"KICK"|"TIKTOK"|"TWITCH"|"YOUTUBE";
-type ContentType= "STREAM"|"SHORT"|"REEL";
+type ContentType= "PICTURE"|"STORY"|"REEL"|"LONG_VIDEO"|"POST";
 type Appearance = "MONSTER_THEME"|"LAYOUT"|"LOGO"|"MONSTER_PRODUCTS";
 
 type Props = {
-  creatorName: string;
+  nickname:    string;
   rank:        string;
+  initialData?: any; // for edit mode
   onSuccess:   () => void;
 };
 
-export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) {
+export default function SubmissionForm({ nickname, rank, initialData, onSuccess }: Props) {
   const t     = useTranslations("submitForm");
   const toast = useToast();
 
@@ -31,9 +32,11 @@ export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) 
   ];
 
   const CONTENT_TYPES: { value: ContentType; label: string }[] = [
-    { value: "STREAM", label: t("streamLabel") },
-    { value: "SHORT",  label: t("shortLabel")  },
-    { value: "REEL",   label: t("reelLabel")   },
+    { value: "PICTURE",    label: t("pictureLabel")   },
+    { value: "STORY",      label: t("storyLabel")     },
+    { value: "REEL",       label: t("reelLabel")      },
+    { value: "LONG_VIDEO", label: t("longVideoLabel") },
+    { value: "POST",       label: t("postLabel")      },
   ];
 
   const APPEARANCES: { value: Appearance; label: string }[] = [
@@ -46,14 +49,15 @@ export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) 
   const [loading, setLoading] = useState(false);
   const [errors,  setErrors]  = useState<Record<string, string>>({});
   const [form, setForm] = useState({
-    platform:           "" as Platform | "",
-    contentLink:        "",
-    contentTypes:       [] as ContentType[],
-    monsterAppearances: [] as Appearance[],
-    totalReach:         "",
-    totalViews:         "",
-    statsScreenshotUrl: "",
+    platform:           (initialData?.platform        ?? "") as Platform | "",
+    contentLink:        initialData?.contentLink       ?? "",
+    contentTypes:       (initialData?.contentTypes     ?? []) as ContentType[],
+    monsterAppearances: (initialData?.monsterAppearances ?? []) as Appearance[],
+    submittedReach:     String(initialData?.submittedReach ?? ""),
+    statsScreenshotUrl: initialData?.statsScreenshotUrl ?? "",
   });
+
+  const isEditMode = !!initialData?.id;
 
   function set(key: keyof typeof form, value: any) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -71,8 +75,7 @@ export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) 
     if (!form.contentLink.trim())            e.contentLink        = t("errorLink");
     if (form.contentTypes.length === 0)      e.contentTypes       = t("errorContentType");
     if (form.monsterAppearances.length === 0)e.monsterAppearances = t("errorAppearance");
-    if (!form.totalReach.trim())             e.totalReach         = t("errorReach");
-    if (!form.totalViews.trim())             e.totalViews         = t("errorViews");
+    if (!form.submittedReach.trim())         e.submittedReach     = t("errorReach");
     if (!form.statsScreenshotUrl)            e.statsScreenshotUrl = t("errorScreenshot");
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -82,21 +85,29 @@ export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) 
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
+
+    const payload = {
+      platform:           form.platform,
+      contentLink:        form.contentLink,
+      contentTypes:       form.contentTypes,
+      monsterAppearances: form.monsterAppearances,
+      submittedReach:     parseInt(form.submittedReach, 10) || 0,
+      statsScreenshotUrl: form.statsScreenshotUrl || null,
+    };
+
     try {
-      const res  = await fetch("/api/submissions", {
-        method: "POST", credentials: "include",
+      const url    = isEditMode ? `/api/submissions/${initialData.id}` : "/api/submissions";
+      const method = isEditMode ? "PATCH" : "POST";
+
+      const res  = await fetch(url, {
+        method, credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          totalReach: parseInt(form.totalReach, 10) || 0,
-          totalViews: parseInt(form.totalViews, 10) || 0,
-          statsScreenshotUrl: form.statsScreenshotUrl || null,
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
+
       if (data.success) {
-        toast.success(t("successMsg"));
-        setForm({ platform: "", contentLink: "", contentTypes: [], monsterAppearances: [], totalReach: "", totalViews: "", statsScreenshotUrl: "" });
+        toast.success(isEditMode ? t("editSuccessMsg") : t("successMsg"));
         onSuccess();
       } else {
         toast.error(data.error || "Error");
@@ -109,13 +120,15 @@ export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) 
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <form onSubmit={handleSubmit} className="space-y-5">
 
-        <Field label={t("creatorName")}>
-          <input type="text" value={creatorName} disabled className={`${input()} opacity-60 cursor-not-allowed`} />
+        {/* Nickname — read only */}
+        <Field label={t("nickname")}>
+          <input type="text" value={nickname} disabled className={`${input()} opacity-60 cursor-not-allowed`} />
         </Field>
 
+        {/* Rank — read only */}
         <Field label={t("rank")}>
           <input type="text" value={rank.replace(/_/g, " ")} disabled className={`${input()} opacity-60 cursor-not-allowed`} />
         </Field>
@@ -153,16 +166,16 @@ export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) 
           </div>
         </Field>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Field label={t("totalReach")} error={errors.totalReach} required>
-            <input type="number" min="0" value={form.totalReach} onChange={(e) => set("totalReach", e.target.value)}
-              className={input(errors.totalReach)} placeholder="0" />
-          </Field>
-          <Field label={t("totalViews")} error={errors.totalViews} required>
-            <input type="number" min="0" value={form.totalViews} onChange={(e) => set("totalViews", e.target.value)}
-              className={input(errors.totalViews)} placeholder="0" />
-          </Field>
-        </div>
+        <Field label={t("totalReach")} error={errors.submittedReach} required>
+          <input type="number" min="0" value={form.submittedReach}
+            onChange={(e) => set("submittedReach", e.target.value)}
+            className={input(errors.submittedReach)} placeholder="0" />
+          {isEditMode && initialData?.acceptedReach > 0 && (
+            <p className="txt-smaller text-zinc-500 mt-1">
+              {t("currentAccepted")}: {Number(initialData.acceptedReach).toLocaleString()}
+            </p>
+          )}
+        </Field>
 
         <FileUpload label={t("screenshot")} value={form.statsScreenshotUrl}
           onChange={(url) => set("statsScreenshotUrl", url)} folder="monster-creators/stats"
@@ -173,7 +186,7 @@ export default function SubmissionForm({ creatorName, rank, onSuccess }: Props) 
         >
           {loading
             ? <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-            : <><IoCheckmarkCircle className="size-5" />{t("submit")}</>
+            : <><IoCheckmarkCircle className="size-5" />{isEditMode ? t("editSubmit") : t("submit")}</>
           }
         </button>
       </form>

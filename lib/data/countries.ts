@@ -2,9 +2,9 @@
 import { Country } from "@/lib/types/countries";
 
 export const countriesList: Country[] = [
-  { key: "EG", label: "Egypt",               arLabel: "مصر",                      callingCode: "+20",  flag: "eg" },
-  { key: "SA", label: "Saudi Arabia",        arLabel: "المملكة العربية السعودية", callingCode: "+966", flag: "sa" },
-  { key: "MA", label: "Morocco",             arLabel: "المغرب",                   callingCode: "+212", flag: "ma" },
+  { key: "EG", label: "Egypt",         arLabel: "مصر",                      callingCode: "+20",  flag: "eg" },
+  { key: "SA", label: "Saudi Arabia",  arLabel: "المملكة العربية السعودية", callingCode: "+966", flag: "sa" },
+  { key: "MA", label: "Morocco",       arLabel: "المغرب",                   callingCode: "+212", flag: "ma" },
 //   { key: "AE", label: "UAE",                 arLabel: "الإمارات",                 callingCode: "+971", flag: "ae" },
 //   { key: "KW", label: "Kuwait",              arLabel: "الكويت",                   callingCode: "+965", flag: "kw" },
 //   { key: "QA", label: "Qatar",               arLabel: "قطر",                      callingCode: "+974", flag: "qa" },

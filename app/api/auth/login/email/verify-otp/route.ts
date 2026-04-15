@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { setAuthCookie } from "@/lib/auth/server";
 import { findUserByContact, safeUserSelect } from "@/lib/utils/auth";
+import { extractPhoneKey } from "@/lib/utils/phoneKey";
 
 const schema = z.object({
   email: z.string().email("Valid email is required"),
@@ -32,16 +33,18 @@ export async function POST(request: NextRequest) {
       const firstName = nameParts[0];
       const lastName  = nameParts.slice(1).join(" ") || firstName;
 
+      // Phone from Hub — only trust if it's a real phone number
       let phoneKey: string | null = null;
-      if (ext.phone?.startsWith("+")) {
-        const match = ext.phone.match(/^\+\d{1,3}/);
-        if (match) phoneKey = match[0];
+      let cleanPhone: string | null = null;
+      if (ext.phone && ext.phone.startsWith("+") && ext.phone.length >= 10) {
+        cleanPhone = ext.phone;
+        phoneKey   = extractPhoneKey(ext.phone);
       }
 
-      let localUser = await findUserByContact(
-        validatedData.email,
-        ext.phone ?? null
-      );
+      // Email is always real here — user typed it
+      const cleanEmail = validatedData.email.toLowerCase().trim();
+
+      let localUser = await findUserByContact(cleanEmail, cleanPhone);
 
       if (!localUser) {
         localUser = await prisma.user.create({
@@ -49,8 +52,8 @@ export async function POST(request: NextRequest) {
             firstName,
             lastName,
             username:   `${firstName.toLowerCase()}-${Date.now()}`,
-            email:      validatedData.email.toLowerCase().trim(),
-            phone:      ext.phone ?? null,
+            email:      cleanEmail,
+            phone:      cleanPhone,
             phoneKey,
             isVerified: true,
             isActive:   true,
@@ -71,20 +74,13 @@ export async function POST(request: NextRequest) {
           provider:   "email",
           lastLogin:  new Date(),
         };
-        // Only update email if it changed and won't conflict
-        if (ext.email && ext.email !== localUser.email) {
+        // Only update phone if Hub returned a real one and it won't conflict
+        if (cleanPhone && cleanPhone !== localUser.phone) {
           const conflict = await prisma.user.findFirst({
-            where: { email: ext.email.toLowerCase().trim(), id: { not: localUser.id } },
-          });
-          if (!conflict) updateData.email = ext.email.toLowerCase().trim();
-        }
-        // Only update phone if Hub returned one and it won't conflict
-        if (ext.phone && ext.phone !== localUser.phone) {
-          const conflict = await prisma.user.findFirst({
-            where: { phone: ext.phone, id: { not: localUser.id } },
+            where: { phone: cleanPhone, id: { not: localUser.id } },
           });
           if (!conflict) {
-            updateData.phone    = ext.phone;
+            updateData.phone    = cleanPhone;
             updateData.phoneKey = phoneKey;
           }
         }
@@ -111,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('error :>> ', error);
+    console.error("login/email/verify-otp error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { success: false, message: "Validation failed", errors: error.flatten().fieldErrors },

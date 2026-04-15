@@ -6,58 +6,61 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 const nextConfig: NextConfig = {
     
   images: {
-    domains: [
-      'localhost',
-      'nvidia-nights-6.vercel.app',
-      'images.lumacdn.com',
-      // Arabhardware
-      'hub.arabhardware.net',
-      'arabhardware.net',
-      'arabhardware.com',
-      // cloudinary
-      'res.cloudinary.com',
+    remotePatterns: [
+      { protocol: "http",  hostname: "localhost" },
+      { protocol: "https", hostname: "nvidia-nights-6.vercel.app" },
+      { protocol: "https", hostname: "images.lumacdn.com" },
 
-      // qrserver
-      'api.qrserver.com',
+      // Arabhardware
+      { protocol: "https", hostname: "hub.arabhardware.net" },
+      { protocol: "https", hostname: "arabhardware.net" },
+      { protocol: "https", hostname: "arabhardware.com" },
+
+      // Cloudinary
+      { protocol: "https", hostname: "res.cloudinary.com" },
+
+      // QR server
+      { protocol: "https", hostname: "api.qrserver.com" },
 
       // Unsplash
-      'images.unsplash.com',
-      'plus.unsplash.com',
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "plus.unsplash.com" },
 
       // Pexels
-      'images.pexels.com',
+      { protocol: "https", hostname: "images.pexels.com" },
 
       // Pixabay
-      'cdn.pixabay.com',
+      { protocol: "https", hostname: "cdn.pixabay.com" },
 
-      // Freepik (CDN used by freepik assets)
-      'img.freepik.com',
+      // Freepik
+      { protocol: "https", hostname: "img.freepik.com" },
 
-      // Pinterest (note: usage may violate TOS if hotlinked directly)
-      'i.pinimg.com',
+      // Pinterest
+      { protocol: "https", hostname: "i.pinimg.com" },
 
-      // Wikimedia Commons
-      'upload.wikimedia.org',
+      // Wikimedia
+      { protocol: "https", hostname: "upload.wikimedia.org" },
 
-      // Openverse (Creative Commons images)
-      'ccsearch.creativecommons.org',
+      // Openverse
+      { protocol: "https", hostname: "ccsearch.creativecommons.org" },
 
-      // Flickr (free images, but check licenses)
-      'live.staticflickr.com',
+      // Flickr
+      { protocol: "https", hostname: "live.staticflickr.com" },
 
       // Rawpixel
-      'img.rawpixel.com',
+      { protocol: "https", hostname: "img.rawpixel.com" },
 
-      // Canva (when exporting public links)
-      'static.canva.com',
+      // Canva
+      { protocol: "https", hostname: "static.canva.com" },
 
-      // StockSnap.io
-      'stocksnap.io',
+      // StockSnap
+      { protocol: "https", hostname: "stocksnap.io" },
 
       // Reshot
-      'cdn.reshot.com'
+      { protocol: "https", hostname: "cdn.reshot.com" },
     ],
-    unoptimized: process.env.NODE_ENV === 'development',
+
+    unoptimized: process.env.NODE_ENV === "development",
   }
 };
 

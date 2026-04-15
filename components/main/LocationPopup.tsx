@@ -22,10 +22,10 @@ export default function LocationPopup({ onClose }: { onClose: () => void }) {
 
   const countries: Country[] =
     activeTab === "americas"
-      ? locationData.americas
+      ? locationData.americas ?? []
       : activeTab === "asia_pacific"
-        ? locationData.asia_pacific
-        : locationData.emea;
+        ? locationData.asia_pacific ?? []
+        : locationData.emea ?? [];
 
   return (
     <AnimatePresence>

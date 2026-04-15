@@ -8,15 +8,14 @@ export async function GET(request: NextRequest) {
   try {
     await requireRole(["ADMIN"], authHeader);
 
-    const params     = new URL(request.url).searchParams;
-    const page       = Math.max(1, parseInt(params.get("page")  ?? "1",  10));
-    const limit      = Math.min(50, parseInt(params.get("limit") ?? "15", 10));
-    const skip       = (page - 1) * limit;
-    const isApproved = params.get("isApproved");
+    const params  = new URL(request.url).searchParams;
+    const page    = Math.max(1, parseInt(params.get("page")  ?? "1",  10));
+    const limit   = Math.min(50, parseInt(params.get("limit") ?? "15", 10));
+    const skip    = (page - 1) * limit;
+    const status  = params.get("status"); // PENDING | APPROVED | REJECTED | null
 
     const where: any = {};
-    if (isApproved === "true")  where.isApproved = true;
-    if (isApproved === "false") where.isApproved = false;
+    if (status) where.status = status;
 
     const [data, total] = await Promise.all([
       prisma.submission.findMany({
@@ -25,6 +24,14 @@ export async function GET(request: NextRequest) {
         include: {
           user: {
             select: { firstName: true, lastName: true, email: true, phone: true },
+            include: {
+              profile: {
+                select: {
+                  nickname: true, rank: true,
+                  currentRankReach: true, totalReachAllTime: true,
+                },
+              },
+            },
           },
         },
       }),

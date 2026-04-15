@@ -3,30 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
-import {
-  calculateSubmissionPoints,
-  getLevelFromPoints,
-  getLevelProgress,
-} from "@/lib/utils/points";
-import { Rank } from "@/generated/prisma";
 
-const patchSchema = z.object({
-  isApproved:   z.boolean().optional(),
-  adminNotes:   z.string().optional(),
-  rank: z.enum([
-    "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER",
-    "ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
-  ]).optional(),
-  // null  = "clear override, recalculate from rank"
-  // number = explicit override
-  // undefined = not sent at all, keep current behaviour
-  pointsOverride: z.number().int().min(0).nullable().optional(),
+const schema = z.object({
+  status:         z.enum(["APPROVED","REJECTED"]),
+  acceptedReach:  z.number().int().min(0).optional(),
+  adminNotes:     z.string().optional().nullable(),
 });
-
-const RANK_ORDER = [
-  "UNRANKED","ROOKIE_MONSTER","RISING_MONSTER",
-  "ELITE_MONSTER","MEGA_MONSTER","COLD_MONSTER",
-];
 
 export async function PATCH(
   request: NextRequest,
@@ -39,85 +21,71 @@ export async function PATCH(
 
     const submission = await prisma.submission.findUnique({ where: { id } });
     if (!submission) {
-      return NextResponse.json(
-        { success: false, error: "Submission not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
     }
 
-    const body          = await request.json();
-    const validatedData = patchSchema.parse(body);
+    const body = await request.json();
+    const data = schema.parse(body);
 
-    const effectiveRank = validatedData.rank ?? submission.rank;
+    let reachToCredit = 0;
+    let newAcceptedReach = submission.acceptedReach;
 
-    // ── Points resolution ────────────────────────────────────
-    // Priority:
-    // 1. pointsOverride is an explicit number → use it as-is
-    // 2. pointsOverride is null → admin cleared the override, recalculate from rank
-    // 3. rank changed but no pointsOverride sent → recalculate from new rank
-    // 4. nothing changed → keep existing pointsAwarded
-    let pointsAwarded: number;
-
-    if (typeof validatedData.pointsOverride === "number") {
-      // Explicit override
-      pointsAwarded = validatedData.pointsOverride;
-    } else if (
-      validatedData.pointsOverride === null ||
-      (validatedData.rank && validatedData.rank !== submission.rank)
-    ) {
-      // Rank changed or override cleared → recalculate
-      pointsAwarded = calculateSubmissionPoints({
-        totalViews:         submission.totalViews,
-        totalReach:         submission.totalReach,
-        monsterAppearances: submission.monsterAppearances,
-        rank:               effectiveRank,
-      });
-    } else {
-      // Nothing relevant changed → keep current
-      pointsAwarded = submission.pointsAwarded;
+    if (data.status === "APPROVED") {
+      if (data.acceptedReach !== undefined) {
+        const adminReach = data.acceptedReach;
+        const delta      = adminReach - submission.acceptedReach;
+        reachToCredit    = delta;
+        newAcceptedReach = adminReach;
+      } else if (submission.pendingReach !== null && submission.pendingReach !== undefined) {
+        const prev    = submission.previousAcceptedReach ?? submission.acceptedReach;
+        reachToCredit = submission.pendingReach - prev;
+        newAcceptedReach = submission.pendingReach;
+      } else {
+        reachToCredit    = submission.submittedReach;
+        newAcceptedReach = submission.submittedReach;
+      }
     }
 
     const updated = await prisma.submission.update({
       where: { id },
       data: {
-        isApproved:    validatedData.isApproved  ?? submission.isApproved,
-        adminNotes:    validatedData.adminNotes  ?? submission.adminNotes,
-        rank:          effectiveRank,
-        pointsAwarded,
+        status:               data.status,
+        adminNotes:           data.adminNotes ?? null,
+        acceptedReach:        newAcceptedReach,
+        pendingReach:         null, // clear pending regardless
+        previousAcceptedReach:null,
       },
     });
 
-    // ── Recompute profile totals from all approved submissions ─
-    // Must run AFTER the update so the new pointsAwarded is in the DB
-    const approved = await prisma.submission.findMany({
-      where: { userId: submission.userId, isApproved: true },
-    });
+    if (data.status === "APPROVED" && reachToCredit !== 0) {
+      const profile = await prisma.creatorProfile.findUnique({
+        where: { userId: submission.userId },
+      });
+      if (profile) {
+        const contentCounts: any = {};
+        submission.contentTypes.forEach((ct) => {
+          const field = contentTypeToField(ct);
+          contentCounts[field] = (contentCounts[field] ?? 0) + 1;
+        });
 
-    const totalPoints = approved.reduce((s, x) => s + x.pointsAwarded, 0);
-    const totalViews  = approved.reduce((s, x) => s + x.totalViews,    0);
-    const totalReach  = approved.reduce((s, x) => s + x.totalReach,    0);
-    const streamCount = approved.filter((x) => x.contentTypes.includes("STREAM")).length;
-    const shortCount  = approved.filter((x) => x.contentTypes.includes("SHORT")).length;
-    const reelCount   = approved.filter((x) => x.contentTypes.includes("REEL")).length;
+        const rankWindowIncrements: any = {};
+        const totalIncrements: any = {};
+        Object.entries(contentCounts).forEach(([field, count]) => {
+          rankWindowIncrements[field]                     = { increment: count as number };
+          totalIncrements[`total${capitalize(field)}`]   = { increment: count as number };
+        });
 
-    const highestRank = approved.reduce<Rank>(
-      (best, x) => RANK_ORDER.indexOf(x.rank) > RANK_ORDER.indexOf(best) ? x.rank : best,
-    "UNRANKED");
-
-    await prisma.creatorProfile.updateMany({
-      where: { userId: submission.userId },
-      data: {
-        totalPoints,
-        totalViews,
-        totalReach,
-        streamCount,
-        shortCount,
-        reelCount,
-        rank:          highestRank,
-        currentLevel:  getLevelFromPoints(totalPoints),
-        levelProgress: getLevelProgress(totalPoints),
-      },
-    });
+        await prisma.creatorProfile.update({
+          where: { userId: submission.userId },
+          data: {
+            currentRankReach:  { increment: reachToCredit },
+            totalReachAllTime: { increment: reachToCredit },
+            ...rankWindowIncrements,
+            ...totalIncrements,
+          },
+        });
+      }
+    }
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
@@ -133,24 +101,22 @@ export async function PATCH(
     if (error instanceof Error && error.message === "Insufficient permissions") {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
+    console.error("Admin submission PATCH error:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const authHeader = request.headers.get("authorization") ?? undefined;
-  try {
-    await requireRole(["ADMIN"], authHeader);
-    const { id } = await params;
-    await prisma.submission.delete({ where: { id } });
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Insufficient permissions") {
-      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
-    }
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
-  }
+function contentTypeToField(ct: string): string {
+  const map: Record<string, string> = {
+    PICTURE:    "pictureCount",
+    STORY:      "storyCount",
+    REEL:       "reelCount",
+    LONG_VIDEO: "longVideoCount",
+    POST:       "postCount",
+  };
+  return map[ct] ?? "postCount";
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }

@@ -6,26 +6,33 @@ import { useLocale, useTranslations } from "next-intl";
 import Link                    from "next/link";
 import { motion }              from "framer-motion";
 import {
-  IoPersonOutline, IoLogOutOutline,
-  IoMailOutline, IoPhonePortraitOutline,
-  IoDocumentTextOutline, IoAddCircleOutline,
-  IoArrowForward, IoArrowBack,
+  IoPersonOutline, IoLogOutOutline, IoMailOutline,
+  IoPhonePortraitOutline, IoDocumentTextOutline,
+  IoAddCircleOutline, IoArrowForward, IoArrowBack,
   IoCheckmarkCircleOutline, IoWarningOutline,
-  IoSparklesOutline, IoTimeOutline,
+  IoSparklesOutline, IoTimeOutline, IoCreateOutline,
+  IoTrophyOutline, IoCalendarOutline,
 } from "react-icons/io5";
 import AuthShell        from "@/components/auth/AuthShell";
 import ChangeEmailModal from "@/components/profile/ChangeEmailModal";
 import ChangePhoneModal from "@/components/profile/ChangePhoneModal";
-import CanLevelMeter    from "@/components/ui/CanLevelMeter";
 import { useAuth }      from "@/hooks/useAuth";
 import { useToast }     from "@/contexts/ToastContext";
-import { getLevelFromPoints, LEVEL_THRESHOLDS } from "@/lib/utils/points";
+import {
+  getRankProgress,
+  formatNumber,
+  getMonthsInProgram,
+  MONTH_RANGE,
+  RANK_THRESHOLDS,
+  getDecorativeTitle,
+} from "@/lib/utils/rank";
 
 const PENDING_CAP = 5;
 
 export default function ProfilePage() {
   const t      = useTranslations("profile");
   const ts     = useTranslations("submissions");
+  const tr     = useTranslations("rank");
   const locale = useLocale();
   const isRTL  = locale === "ar";
   const router = useRouter();
@@ -77,23 +84,34 @@ export default function ProfilePage() {
     );
   }
 
-  const displayEmail    = user.email && !user.email.includes("@temp.monster") ? user.email : null;
-  const initial         = user.firstName?.charAt(0)?.toUpperCase() ?? "?";
-  const totalPoints     = profile?.totalPoints  ?? 0;
-  const levelKey        = getLevelFromPoints(totalPoints);
-  const levelNum        = parseInt(levelKey.replace("LEVEL_", ""), 10);
-  const levelProgress   = profile?.levelProgress ?? 0;
-  const threshold       = LEVEL_THRESHOLDS[levelKey];
-  const nextTarget      = threshold.max === Infinity ? null : threshold.max + 1;
+  const displayEmail = user.email && !user.email.includes("@temp.monster") ? user.email : null;
+  const initial      = user.firstName?.charAt(0)?.toUpperCase() ?? "?";
 
-  // Form 1 submitted (registered) but admin hasn't approved yet
-  const isRegistered    = profileLoaded && !!profile;
-  const isApproved      = !!profile?.isApproved;
-  const isPendingApproval = isRegistered && !isApproved;
-  // Can submit content only if Form 1 is approved
-  const canAccessSubmit = isApproved && canSubmit;
-  // Show level bar only when there are approved content submissions
-  const hasPoints       = totalPoints > 0 || (profile?.rank && profile.rank !== "UNRANKED");
+  // Status flags
+  const isRegistered      = profileLoaded && !!profile;
+  const isApproved        = profile?.status === "APPROVED";
+  const isPending         = profile?.status === "PENDING";
+  const isRejected        = profile?.status === "REJECTED";
+  const canAccessSubmit   = isApproved && canSubmit;
+
+  // Rank data
+  const rank              = profile?.rank ?? "UNRANKED";
+  const currentRankReach  = profile?.currentRankReach  ?? 0;
+  const totalReachAllTime = profile?.totalReachAllTime ?? 0;
+  const rankProgress      = getRankProgress(rank, currentRankReach);
+  const progressPct       = Math.round(rankProgress * 100);
+  const threshold         = RANK_THRESHOLDS[rank] ?? 0;
+  const decorativeTitle   = getDecorativeTitle(rank, rankProgress);
+
+  // Month tracking
+  const approvedAt  = profile?.approvedAt ? new Date(profile.approvedAt) : null;
+  const monthsIn    = getMonthsInProgram(approvedAt);
+  const [, maxMonth]= MONTH_RANGE[rank] ?? [0, 1];
+  const monthDisplay= `${Math.min(monthsIn, maxMonth)}/${maxMonth}`;
+
+  // Content counts
+  const totalContent = (profile?.pictureCount ?? 0) + (profile?.storyCount ?? 0) +
+    (profile?.reelCount ?? 0) + (profile?.longVideoCount ?? 0) + (profile?.postCount ?? 0);
 
   const Arrow = isRTL ? IoArrowBack : IoArrowForward;
 
@@ -112,90 +130,153 @@ export default function ProfilePage() {
             <h1 className="header-smaller font-display font-semibold text-white truncate">
               {user.firstName} {user.lastName}
             </h1>
+            {profile?.nickname && (
+              <p className="txt-smaller text-zinc-400 truncate">@{profile.nickname}</p>
+            )}
             <p className="txt-smaller text-zinc-500 truncate">{displayEmail || user.phone}</p>
             <div className="flex gap-2 mt-1.5 flex-wrap">
-              {profile?.rank && profile.rank !== "UNRANKED" && (
+              {/* Rank badge */}
+              {isApproved && rank !== "UNRANKED" && (
                 <span className="txt-smaller font-medium uppercase tracking-wide text-[#78be20] border border-[#78be20]/30 px-2 py-0.5 rounded-sm">
-                  {profile.rank.replace(/_/g, " ")}
+                  {tr(rank.toLowerCase() as any)}
                 </span>
               )}
-              {isRegistered && isApproved && (
+              {/* Decorative sub-rank */}
+              {decorativeTitle && (
+                <span className="txt-smaller text-zinc-400 border border-zinc-700 px-2 py-0.5 rounded-sm italic">
+                  {tr(decorativeTitle.toLowerCase() as any)}
+                </span>
+              )}
+              {/* Status badge */}
+              {isApproved && (
                 <span className="txt-smaller text-[#78be20] border border-[#78be20]/30 px-2 py-0.5 rounded-sm flex items-center gap-1">
                   <IoCheckmarkCircleOutline className="size-3" />{t("registered")}
                 </span>
               )}
-              {isPendingApproval && (
+              {isPending && (
                 <span className="txt-smaller text-yellow-400 border border-yellow-400/30 px-2 py-0.5 rounded-sm flex items-center gap-1">
-                  <IoTimeOutline className="size-3" />{t("loggingOut" /* placeholder — we use inline text below */)}
+                  <IoTimeOutline className="size-3" />{t("pendingApproval")}
+                </span>
+              )}
+              {isRejected && (
+                <span className="txt-smaller text-red-400 border border-red-400/30 px-2 py-0.5 rounded-sm flex items-center gap-1">
+                  <IoWarningOutline className="size-3" />{t("rejected")}
                 </span>
               )}
             </div>
           </div>
         </motion.div>
 
-        {/* Pending approval banner — Form 1 submitted but not yet approved */}
-        {isPendingApproval && (
+        {/* Status banners */}
+        {isPending && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04, duration: 0.28 }}
-            className="bg-yellow-400/5 border border-yellow-400/30 rounded-2xl p-4 flex items-start gap-3"
+            className="bg-yellow-400/5 border border-yellow-400/30 rounded-2xl p-4 flex items-start justify-between gap-3"
           >
-            <IoTimeOutline className="size-5 text-yellow-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="txt-small font-semibold text-yellow-400">
-                {locale === "ar" ? "طلبك قيد المراجعة" : "Application Under Review"}
-              </p>
-              <p className="txt-smaller text-zinc-400 mt-0.5">
-                {locale === "ar"
-                  ? "سيقوم الفريق بمراجعة طلبك قريبًا. ستتمكن من رفع المشاركات بعد القبول."
-                  : "The team will review your application soon. You'll be able to submit content after approval."
-                }
-              </p>
+            <div className="flex items-start gap-3">
+              <IoTimeOutline className="size-5 text-yellow-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="txt-small font-semibold text-yellow-400">{t("applicationUnderReview")}</p>
+                <p className="txt-smaller text-zinc-400 mt-0.5">{t("applicationUnderReviewDesc")}</p>
+              </div>
             </div>
+            <Link href={`/${locale}/submissions/register?editMode=true`}
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-white txt-smaller rounded-lg transition-colors">
+              <IoCreateOutline className="size-3.5" />{t("editApplication")}
+            </Link>
           </motion.div>
         )}
 
-        {/* Level can meter — only after approval + has points */}
-        {isApproved && hasPoints && (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.28 }}
-            className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-5"
+        {isRejected && (
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04, duration: 0.28 }}
+            className="bg-red-400/5 border border-red-400/30 rounded-2xl p-4 flex items-start justify-between gap-3"
           >
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              <CanLevelMeter
-                levelNum={levelNum}
-                levelProgress={levelProgress}
-                totalPoints={totalPoints}
-                rank={profile.rank}
-                className="shrink-0"
-              />
-              <div className="flex-1 w-full space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="txt-small font-semibold text-white uppercase tracking-wide">{t("progress")}</span>
-                  {nextTarget && (
-                    <span className="txt-smaller text-zinc-500">{t("nextLevel")}: {nextTarget.toLocaleString()} pts</span>
-                  )}
+            <div className="flex items-start gap-3">
+              <IoWarningOutline className="size-5 text-red-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="txt-small font-semibold text-red-400">{t("applicationRejected")}</p>
+                <p className="txt-smaller text-zinc-400 mt-0.5">{t("applicationRejectedDesc")}</p>
+                {profile?.adminNotes && (
+                  <p className="txt-smaller text-zinc-500 mt-1 italic">"{profile.adminNotes}"</p>
+                )}
+              </div>
+            </div>
+            <Link href={`/${locale}/submissions/register?editMode=true`}
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-[#78be20] hover:bg-[#8fd428] text-black font-semibold txt-smaller rounded-lg transition-colors">
+              <IoCreateOutline className="size-3.5" />{t("editApplication")}
+            </Link>
+          </motion.div>
+        )}
+
+        {/* Rank + progress card — only when approved */}
+        {isApproved && (
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.28 }}
+            className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-5 space-y-4"
+          >
+            <div className="flex items-center gap-2">
+              <IoTrophyOutline className="size-4 text-[#78be20]" />
+              <span className="txt-regular font-semibold text-white uppercase">{tr(rank.toLowerCase() as any)}</span>
+              {decorativeTitle && (
+                <span className="txt-smaller text-zinc-500 italic">/ {tr(decorativeTitle.toLowerCase() as any)}</span>
+              )}
+            </div>
+
+            {/* Month counter */}
+            {approvedAt && (
+              <div className="flex items-center gap-2 txt-smaller text-zinc-500">
+                <IoCalendarOutline className="size-3.5" />
+                {t("monthsInProgram")}: <span className="text-white font-medium">{monthDisplay}</span>
+              </div>
+            )}
+
+            {/* Reach progress toward next rank */}
+            {rank !== "COLD" && (
+              <div className="space-y-2">
+                <div className="flex justify-between txt-smaller">
+                  <span className="text-zinc-500">{t("currentRankReach")}</span>
+                  <span className="text-white font-medium">
+                    {formatNumber(currentRankReach)} / {formatNumber(threshold === Infinity ? 0 : threshold)}
+                  </span>
                 </div>
-                <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: `${Math.round(levelProgress * 100)}%` }}
-                    transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1], delay: 0.4 }}
-                    className="h-full bg-monster rounded-full" />
+                <div className="h-2.5 rounded-full bg-zinc-800 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPct}%` }}
+                    transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
+                    className="h-full rounded-full"
+                    style={{ background: "linear-gradient(90deg, #78be20, #a3e635)" }}
+                  />
                 </div>
                 <p className="txt-smaller text-zinc-500">
-                  {Math.round(levelProgress * 100)}% {locale === "ar" ? `من المستوى ${levelNum}` : `of Level ${levelNum}`}
+                  {progressPct}% {tr("progressLabel", { next: tr(rank === "UNRANKED" ? "rookie" : rank === "ROOKIE" ? "rising" : "cold") })}
                 </p>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { label: t("streams"), val: profile.streamCount, target: 10 },
-                    { label: t("shorts"),  val: profile.shortCount,  target: 10 },
-                    { label: t("reels"),   val: profile.reelCount,   target: 5  },
-                  ].map(({ label, val, target }) => (
-                    <div key={label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
-                      <p className="header-smaller font-display font-bold text-white leading-none">
-                        {val}<span className="txt-smaller text-zinc-500 font-normal">/{target}</span>
-                      </p>
-                      <p className="txt-smaller text-zinc-500 mt-1">{label}</p>
-                    </div>
-                  ))}
-                </div>
               </div>
+            )}
+
+            {/* COLD rank note */}
+            {rank === "COLD" && (
+              <p className="txt-small text-[#78be20]">{tr("coldNote")}</p>
+            )}
+
+            {/* Total reach all time */}
+            <div className="flex justify-between txt-smaller text-zinc-500 pt-1 border-t border-zinc-800">
+              <span>{t("totalReach")}</span>
+              <span className="text-white font-medium">{formatNumber(totalReachAllTime)}</span>
+            </div>
+
+            {/* Content counts */}
+            <div className="grid grid-cols-5 gap-2">
+              {[
+                { label: "Pic",   val: profile.pictureCount    },
+                { label: "Story", val: profile.storyCount      },
+                { label: "Reel",  val: profile.reelCount       },
+                { label: "Video", val: profile.longVideoCount  },
+                { label: "Post",  val: profile.postCount       },
+              ].map(({ label, val }) => (
+                <div key={label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+                  <p className="txt-small font-bold text-white">{val}</p>
+                  <p className="txt-smaller text-zinc-500 mt-0.5">{label}</p>
+                </div>
+              ))}
             </div>
           </motion.div>
         )}
@@ -208,14 +289,12 @@ export default function ProfilePage() {
             <IoWarningOutline className="size-5 text-yellow-400 shrink-0 mt-0.5" />
             <div>
               <p className="txt-small font-semibold text-yellow-400">{t("pendingLimit")}</p>
-              <p className="txt-smaller text-zinc-400 mt-0.5">
-                {t("pendingLimitDesc", { count: pendingCount, cap: PENDING_CAP })}
-              </p>
+              <p className="txt-smaller text-zinc-400 mt-0.5">{t("pendingLimitDesc", { count: pendingCount, cap: PENDING_CAP })}</p>
             </div>
           </motion.div>
         )}
 
-        {/* First-submission nudge — approved but no submissions yet */}
+        {/* First submission nudge */}
         {isApproved && subCount === 0 && canSubmit && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06, duration: 0.28 }}
             className="bg-[#78be20]/5 border border-[#78be20]/30 rounded-2xl p-4 flex items-start gap-3"
@@ -224,10 +303,9 @@ export default function ProfilePage() {
             <div className="flex-1 min-w-0">
               <p className="txt-small font-semibold text-[#78be20]">{t("registrationComplete")}</p>
               <p className="txt-smaller text-zinc-400 mt-0.5">{t("registrationCompleteDesc")}</p>
-              <Link href="/submissions/submit"
+              <Link href={`/${locale}/submissions/submit`}
                 className="inline-flex items-center gap-1.5 mt-2.5 txt-smaller font-semibold text-[#78be20] hover:text-[#8fd428] transition-colors">
-                {t("submitFirst")}
-                <Arrow className="size-3.5" />
+                {t("submitFirst")}<Arrow className="size-3.5" />
               </Link>
             </div>
           </motion.div>
@@ -237,42 +315,29 @@ export default function ProfilePage() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.28 }}
           className="space-y-3"
         >
-          {/* Registration — if not yet submitted */}
+          {/* Register — if not done */}
           {profileLoaded && !profile && (
-            <ActionCard href="/submissions/register" isRTL={isRTL} highlight
+            <ActionCard href={`/${locale}/submissions/register`} isRTL={isRTL} highlight
               icon={<IoPersonOutline className="size-5 text-[#78be20]" />}
               title={ts("register")} description={ts("registerDesc")} cta={ts("registerStart")} />
           )}
 
-          {/* New submission — only if approved */}
-          {isRegistered && (
-            <ActionCard
-              href="/submissions/submit" isRTL={isRTL} disabled={!canAccessSubmit}
-              icon={<IoAddCircleOutline className={`size-5 ${canAccessSubmit ? "text-[#78be20]" : "text-zinc-600"}`} />}
+          {/* New submission */}
+          {isApproved && (
+            <ActionCard href={`/${locale}/submissions/submit`} isRTL={isRTL} disabled={!canSubmit}
+              icon={<IoAddCircleOutline className={`size-5 ${canSubmit ? "text-[#78be20]" : "text-zinc-600"}`} />}
               title={ts("newSubmission")}
-              description={
-                isPendingApproval
-                  ? (locale === "ar" ? "متاح بعد الموافقة على طلبك" : "Available after your application is approved")
-                  : !canSubmit
-                    ? ts("pendingCountHeader", { count: pendingCount, cap: PENDING_CAP })
-                    : ts("newSubmissionDesc")
-              }
+              description={!canSubmit ? ts("pendingCountHeader", { count: pendingCount, cap: PENDING_CAP }) : ts("newSubmissionDesc")}
               cta={ts("submitCta")}
             />
           )}
 
-          {/* History — if registered */}
+          {/* Submissions history */}
           {isRegistered && (
-            <ActionCard href="/submissions" isRTL={isRTL}
+            <ActionCard href={`/${locale}/submissions`} isRTL={isRTL}
               icon={<IoDocumentTextOutline className="size-5 text-[#78be20]" />}
               title={ts("history")}
-              description={
-                subCount === null
-                  ? "..."
-                  : subCount === 0
-                    ? ts("historyNone")
-                    : ts(subCount === 1 ? "historyCount" : "historyCountPlural", { count: subCount, pending: pendingCount })
-              }
+              description={subCount === null ? "..." : subCount === 0 ? ts("historyNone") : `${subCount} — ${pendingCount} ${ts("pending")}`}
               cta={ts("history")}
             />
           )}
@@ -284,7 +349,7 @@ export default function ProfilePage() {
         >
           <h2 className="txt-small font-semibold text-white uppercase tracking-wide mb-3">{t("contactInfo")}</h2>
           {[
-            { icon: IoMailOutline,         label: t("email"), value: displayEmail, action: () => setShowEmail(true), actionLabel: displayEmail ? t("change") : t("add") },
+            { icon: IoMailOutline,          label: t("email"), value: displayEmail, action: () => setShowEmail(true), actionLabel: displayEmail ? t("change") : t("add") },
             { icon: IoPhonePortraitOutline, label: t("phone"), value: user.phone || null, action: () => setShowPhone(true), actionLabel: user.phone ? t("change") : t("add") },
           ].map(({ icon: Icon, label, value, action, actionLabel }) => (
             <div key={label} className="flex items-center justify-between py-3 border-b border-zinc-800 last:border-0">
@@ -308,10 +373,8 @@ export default function ProfilePage() {
         <button onClick={() => { toast.info(t("loggingOut")); logout(); }}
           className="w-full flex items-center justify-center gap-3 py-3.5 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-300 hover:text-red-400 txt-regular font-medium rounded-xl transition-colors duration-200"
         >
-          <IoLogOutOutline className="size-5" />
-          {t("logout")}
+          <IoLogOutOutline className="size-5" />{t("logout")}
         </button>
-
       </div>
 
       {showEmail && <ChangeEmailModal currentEmail={displayEmail} onClose={() => setShowEmail(false)} />}
@@ -321,8 +384,9 @@ export default function ProfilePage() {
 }
 
 function ActionCard({ href, icon, title, description, cta, isRTL, highlight, disabled }: {
-  href: string; icon: React.ReactNode; title: string; description: string;
-  cta: string; isRTL: boolean; highlight?: boolean; disabled?: boolean;
+  href: string; icon: React.ReactNode; title: string;
+  description: string; cta: string; isRTL: boolean;
+  highlight?: boolean; disabled?: boolean;
 }) {
   const Arrow = isRTL ? IoArrowBack : IoArrowForward;
   const inner = (
@@ -332,7 +396,7 @@ function ActionCard({ href, icon, title, description, cta, isRTL, highlight, dis
         <p className={`txt-regular font-semibold truncate ${disabled ? "text-zinc-600" : "text-white"}`}>{title}</p>
         <p className="txt-smaller text-zinc-500 truncate">{description}</p>
       </div>
-      <div className={`shrink-0 flex items-center gap-1.5 txt-smaller font-medium transition-colors duration-200 ${
+      <div className={`shrink-0 flex items-center gap-1.5 txt-smaller font-medium transition-colors ${
         disabled ? "text-zinc-700" : highlight ? "text-[#78be20]" : "text-zinc-500 group-hover:text-white"
       }`}>
         <span className="hidden sm:inline">{cta}</span>
