@@ -1,116 +1,164 @@
-"use client";
-
 // src/components/landing/RanksSection.tsx
+"use client";
+import { useState, useEffect } from "react";
+import Link       from "next/link";
+import Image      from "next/image";
 import { useLocale } from "next-intl";
-import Link          from "next/link";
-import { motion }    from "framer-motion";
-import { IoTrophyOutline, IoArrowForward, IoArrowBack } from "react-icons/io5";
+import { motion, AnimatePresence } from "framer-motion";
+import SkewBtn    from "@/components/ui/SkewBtn";
 import { LANDING_RANKS } from "@/lib/data/program";
 
+// Show ranks sequentially: 0=Rookie, 1=Rising, 2=Cold, then repeat
+const CYCLE_MS = 2800;
+
 export default function RanksSection() {
-  const locale = useLocale();
-  const isRTL  = locale === "ar";
-  const Arrow  = isRTL ? IoArrowBack : IoArrowForward;
+  const locale  = useLocale();
+  // -1 = idle (none shown yet), 0/1/2 = which rank is active
+  const [active, setActive] = useState(-1);
+  // 0 = only Rookie visible, 1 = Rookie+Rising, 2 = all three
+  const [revealed, setRevealed] = useState(-1);
+
+  useEffect(() => {
+    // Stagger reveal: Rookie at 600ms, Rising at 1400ms, Cold at 2200ms
+    const timers = [
+      setTimeout(() => setRevealed(0), 600),
+      setTimeout(() => setRevealed(1), 1400),
+      setTimeout(() => setRevealed(2), 2200),
+      // Then start cycling active highlight
+      setTimeout(() => setActive(0), 3000),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  useEffect(() => {
+    if (active === -1) return;
+    const id = setInterval(() => {
+      setActive((a) => (a + 1) % LANDING_RANKS.length);
+    }, CYCLE_MS);
+    return () => clearInterval(id);
+  }, [active]);
+
+  // Rank order in the image: index 0=Rookie(bottom), 1=Rising(mid), 2=Cold(top)
+  const rankPositions = [
+    { side: "left",  yPct: "72%" }, // Rookie — bottom of can
+    { side: "left",  yPct: "44%" }, // Rising  — middle
+    { side: "right", yPct: "18%" }, // Cold    — top
+  ];
 
   return (
-    <section className="py-24 bg-black relative overflow-hidden">
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-100 opacity-10 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(ellipse, #78be20 0%, transparent 70%)" }}
-      />
+    <section className="w-full bg-[#050505] py-16 overflow-hidden relative">
+      {/* Subtle green glow behind can */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 60% 80% at 50% 60%, rgba(120,190,32,0.07) 0%, transparent 70%)" }} />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.4 }}
-            className="txt-small font-semibold uppercase tracking-[0.3em] text-[#78be20] mb-3"
+      {/* Title */}
+      <div className="text-center mb-10">
+        <p className="font-proxima font-semibold uppercase tracking-[0.3em] text-[#78be20] txt-larger mb-2">
+          {locale === "ar" ? "نظام التصنيف" : "Leveling System"}
+        </p>
+        <h2 className="font-display font-black text-[clamp(2.5rem,5vw,4rem)] uppercase leading-none mb-6 text-white">
+          {locale === "ar"
+            ? <>ارتقِ عبر <span className="text-accent">التصنيفات</span></>
+            : <>RISE THROUGH THE <span className="text-accent">RANKS</span></>
+          }
+        </h2>
+        <SkewBtn href={`/${locale}/ranks`}
+          text={locale === "ar" ? "عرض جميع التصنيفات" : "VIEW ALL RANKS"} />
+      </div>
+
+      {/* Can + rank labels */}
+      <div className="relative mx-auto max-w-4xl px-6" style={{ minHeight: "520px" }}>
+
+        {/* Can image — centered */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 flex items-center justify-center"
+          style={{ width: "320px" }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+            className="relative w-full"
+            style={{ height: "500px" }}
           >
-            {locale === "ar" ? "نظام التصنيف" : "Leveling System"}
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display font-black text-white uppercase text-4xl md:text-5xl leading-none mb-4"
-          >
-            {locale === "ar" ? "ارتقِ عبر التصنيفات" : "RISE THROUGH THE RANKS"}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-            viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.4 }}
-            className="txt-regular text-zinc-500 max-w-xl mx-auto"
-          >
-            {locale === "ar"
-              ? "لا ترقيات تلقائية — كل مستوى يُكسب. انقر على أي تصنيف لمعرفة المزيد."
-              : "No automatic upgrades — every level is earned. Click any rank to learn more."}
-          </motion.p>
+            <Image src="/assets/program/monster-ranking.png" alt="Monster Ranks"
+              fill className="object-contain drop-shadow-2xl" priority />
+          </motion.div>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {LANDING_RANKS.map((rank, i) => (
-            <motion.div
-              key={rank.id}
-              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.12 }}
-            >
-              <Link
-                href={`/${locale}/ranks#${rank.id}`}
-                className="group block h-full relative rounded-2xl overflow-hidden border border-zinc-800
-                  hover:border-zinc-600 transition-all duration-300 hover:-translate-y-1
-                  hover:shadow-2xl bg-[#0a0a0a]"
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = `0 0 40px ${rank.glow}`; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = ""; }}
-              >
-                <div className="h-1 w-full" style={{ background: rank.color }} />
+        {/* Rank labels — positioned relative to can */}
+        {LANDING_RANKS.map((rank, i) => {
+          const pos       = rankPositions[i];
+          const isActive  = active === i;
+          const isShown   = revealed >= i;
+          const isLeft    = pos.side === "left";
 
-                <div className="p-7">
-                  <div className="flex items-center justify-between mb-5">
-                    <span
-                      className="txt-smaller font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm"
-                      style={{ color: rank.color, background: `${rank.color}15` }}
+          return (
+            <AnimatePresence key={rank.id}>
+              {isShown && (
+                <motion.div
+                  initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                  className={`absolute flex items-center gap-3 ${isLeft ? "ltr:right-[52%] rtl:left-[52%] text-end ltr:flex-row-reverse rtl:flex-row" : "ltr:left-[52%] rtl:right-[52%] text-start"}`}
+                  style={{ top: pos.yPct, transform: "translateY(-50%)" }}
+                >
+                  {/* Connector line */}
+                  <motion.div
+                    animate={{ width: isActive ? "48px" : "24px", opacity: isActive ? 1 : 0.4 }}
+                    transition={{ duration: 0.3 }}
+                    className="h-px shrink-0"
+                    style={{ background: rank.color }}
+                  />
+
+                  {/* Card */}
+                  <Link href={`/${locale}/ranks#${rank.id}`}
+                    className="no-underline group block">
+                    <motion.div
+                      animate={{
+                        borderColor: isActive ? rank.color : "rgba(63,63,70,0.5)",
+                        boxShadow: isActive ? `0 0 24px ${rank.glow}` : "none",
+                      }}
+                      transition={{ duration: 0.4 }}
+                      className="bg-[#0d0d0d] border rounded-xl px-5 py-3 min-w-45"
                     >
-                      {locale === "ar" ? rank.reachAr : rank.reachEn}
-                    </span>
-                    <IoTrophyOutline className="size-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
-                  </div>
+                      <p className="font-display font-black uppercase text-xl leading-none mb-1"
+                        style={{ color: rank.color }}>
+                        {locale === "ar" ? rank.nameAr : rank.nameEn}
+                      </p>
+                      <p className="txt-smaller text-zinc-500 uppercase tracking-wider mb-2">
+                        {locale === "ar" ? rank.reachAr : rank.reachEn}
+                      </p>
 
-                  <h3
-                    className="font-display font-black uppercase leading-none mb-3 whitespace-pre-line"
-                    style={{ fontSize: "2rem", color: rank.color }}
-                  >
-                    {locale === "ar" ? rank.nameAr : rank.nameEn}
-                  </h3>
-                  <p className="txt-smaller font-semibold uppercase tracking-widest text-zinc-500 mb-4">
-                    {locale === "ar" ? rank.tagAr : rank.tagEn}
-                  </p>
+                      {/* Animated description — only when active */}
+                      <AnimatePresence>
+                        {isActive && (
+                          <motion.p
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="txt-smaller text-zinc-400 leading-snug overflow-hidden"
+                          >
+                            {locale === "ar" ? rank.descAr : rank.descEn}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          );
+        })}
+      </div>
 
-                  <p className="txt-small text-zinc-400 leading-relaxed mb-6">
-                    {locale === "ar" ? rank.descAr : rank.descEn}
-                  </p>
-
-                  <ul className="space-y-1.5 mb-6">
-                    {(locale === "ar" ? rank.rewardsAr : rank.rewardsEn).map((r) => (
-                      <li key={r} className="flex items-start gap-2 txt-smaller text-zinc-400">
-                        <span style={{ color: rank.color }} className="mt-0.5 shrink-0">✦</span>
-                        {r}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div
-                    className="flex items-center gap-1.5 txt-smaller font-semibold uppercase tracking-wide"
-                    style={{ color: rank.color }}
-                  >
-                    {locale === "ar" ? "تفاصيل التصنيف" : "Rank Details"}
-                    <Arrow className="size-3.5 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+      {/* Bottom CTA */}
+      <div className="text-center mt-8">
+        <Link href={`/${locale}/program`}
+          className="inline-flex items-center gap-2 txt-small font-proxima font-semibold uppercase tracking-[0.2em] text-zinc-400 hover:text-[#78be20] transition-colors duration-200">
+          {locale === "ar" ? "← عن البرنامج" : "About the Program →"}
+        </Link>
       </div>
     </section>
   );

@@ -1,22 +1,19 @@
 // src/app/[locale]/page.tsx"use client";
-import HeroSection        from "@/components/landing/HeroSection";
-import HowItWorksSection  from "@/components/landing/HowItWorksSection";
-import ProgramStatsStrip from "@/components/landing/ProgramStatsStrip";
+import Header from "@/components/Header";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import ProgramHero from "@/components/landing/ProgramHero";
 import RanksSection from "@/components/landing/RankSection";
-import RequirementsSection from "@/components/landing/RequirementsSection";
-import NewsletterSection from "@/components/main/NewsLetterSection";
+import Hero from "@/components/main/Hero";
 import NewsSection from "@/components/main/NewsSection";
-
-export default function LandingPage() {
+ 
+export default function Home() {
   return (
     <main>
-      <HeroSection />
-      <ProgramStatsStrip />
+      <Header />
+      <ProgramHero />
       <RanksSection />
       <HowItWorksSection />
-      <RequirementsSection />
-     <NewsSection />
-     <NewsletterSection />
+      <NewsSection />
     </main>
   );
 }

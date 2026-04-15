@@ -1,45 +1,57 @@
-// lib/types/authType.ts
+// src/lib/types/authType.ts
+
+export type RegistrationStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type SubmissionStatus   = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface CreatorProfile {
-  id:              string;
-  channelLogo?:    string | null;
-  platforms:       string[];
-  contentType:     string;
-  socialMediaLink: string;
-  followers:       number;
-  eventAttendance: string;
-  rank:            string;
-  currentLevel:    string;
-  totalPoints:     number;
-  levelProgress:   number;
-  streamCount:     number;
-  shortCount:      number;
-  reelCount:       number;
-  totalReach:      number;
-  totalViews:      number;
-  isApproved:      boolean;
-  isActive:        boolean;
-  cohortMonth?:    number | null;
-  joinedAt?:       string | null;
+  id:                string;
+  channelLogo?:      string | null;
+  platforms:         string[];
+  platformLinks?:    { platform: string; url: string }[];
+  primarySocialLink?:string;
+  contentType:       string;
+  followers:         number;
+  eventAttendance:   string;
+  rank:              string;
+
+  status:            RegistrationStatus;
+  adminNotes?:       string | null;
+  approvedAt?:       string | null;
+
+  currentRankReach:  number;
+  totalReachAllTime: number;
+
+  pictureCount:      number;
+  storyCount:        number;
+  reelCount:         number;
+  longVideoCount:    number;
+  postCount:         number;
+  totalPictureCount: number;
+  totalStoryCount:   number;
+  totalReelCount:    number;
+  totalLongVideoCount:number;
+  totalPostCount:    number;
+  isActive:          boolean;
+  joinedAt?:         string | null;
 }
 
 export interface User {
-  id:         string;
-  email?:     string | null;
-  phone?:     string | null;
-  phoneKey?:  string | null;
-  firstName:  string;
-  lastName:   string;
-  username:   string;
-  role:       "USER" | "ADMIN";
-  isVerified: boolean;
-  isActive:   boolean;
+  id:          string;
+  email?:      string | null;
+  phone?:      string | null;
+  phoneKey?:   string | null;
+  firstName:   string;
+  lastName:    string;
+  username:    string;
+  role:        "USER" | "ADMIN";
+  isVerified:  boolean;
+  isActive:    boolean;
   externalId?: string | null;
-  provider?:  string | null;
-  createdAt:  string;
-  updatedAt:  string;
-  lastLogin?: string | null;
-  profile?:   CreatorProfile | null;
+  provider?:   string | null;
+  createdAt:   string;
+  updatedAt:   string;
+  lastLogin?:  string | null;
+  profile?:    CreatorProfile | null;
 }
 
 export interface AuthContextType {
@@ -58,6 +70,6 @@ export interface AuthContextType {
   verifyEmailLoginOTP:      (email: string, otp: string) => Promise<boolean>;
   logout:                   () => Promise<void>;
   refreshUser:              (forceRefresh?: boolean) => Promise<void>;
-  clearAuthError:           () => void;
+  clearAuthError:            () => void;
   invalidateUserCache:      () => void;
 }

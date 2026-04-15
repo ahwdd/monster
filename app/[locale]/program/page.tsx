@@ -1,11 +1,21 @@
-"use client";
-
 // src/app/[locale]/program/page.tsx
+"use client";
 import { useLocale } from "next-intl";
 import Link          from "next/link";
 import Image         from "next/image";
+import { useRef }    from "react";
 import { motion }    from "framer-motion";
-import { IoCheckmarkCircle, IoArrowForward, IoArrowBack, IoGiftOutline, IoDocumentTextOutline } from "react-icons/io5";
+import {
+  IoCheckmarkCircle, IoArrowForward, IoArrowBack,
+  IoGiftOutline, IoChevronBack, IoChevronForward,
+  IoGameControllerOutline, IoRibbonOutline, IoFlashOutline,
+  IoShieldCheckmarkOutline, IoHeartOutline, IoVideocamOutline,
+  IoDocumentTextOutline, IoStarOutline, IoCalendarOutline,
+  IoTrophyOutline, IoSparklesOutline, IoPeopleOutline,
+  IoBarChartOutline,
+} from "react-icons/io5";
+import PageTitle from "@/components/ui/PageTitle";
+import SkewBtn   from "@/components/ui/SkewBtn";
 import {
   RANK_DETAILS,
   REWARD_PACKS,
@@ -15,284 +25,454 @@ import {
   TRACKING_RULES,
   TERMS,
 } from "@/lib/data/program";
+import Header from "@/components/Header";
+
+// ── Glassy card with monster border ──────────────────────────
+function GlassCard({
+  children,
+  className = "",
+  accent,
+  textureOverlay = false,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  accent?: string;
+  textureOverlay?: boolean;
+}) {
+  return (
+    <div
+      className={`relative overflow-hidden ${className}`}
+      style={{
+        border: "solid 1px #707070",
+        background: "rgba(0,0,0,.2)",
+        backdropFilter: "blur(8px)",
+      }}
+    >
+      {/* Optional texture bg */}
+      {textureOverlay && (
+        <div
+          className="absolute inset-0 opacity-[0.08] pointer-events-none"
+          style={{
+            backgroundImage: "url('/assets/textures/texture.webp')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+      )}
+      {/* Icon gradient: bottom-left → top-right, rgba(0,0,0,0.3) → transparent */}
+      {accent && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `linear-gradient(to top right, rgba(0,0,0,0.3) 0%, transparent 60%)`,
+          }}
+        />
+      )}
+      {/* Top accent bar */}
+      {accent && (
+        <div className="absolute top-0 inset-x-0 h-px" style={{ background: accent }} />
+      )}
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+}
+
+function SectionTag({ en, ar, locale }: { en: string; ar: string; locale: string }) {
+  return (
+    <p className="txt-huge font-medium uppercase tracking-[3px] text-[#6bd41a] mb-3">
+      {locale === "ar" ? ar : en}
+    </p>
+  );
+}
+
+// ── Content approval icons ────────────────────────────────────
+const CONTENT_ICONS = [IoGameControllerOutline, IoRibbonOutline, IoFlashOutline, IoSparklesOutline];
+const SELECTION_ICONS = [IoDocumentTextOutline, IoPeopleOutline, IoStarOutline];
+const TRACKING_ICONS = [IoCalendarOutline, IoCheckmarkCircle, IoBarChartOutline, IoShieldCheckmarkOutline];
 
 export default function ProgramPage() {
   const locale = useLocale();
   const isRTL  = locale === "ar";
   const Arrow  = isRTL ? IoArrowBack : IoArrowForward;
+  const timelineRef = useRef<HTMLDivElement>(null);
 
-  // Only the main 3 ranks for the leveling section (exclude UNRANKED detail)
+  const scrollTimeline = (dir: "left" | "right") => {
+    if (!timelineRef.current) return;
+    timelineRef.current.scrollBy({ left: dir === "left" ? -340 : 340, behavior: "smooth" });
+  };
+
   const mainRanks = RANK_DETAILS.filter((r) => r.id !== "unranked");
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Hero strip */}
-      <div className="pt-20 pb-16 relative overflow-hidden bg-[#050505] border-b border-zinc-900">
-        <div className="absolute inset-0 opacity-10"
-          style={{ background: "radial-gradient(ellipse 60% 80% at 50% 100%, #78be20, transparent)" }} />
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <p className="txt-small font-semibold uppercase tracking-[0.3em] text-[#78be20] mb-4">
-            {locale === "ar" ? "نظرة عامة" : "Program Overview"}
-          </p>
-          <h1 className="font-display font-black text-white uppercase text-5xl md:text-6xl leading-none mb-6">
-            {locale === "ar" ? "برنامج مونستر\nللسفراء" : "MONSTER\nAMBASSADORS"}
-          </h1>
-          <p className="txt-regular text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            {locale === "ar"
-              ? "برنامج تطوير لمدة 9 أشهر مصمم لتموضع مونستر إنرجي كعلامة رائدة بين لاعبي الجذب الشعبي وصناع المحتوى في منطقة MENA. كل شهر، ينضم 5 مؤثرين صغار، ليصل مجموع الفريق إلى 30 صانع محتوى بنهاية البرنامج."
-              : "A 9-month development program designed to position Monster Energy as a leading brand among grassroots gamers and content creators across the MENA Region. Each month, 5 micro-influencers join, forming a squad of 30 creators by the end of the program."}
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            <Link href={`/${locale}/submissions/register`}
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#78be20] hover:bg-[#8fd428]
-                text-black font-display font-bold uppercase tracking-wider txt-small rounded-sm
-                transition-all duration-200 hover:shadow-[0_0_20px_rgba(120,190,32,0.4)] group">
-              {locale === "ar" ? "سجّل الآن" : "Register Now"}
-              <Arrow className="size-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
-            <Link href={`/${locale}/ranks`}
-              className="inline-flex items-center gap-2 px-7 py-3.5 border border-zinc-700
-                hover:border-zinc-400 text-zinc-300 hover:text-white font-display font-bold
-                uppercase tracking-wider txt-small rounded-sm transition-colors duration-200">
-              {locale === "ar" ? "التصنيفات" : "View Ranks"}
-            </Link>
-          </div>
-        </div>
-      </div>
+      <Header />
+      <PageTitle title={locale === "ar" ? "البرنامج" : "The Program"} />
 
-      <div className="max-w-5xl mx-auto px-6 py-20 space-y-24">
+      <div style={{ width: "100%", maxWidth: "1300px", margin: "60px auto 80px" }}>
+        <div className="px-6 space-y-0">
 
-        {/* Leveling system */}
-        <section>
-          <SectionLabel en="Leveling System" ar="نظام التصنيف" locale={locale} />
-          <h2 className="font-display font-black text-white uppercase text-3xl md:text-4xl mb-8">
-            {locale === "ar" ? "ارتقِ عبر التصنيفات" : "RISE THROUGH THE RANKS"}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <div>
-              <p className="txt-regular text-zinc-400 leading-relaxed mb-6">
-                {locale === "ar"
-                  ? "كل تصنيف يُكتسب — لا ترقيات تلقائية. تُثبت ثباتك، تحقق أهداف الوصول، ويقوم الفريق بترقيتك. عداد المشاهدات يعود إلى الصفر عند كل تصنيف جديد."
-                  : "Every rank is earned — no automatic upgrades. You prove consistency, hit your reach targets, and the team ranks you up. The views counter resets to 0 at each new level."}
-              </p>
-              {mainRanks.map((rank) => (
-                <div key={rank.id} className="flex items-center gap-3 py-2.5 border-b border-zinc-800 last:border-0">
-                  <span style={{ color: rank.color }} className="font-bold shrink-0">✦</span>
-                  <span className="txt-small text-zinc-300">
-                    {locale === "ar" ? rank.nameAr : rank.nameEn}
-                    {" — "}
-                    {locale === "ar" ? rank.reachAr : rank.reachEn}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="relative flex items-center justify-center">
-              <div className="absolute inset-0 opacity-30 blur-3xl pointer-events-none"
-                style={{ background: "radial-gradient(ellipse, #78be20, transparent 70%)" }} />
-              <Image src="/assets/program/ranks-can.png" alt="Monster Ranks"
-                width={380} height={480} className="relative z-10 drop-shadow-2xl w-full max-w-xs md:max-w-sm" />
-            </div>
-          </div>
-        </section>
-
-        {/* Selection process */}
-        <section>
-          <SectionLabel en="Selection Process" ar="عملية الاختيار" locale={locale} />
-          <h2 className="font-display font-black text-white uppercase text-3xl md:text-4xl mb-8">
-            {locale === "ar" ? "كيف يتم الاختيار" : "HOW SELECTION WORKS"}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {SELECTION_PHASES.map((p, i) => (
-              <motion.div key={p.phase}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-6">
-                <span className="txt-smaller font-bold uppercase tracking-wider text-[#78be20] bg-[#78be20]/10 px-2 py-0.5 rounded-sm mb-3 inline-block">
-                  {p.phase}
-                </span>
-                <h3 className="font-display font-bold text-white uppercase txt-larger mb-2">
-                  {locale === "ar" ? p.titleAr : p.titleEn}
-                </h3>
-                <p className="txt-small text-zinc-500 leading-relaxed">
-                  {locale === "ar" ? p.descAr : p.descEn}
+          {/* ── Overview ── */}
+          <section className="py-16 border-b border-[#171717]">
+            <div className="flex flex-col md:flex-row gap-12 items-center">
+              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex-1">
+                <SectionTag en="Program Overview" ar="نظرة عامة" locale={locale} />
+                <h2 className="font-display font-black text-white uppercase text-[clamp(2rem,4vw,3.5rem)] leading-none mb-6">
+                  {locale === "ar" ? "برنامج مونستر للسفراء" : "MONSTER AMBASSADORS"}
+                </h2>
+                <p className="font-proxima text-[#b6b6b6] txt-larger leading-relaxed mb-6">
+                  {locale === "ar"
+                    ? "برنامج تطوير لمدة 9 أشهر مصمم لتموضع مونستر إنرجي كعلامة رائدة بين صناع محتوى الألعاب في منطقة MENA."
+                    : "A 9-month development program designed to position Monster Energy as a leading brand among gaming content creators across MENA. Each month, 5 micro-influencers join, forming a squad of 30 creators."}
                 </p>
+                <SkewBtn href={`/${locale}/submissions/register`}
+                  text={locale === "ar" ? "سجّل الآن" : "REGISTER NOW"} />
               </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Content approval */}
-        <section>
-          <SectionLabel en="Content Approval" ar="اعتماد المحتوى" locale={locale} />
-          <h2 className="font-display font-black text-white uppercase text-3xl md:text-4xl mb-8">
-            {locale === "ar" ? "ما يُحتسب كمحتوى مونستر" : "WHAT COUNTS AS MONSTER CONTENT"}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {CONTENT_APPROVAL_TYPES.map((ct, i) => (
-              <motion.div key={ct.en}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -16 : 16 }} whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-                className="flex gap-4 bg-[#0a0a0a] border border-zinc-800 rounded-xl p-4">
-                <span className="w-2 bg-[#78be20] rounded-full shrink-0" />
-                <div>
-                  <p className="font-semibold text-white txt-small uppercase mb-1">
-                    {locale === "ar" ? ct.ar : ct.en}
-                  </p>
-                  <p className="txt-smaller text-zinc-500">
-                    {locale === "ar" ? ct.descAr : ct.descEn}
-                  </p>
-                </div>
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}
+                className="relative shrink-0" style={{ width: "220px", height: "280px" }}>
+                <div className="absolute inset-0 opacity-30 blur-3xl"
+                  style={{ background: "radial-gradient(ellipse, #78be20, transparent)" }} />
+                <Image src="/assets/program/ranks-can.png" alt="Monster Ranks"
+                  fill className="object-contain drop-shadow-2xl relative z-10" />
               </motion.div>
-            ))}
-          </div>
-        </section>
+            </div>
+          </section>
 
-        {/* Rewards */}
-        <section>
-          <SectionLabel en="Rewards" ar="المكافآت" locale={locale} />
-          <h2 className="font-display font-black text-white uppercase text-3xl md:text-4xl mb-8">
-            {locale === "ar" ? "ما تربحه" : "WHAT YOU EARN"}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {REWARD_PACKS.map((rw, i) => (
-              <motion.div key={rw.titleEn}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-6 relative overflow-hidden">
-                <div className="absolute top-0 inset-x-0 h-0.5" style={{ background: rw.color }} />
-                <div className="flex items-center gap-2 mb-5">
-                  <IoGiftOutline className="size-5" style={{ color: rw.color }} />
-                  <h3 className="font-display font-bold text-white uppercase txt-larger">
-                    {locale === "ar" ? rw.titleAr : rw.titleEn}
-                  </h3>
-                </div>
-                <ul className="space-y-2">
-                  {(locale === "ar" ? rw.itemsAr : rw.itemsEn).map((item) => (
-                    <li key={item} className="flex items-center gap-2 txt-small text-zinc-400">
-                      <IoCheckmarkCircle className="size-4 shrink-0" style={{ color: rw.color }} />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Grand prize */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ delay: 0.3 }}
-            className="mt-6 relative rounded-2xl overflow-hidden border border-[#38bdf8]/30 bg-[#38bdf8]/5 p-8 text-center">
-            <div className="absolute inset-0 opacity-10 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse, #38bdf8, transparent 70%)" }} />
-            <p className="txt-smaller font-semibold uppercase tracking-[0.3em] text-[#38bdf8] mb-2">
-              {locale === "ar" ? "الجائزة الكبرى" : "Grand Prize"}
-            </p>
-            <h3 className="font-display font-black text-white uppercase text-2xl md:text-3xl mb-3">
-              {locale === "ar" ? "3 ملايين مشاهدة = كريدت PC كامل" : "3M VIEWS = FULL PC CREDIT"}
-            </h3>
-            <p className="txt-small text-zinc-400">
-              {locale === "ar"
-                ? "بمجرد وصول كولد مونستر إلى 3 ملايين مشاهدة، يحصل على رصيد كامل لجهاز PC من متجر AHW."
-                : "Once a Cold Monster reaches 3M views, they will get a full PC worth of credit on the AHW store."}
-            </p>
-          </motion.div>
-        </section>
-
-        {/* Tracking */}
-        <section>
-          <SectionLabel en="Tracking & Validation" ar="المتابعة والتحقق" locale={locale} />
-          <h2 className="font-display font-black text-white uppercase text-3xl md:text-4xl mb-8">
-            {locale === "ar" ? "كيف يُتتبَّع أداؤك" : "HOW YOUR PERFORMANCE IS TRACKED"}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {TRACKING_RULES.map((item) => (
-              <div key={item.en} className="flex items-start gap-3 bg-[#0a0a0a] border border-zinc-800 rounded-xl p-4">
-                <IoCheckmarkCircle className="size-4 text-[#78be20] shrink-0 mt-0.5" />
-                <span className="txt-small text-zinc-300">{locale === "ar" ? item.ar : item.en}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Timeline */}
-        <section>
-          <SectionLabel en="Program Timeline" ar="الجدول الزمني" locale={locale} />
-          <h2 className="font-display font-black text-white uppercase text-3xl md:text-4xl mb-8">
-            {locale === "ar" ? "خريطة الطريق" : "THE ROAD MAP"}
-          </h2>
-          <div className="relative">
-            <div className="absolute ltr:left-[2.1rem] rtl:right-[2.1rem] top-0 bottom-0 w-px bg-zinc-800" />
-            <div className="space-y-6">
-              {PROGRAM_TIMELINE.map((item, i) => (
-                <motion.div key={item.month}
-                  initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }} transition={{ delay: i * 0.07 }}
-                  className="flex items-start gap-6">
-                  <div className="shrink-0 w-16 h-16 rounded-xl bg-[#0a0a0a] border border-zinc-800 flex items-center justify-center relative z-10">
-                    <span className="font-display font-black text-[#78be20] txt-small">{item.month}</span>
-                  </div>
-                  <div className="flex-1 bg-[#0a0a0a] border border-zinc-800 rounded-xl p-4">
-                    <p className="font-display font-bold text-white uppercase txt-small mb-1">
-                      {locale === "ar" ? item.titleAr : item.titleEn}
-                    </p>
-                    <p className="txt-smaller text-zinc-500">
-                      {locale === "ar" ? item.descAr : item.descEn}
-                    </p>
-                  </div>
+          {/* ── Rank progression — glassy cards ── */}
+          <section className="py-16 border-b border-[#171717]">
+            <SectionTag en="Leveling System" ar="نظام التصنيف" locale={locale} />
+            <h2 className="font-display font-black text-white uppercase text-[clamp(2rem,4vw,3rem)] leading-none mb-10">
+              {locale === "ar" ? "ارتقِ عبر التصنيفات" : "RISE THROUGH THE RANKS"}
+            </h2>
+            <div className="flex flex-col md:flex-row gap-5">
+              {mainRanks.map((rank, i) => (
+                <motion.div key={rank.id} initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  transition={{ delay: i * 0.12 }} className="flex-1">
+                  <GlassCard accent={rank.color} textureOverlay className="h-full">
+                    {/* Big rank number watermark */}
+                    <div className="absolute top-0 inset-e-0 opacity-[0.04] pointer-events-none select-none
+                      font-display font-black leading-none text-white"
+                      style={{ fontSize: "8rem", lineHeight: 1 }}>
+                      {i + 1}
+                    </div>
+                    <div className="p-7">
+                      <span className="txt-smaller font-bold uppercase tracking-wider px-2.5 py-1 mb-4 inline-block"
+                        style={{ color: rank.color, background: `${rank.color}18`, border: `1px solid ${rank.color}40` }}>
+                        {locale === "ar" ? rank.reachAr : rank.reachEn}
+                      </span>
+                      <h3 className="font-display font-black text-2xl uppercase leading-none mb-2"
+                        style={{ color: rank.color }}>
+                        {locale === "ar" ? rank.nameAr : rank.nameEn}
+                      </h3>
+                      <p className="font-proxima txt-larger text-[#b6b6b6] leading-relaxed mb-5">
+                        {locale === "ar" ? rank.descAr : rank.descEn}
+                      </p>
+                      <ul className="space-y-1.5">
+                        {(locale === "ar" ? rank.requirementsAr : rank.requirementsEn).map((r) => (
+                          <li key={r} className="flex items-center gap-2 txt-larger text-zinc-400">
+                            <span style={{ color: rank.color }}>→</span>{r}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </GlassCard>
                 </motion.div>
               ))}
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Terms */}
-        <section>
-          <SectionLabel en="Terms & Conditions" ar="الشروط والأحكام" locale={locale} />
-          <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <IoDocumentTextOutline className="size-5 text-[#78be20]" />
-              <h2 className="font-display font-bold text-white uppercase txt-larger">
-                {locale === "ar" ? "الشروط والأحكام" : "Terms & Conditions"}
+          {/* ── Selection process — sticky texture bg section ── */}
+          <section className="py-16 border-b border-[#171717] relative overflow-hidden">
+            {/* Sticky texture background */}
+            <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
+              style={{
+                backgroundImage: "url('/assets/textures/texture.webp')",
+                backgroundSize: "cover",
+                backgroundAttachment: "fixed",
+              }} />
+            <div className="relative z-10">
+              <SectionTag en="Selection Process" ar="عملية الاختيار" locale={locale} />
+              <h2 className="font-display font-black text-white uppercase text-[clamp(2rem,4vw,3rem)] leading-none mb-10">
+                {locale === "ar" ? "كيف يتم الاختيار" : "HOW SELECTION WORKS"}
               </h2>
+              <div className="flex flex-col md:flex-row gap-5">
+                {SELECTION_PHASES.map((p, i) => {
+                  const Icon = SELECTION_ICONS[i] ?? IoDocumentTextOutline;
+                  return (
+                    <motion.div key={p.phase} initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }} className="flex-1">
+                      <GlassCard accent="#78be20" className="h-full">
+                        <div className="p-7">
+                          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                            style={{ background: "rgba(120,190,32,0.15)", border: "1px solid rgba(120,190,32,0.3)" }}>
+                            <Icon className="size-6 text-[#78be20]" />
+                          </div>
+                          <span className="txt-huge font-medium uppercase tracking-[2px] text-[#6bd41a] mb-2 block">
+                            {p.phase}
+                          </span>
+                          <h3 className="font-display font-bold text-white uppercase txt-larger mb-3">
+                            {locale === "ar" ? p.titleAr : p.titleEn}
+                          </h3>
+                          <p className="font-proxima txt-larger text-[#b6b6b6] leading-relaxed">
+                            {locale === "ar" ? p.descAr : p.descEn}
+                          </p>
+                        </div>
+                      </GlassCard>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
-            <ul className="space-y-3">
-              {TERMS.map((item) => (
-                <li key={item.en} className="flex items-start gap-3 txt-small text-zinc-400">
-                  <IoCheckmarkCircle className="size-4 text-[#78be20] shrink-0 mt-0.5" />
-                  {locale === "ar" ? item.ar : item.en}
-                </li>
+          </section>
+
+          {/* ── Content approval — 2x2 glassy grid ── */}
+          <section className="py-16 border-b border-[#171717]">
+            <SectionTag en="Content Approval" ar="اعتماد المحتوى" locale={locale} />
+            <h2 className="font-display font-black text-white uppercase text-[clamp(2rem,4vw,3rem)] leading-none mb-10">
+              {locale === "ar" ? "محتوى مونستر" : "MONSTER CONTENT"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {CONTENT_APPROVAL_TYPES.map((ct, i) => {
+                const Icon = CONTENT_ICONS[i] ?? IoFlashOutline;
+                return (
+                  <motion.div key={ct.en} initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+                    whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                    transition={{ delay: i * 0.08 }}>
+                    <GlassCard accent="#78be20" textureOverlay className="h-full">
+                      <div className="p-6 flex gap-5 items-start">
+                        {/* Icon with gradient behind it */}
+                        <div className="relative shrink-0">
+                          <div className="absolute inset-0 rounded-xl"
+                            style={{ background: "linear-gradient(to top right, rgba(0,0,0,0.3) 0%, transparent 70%)" }} />
+                          <div className="relative w-14 h-14 rounded-xl flex items-center justify-center"
+                            style={{ background: "rgba(120,190,32,0.12)", border: "1px solid rgba(120,190,32,0.3)" }}>
+                            <Icon className="size-7 text-[#78be20]" />
+                          </div>
+                        </div>
+                        <div>
+                          <p className="font-display font-bold text-white uppercase txt-larger mb-1">
+                            {locale === "ar" ? ct.ar : ct.en}
+                          </p>
+                          <p className="font-proxima txt-larger text-[#b6b6b6] leading-relaxed">
+                            {locale === "ar" ? ct.descAr : ct.descEn}
+                          </p>
+                        </div>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ── Rewards — glassy packs ── */}
+          <section className="py-16 border-b border-[#171717]">
+            <SectionTag en="Rewards" ar="المكافآت" locale={locale} />
+            <h2 className="font-display font-black text-white uppercase text-[clamp(2rem,4vw,3rem)] leading-none mb-10">
+              {locale === "ar" ? "ما تربحه" : "WHAT YOU EARN"}
+            </h2>
+            <div className="flex flex-col md:flex-row gap-5 mb-5">
+              {REWARD_PACKS.map((rw, i) => (
+                <motion.div key={rw.titleEn} initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }} className="flex-1">
+                  <GlassCard accent={rw.color} textureOverlay className="h-full">
+                    <div className="p-7">
+                      <div className="flex items-center gap-3 mb-5">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                          style={{ background: `${rw.color}18`, border: `1px solid ${rw.color}40` }}>
+                          <IoGiftOutline className="size-5" style={{ color: rw.color }} />
+                        </div>
+                        <h3 className="font-display font-bold text-white uppercase txt-larger">
+                          {locale === "ar" ? rw.titleAr : rw.titleEn}
+                        </h3>
+                      </div>
+                      <ul className="space-y-2.5">
+                        {(locale === "ar" ? rw.itemsAr : rw.itemsEn).map((item) => (
+                          <li key={item} className="flex items-center gap-2 txt-larger text-zinc-400">
+                            <IoCheckmarkCircle className="size-4 shrink-0" style={{ color: rw.color }} />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </GlassCard>
+                </motion.div>
               ))}
-            </ul>
-          </div>
-        </section>
+            </div>
+            {/* Grand prize */}
+            <GlassCard accent="#38bdf8" textureOverlay>
+              <div className="p-8 text-center relative">
+                <div className="absolute inset-0 opacity-5 pointer-events-none"
+                  style={{ background: "radial-gradient(ellipse, #38bdf8, transparent)" }} />
+                <div className="relative z-10">
+                  <IoTrophyOutline className="size-10 text-[#38bdf8] mx-auto mb-3" />
+                  <p className="txt-huge font-medium uppercase tracking-[3px] text-[#38bdf8] mb-2">
+                    {locale === "ar" ? "الجائزة الكبرى" : "GRAND PRIZE"}
+                  </p>
+                  <h3 className="font-display font-black text-white uppercase text-[clamp(1.5rem,3vw,2.5rem)] mb-3">
+                    {locale === "ar" ? "3M مشاهدة = كريدت PC كامل" : "3M VIEWS = FULL PC CREDIT"}
+                  </h3>
+                  <p className="font-proxima txt-larger text-[#b6b6b6]">
+                    {locale === "ar"
+                      ? "بمجرد وصول كولد مونستر إلى 3 ملايين مشاهدة، يحصل على رصيد كامل لجهاز PC من متجر AHW."
+                      : "Once a Cold Monster reaches 3M views, they get a full PC worth of credit on the AHW store."}
+                  </p>
+                </div>
+              </div>
+            </GlassCard>
+          </section>
+
+          {/* ── Timeline — sticky texture bg, horizontal scroll, styled ── */}
+          <section className="py-16 border-b border-[#171717] relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none opacity-[0.05]"
+              style={{
+                backgroundImage: "url('/assets/textures/texture.webp')",
+                backgroundSize: "cover",
+                backgroundAttachment: "fixed",
+              }} />
+            <div className="relative z-10">
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <SectionTag en="Program Timeline" ar="الجدول الزمني" locale={locale} />
+                  <h2 className="font-display font-black text-white uppercase text-[clamp(2rem,4vw,3rem)] leading-none">
+                    {locale === "ar" ? "خريطة الطريق" : "THE ROAD MAP"}
+                  </h2>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => scrollTimeline("left")}
+                    className="w-10 h-10 flex items-center justify-center text-white transition-colors duration-200"
+                    style={{ border: "1px solid #707070", background: "rgba(0,0,0,0.2)" }}>
+                    <IoChevronBack className="size-5" />
+                  </button>
+                  <button onClick={() => scrollTimeline("right")}
+                    className="w-10 h-10 flex items-center justify-center text-white transition-colors duration-200"
+                    style={{ border: "1px solid #707070", background: "rgba(0,0,0,0.2)" }}>
+                    <IoChevronForward className="size-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Scrollable timeline track */}
+              <div
+                ref={timelineRef}
+                className="overflow-x-auto pb-6"
+                style={{ scrollbarWidth: "none" }}
+              >
+                <div className="relative flex items-start min-w-max gap-0 px-2">
+                  {/* Horizontal connector */}
+                  <div className="absolute top-[2.2rem] left-12 right-12 h-px"
+                    style={{ background: "linear-gradient(90deg, #78be20, #38bdf8)" }} />
+
+                  {PROGRAM_TIMELINE.map((item, i) => (
+                    <motion.div
+                      key={item.month}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.07 }}
+                      className="flex flex-col items-center shrink-0 px-4"
+                      style={{ width: "220px" }}
+                    >
+                      {/* Month node */}
+                      <div
+                        className="relative z-10 w-18 h-18 flex items-center justify-center mb-5"
+                        style={{
+                          border: "solid 2px #707070",
+                          background: "rgba(0,0,0,0.6)",
+                          boxShadow: "0 0 20px rgba(120,190,32,0.15)",
+                        }}
+                      >
+                        <span className="font-display font-black text-[#78be20] txt-larger tracking-wider">
+                          {item.month}
+                        </span>
+                      </div>
+
+                      {/* Info card */}
+                      <GlassCard accent="#78be20" className="w-full">
+                        <div className="p-4 text-center">
+                          <p className="font-display font-bold text-white uppercase txt-small leading-tight mb-2">
+                            {locale === "ar" ? item.titleAr : item.titleEn}
+                          </p>
+                          <p className="font-proxima txt-smaller text-zinc-500 leading-snug">
+                            {locale === "ar" ? item.descAr : item.descEn}
+                          </p>
+                        </div>
+                      </GlassCard>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Tracking & Validation ── */}
+          <section className="py-16 border-b border-[#171717]">
+            <SectionTag en="Tracking & Validation" ar="المتابعة والتحقق" locale={locale} />
+            <h2 className="font-display font-black text-white uppercase text-[clamp(2rem,4vw,3rem)] leading-none mb-10">
+              {locale === "ar" ? "كيف يُتتبَّع أداؤك" : "HOW YOU'RE TRACKED"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {TRACKING_RULES.map((item, i) => {
+                const Icon = TRACKING_ICONS[i] ?? IoCheckmarkCircle;
+                return (
+                  <motion.div key={item.en} initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ delay: i * 0.07 }}>
+                    <GlassCard accent="#78be20">
+                      <div className="p-5 flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                          style={{ background: "rgba(120,190,32,0.12)", border: "1px solid rgba(120,190,32,0.3)" }}>
+                          <Icon className="size-5 text-[#78be20]" />
+                        </div>
+                        <span className="font-proxima txt-larger text-zinc-300 leading-relaxed">
+                          {locale === "ar" ? item.ar : item.en}
+                        </span>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ── Terms ── */}
+          <section className="py-16">
+            <SectionTag en="Terms & Conditions" ar="الشروط والأحكام" locale={locale} />
+            <GlassCard textureOverlay>
+              <div className="p-8">
+                <ul className="space-y-4">
+                  {TERMS.map((item, i) => (
+                    <motion.li key={item.en}
+                      initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                      className="flex items-start gap-3 font-proxima txt-larger text-zinc-400">
+                      <IoCheckmarkCircle className="size-4 text-[#78be20] shrink-0 mt-0.5" />
+                      {locale === "ar" ? item.ar : item.en}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            </GlassCard>
+          </section>
+
+        </div>
 
         {/* Final CTA */}
-        <div className="text-center py-12 border-t border-zinc-800">
-          <p className="font-display font-black text-white uppercase text-3xl md:text-4xl mb-4">
-            {locale === "ar" ? "مستعد لتكون مونستر؟" : "READY TO BE A MONSTER?"}
+        <div className="text-center py-16 border-t border-[#171717]">
+          <p className="font-display font-black text-white uppercase text-[clamp(2rem,5vw,4rem)] mb-6">
+            {locale === "ar" ? "مستعد؟" : "READY?"}
           </p>
-          <p className="txt-regular text-zinc-500 mb-8">
+          <p className="font-proxima txt-larger text-zinc-500 mb-8">
             {locale === "ar" ? "لا مكافآت مضمونة — كل شيء يُكتسب." : "No guaranteed rewards — everything is earned."}
           </p>
-          <Link href={`/${locale}/submissions/register`}
-            className="inline-flex items-center gap-2 px-10 py-4 bg-[#78be20] hover:bg-[#8fd428]
-              text-black font-display font-bold uppercase tracking-wider txt-regular
-              rounded-sm transition-all duration-200 hover:shadow-[0_0_30px_rgba(120,190,32,0.4)]
-              hover:-translate-y-0.5 group">
-            {locale === "ar" ? "سجّل الآن" : "REGISTER NOW"}
-            <Arrow className="size-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <SkewBtn href={`/${locale}/submissions/register`}
+            text={locale === "ar" ? "سجّل الآن" : "REGISTER NOW"} />
         </div>
       </div>
     </div>
-  );
-}
-
-function SectionLabel({ en, ar, locale }: { en: string; ar: string; locale: string }) {
-  return (
-    <p className="txt-smaller font-semibold uppercase tracking-[0.3em] text-[#78be20] mb-3">
-      {locale === "ar" ? ar : en}
-    </p>
   );
 }

@@ -1,8 +1,32 @@
 // src/app/api/submissions/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { z }           from "zod";
 import { requireAuth } from "@/lib/auth/server";
-import { prisma } from "@/lib/prisma";
+import { prisma }      from "@/lib/prisma";
+
+function extractPublicId(url: string): string | null {
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z]+)?$/i);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function deleteScreenshot(url: string, req: NextRequest) {
+  const publicId = extractPublicId(url);
+  if (!publicId) return;
+  try {
+    const origin = req.nextUrl.origin;
+    await fetch(`${origin}/api/cloudinary/delete`, {
+      method:  "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ public_id: publicId }),
+    });
+  } catch (e) {
+    console.warn("Screenshot delete failed for", url, e);
+  }
+}
 
 const editSchema = z.object({
   platform:           z.enum(["FACEBOOK","INSTAGRAM","KICK","TIKTOK","TWITCH","YOUTUBE"]).optional(),
@@ -32,6 +56,42 @@ export async function PATCH(
 
     const body = await request.json();
     const data = editSchema.parse(body);
+    const isApproved = submission.status === "APPROVED";
+
+    if (isApproved) {
+      if (data.submittedReach === undefined) {
+        return NextResponse.json(
+          { success: false, error: "Approved submissions can only update reach and screenshot" },
+          { status: 400 }
+        );
+      }
+      if (data.submittedReach <= submission.acceptedReach) {
+        return NextResponse.json(
+          { success: false, error: "New reach must be greater than current accepted reach" },
+          { status: 400 }
+        );
+      }
+
+      const oldScreenshot = submission.statsScreenshotUrl;
+      const newScreenshot = data.statsScreenshotUrl;
+      if (newScreenshot !== undefined && newScreenshot !== oldScreenshot && oldScreenshot) {
+        await deleteScreenshot(oldScreenshot, request);
+      }
+
+      const updated = await prisma.submission.update({
+        where: { id },
+        data: {
+          submittedReach:        data.submittedReach,
+          pendingReach:          data.submittedReach,
+          previousAcceptedReach: submission.acceptedReach,
+          statsScreenshotUrl:    newScreenshot ?? submission.statsScreenshotUrl,
+          status:                "PENDING",
+          isEdited:              true,
+        },
+      });
+
+      return NextResponse.json({ success: true, data: updated });
+    }
 
     const updateData: any = {
       status:   "PENDING",
@@ -42,12 +102,20 @@ export async function PATCH(
     if (data.contentLink        !== undefined) updateData.contentLink        = data.contentLink;
     if (data.contentTypes       !== undefined) updateData.contentTypes       = data.contentTypes;
     if (data.monsterAppearances !== undefined) updateData.monsterAppearances = data.monsterAppearances;
-    if (data.statsScreenshotUrl !== undefined) updateData.statsScreenshotUrl = data.statsScreenshotUrl;
+
+    // Screenshot — delete old from Cloudinary only if changed to a different URL
+    if (data.statsScreenshotUrl !== undefined) {
+      const oldUrl = submission.statsScreenshotUrl;
+      if (data.statsScreenshotUrl !== oldUrl && oldUrl && data.statsScreenshotUrl !== null) {
+        await deleteScreenshot(oldUrl, request);
+      }
+      updateData.statsScreenshotUrl = data.statsScreenshotUrl;
+    }
 
     if (data.submittedReach !== undefined) {
-      updateData.submittedReach          = data.submittedReach;
-      updateData.pendingReach            = data.submittedReach;
-      updateData.previousAcceptedReach   = submission.acceptedReach; // snapshot
+      updateData.submittedReach        = data.submittedReach;
+      updateData.pendingReach          = data.submittedReach;
+      updateData.previousAcceptedReach = submission.acceptedReach;
     }
 
     const updated = await prisma.submission.update({

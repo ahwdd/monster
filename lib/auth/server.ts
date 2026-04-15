@@ -1,11 +1,61 @@
 // src/lib/auth/server.ts
 import { cookies } from "next/headers";
 import { prisma }  from "@/lib/prisma";
-export { safeUserSelect } from "@/lib/utils/auth";
 
 const verificationCache = new Map<string, { ts: number; data: any }>();
 const CACHE_TTL   = Number(process.env.HUB_VERIFY_CACHE_TTL_SEC || 30) * 1000;
 const MAX_RETRIES = 3;
+
+export const safeUserSelect = {
+  id:         true,
+  email:      true,
+  phone:      true,
+  phoneKey:   true,
+  firstName:  true,
+  lastName:   true,
+  username:   true,
+  role:       true,
+  isVerified: true,
+  isActive:   true,
+  externalId: true,
+  provider:   true,
+  createdAt:  true,
+  updatedAt:  true,
+  lastLogin:  true,
+  profile: {
+    select: {
+      id:                  true,
+      channelLogo:         true,
+      platforms:           true,
+      platformLinks:       true,
+      primarySocialLink:   true,
+      contentType:         true,
+      followers:           true,
+      eventAttendance:     true,
+      rank:                true,
+      status:              true,
+      adminNotes:          true,
+      approvedAt:          true,
+
+      currentRankReach:    true,
+      totalReachAllTime:   true,
+
+      pictureCount:        true,
+      storyCount:          true,
+      reelCount:           true,
+      longVideoCount:      true,
+      postCount:           true,
+
+      totalPictureCount:   true,
+      totalStoryCount:     true,
+      totalReelCount:      true,
+      totalLongVideoCount: true,
+      totalPostCount:      true,
+      isActive:            true,
+      joinedAt:            true,
+    },
+  },
+} as const;
 
 export type UserSession = {
   id:         string;
@@ -23,35 +73,40 @@ export type UserSession = {
   createdAt:  Date;
   updatedAt:  Date;
   lastLogin?: Date | null;
-  profile?:   {
-    id:              string;
-    channelLogo?:    string | null;
-    platforms:       string[];
-    contentType:     string;
-    socialMediaLink: string;
-    followers:       number;
-    eventAttendance: string;
-    rank:            string;
-    currentLevel:    string;
-    totalPoints:     number;
-    levelProgress:   number;
-    streamCount:     number;
-    shortCount:      number;
-    reelCount:       number;
-    totalReach:      number;
-    totalViews:      number;
-    isApproved:      boolean;
-    isActive:        boolean;
-    cohortMonth?:    number | null;
-    joinedAt?:       Date | null;
+  profile?: {
+    id:                  string;
+    channelLogo?:        string | null;
+    platforms:           string[];
+    platformLinks:       { platform: string; url: string }[];
+    primarySocialLink?:  string;
+    contentType:         string;
+    followers:           number;
+    eventAttendance:     string;
+    rank:                string;
+    status:              "PENDING" | "APPROVED" | "REJECTED";
+    adminNotes?:         string | null;
+    approvedAt?:         Date | null;
+    currentRankReach:    number;
+    totalReachAllTime:   number;
+    pictureCount:        number;
+    storyCount:          number;
+    reelCount:           number;
+    longVideoCount:      number;
+    postCount:           number;
+    totalPictureCount:   number;
+    totalStoryCount:     number;
+    totalReelCount:      number;
+    totalLongVideoCount: number;
+    totalPostCount:      number;
+    isActive:            boolean;
+    joinedAt?:           Date | null;
   } | null;
 };
 
-// ── Cookie helpers ───────────────────────────────────────────
 export async function setAuthCookie(token: string) {
   try {
     const store = await cookies();
-    const opts  = {
+    const opts = {
       httpOnly: false,
       secure:   process.env.NODE_ENV === "production",
       sameSite: "lax" as const,
@@ -61,7 +116,9 @@ export async function setAuthCookie(token: string) {
     store.set("token",      token, opts);
     store.set("auth-token", token, opts);
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 export async function removeAuthCookie() {
@@ -70,17 +127,20 @@ export async function removeAuthCookie() {
     store.delete("token");
     store.delete("auth-token");
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 export async function getAuthToken(): Promise<string | null> {
   try {
     const store = await cookies();
     return store.get("token")?.value ?? store.get("auth-token")?.value ?? null;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
-// ── External Hub verification ────────────────────────────────
 async function fetchWithTimeout(url: string, opts: RequestInit, ms: number) {
   const ctrl = new AbortController();
   const t    = setTimeout(() => ctrl.abort(), ms);
@@ -88,7 +148,10 @@ async function fetchWithTimeout(url: string, opts: RequestInit, ms: number) {
     const res = await fetch(url, { ...opts, signal: ctrl.signal });
     clearTimeout(t);
     return res;
-  } catch (e) { clearTimeout(t); throw e; }
+  } catch (e) {
+    clearTimeout(t);
+    throw e;
+  }
 }
 
 async function verifyExternalToken(token: string): Promise<any | null> {
@@ -107,7 +170,9 @@ async function verifyExternalToken(token: string): Promise<any | null> {
         method:  "GET",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       }, timeout);
+
       if (!res.ok) return null;
+
       const body = await res.json().catch(() => null);
       const user = body?.data?.user ?? null;
       verificationCache.set(token, { ts: Date.now(), data: user });
@@ -118,9 +183,6 @@ async function verifyExternalToken(token: string): Promise<any | null> {
   }
   return null;
 }
-
-// ── getCurrentUser ───────────────────────────────────────────
-import { safeUserSelect as sel } from "@/lib/utils/auth";
 
 export async function getCurrentUser(authHeader?: string): Promise<UserSession | null> {
   const token = authHeader?.startsWith("Bearer ")
@@ -139,8 +201,8 @@ export async function getCurrentUser(authHeader?: string): Promise<UserSession |
   if (where.length === 0) return null;
 
   const local = await prisma.user.findFirst({
-    where:  { OR: where },
-    select: sel,
+    where: { OR: where },
+    select: safeUserSelect,
   });
 
   if (!local || !local.isActive) return null;

@@ -223,6 +223,14 @@ header .logo::after {
   background-size:     100vw 100vh;
   background-position: -15px 0;
 }
+/* how it works */
+.how-it-works-bg {
+  background-color: #0a0a0a;
+  background-image: url('/assets/program/ranks-can.png');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
 /* footer */
 .footer-link {
   background: linear-gradient(to right, #fff, #fff 50%, #b6b6b6 50%);

@@ -1,4 +1,5 @@
 // src/app/api/admin/registrations/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
@@ -12,10 +13,12 @@ export async function GET(request: NextRequest) {
     const page   = Math.max(1, parseInt(params.get("page")  ?? "1",  10));
     const limit  = Math.min(50, parseInt(params.get("limit") ?? "15", 10));
     const skip   = (page - 1) * limit;
-    const status = params.get("status"); // PENDING | APPROVED | REJECTED | null
+    const status = params.get("status"); // "PENDING" | "APPROVED" | "REJECTED" | null
 
     const where: any = {};
-    if (status) where.status = status;
+    if (status && ["PENDING", "APPROVED", "REJECTED"].includes(status)) {
+      where.status = status;
+    }
 
     const [data, total] = await Promise.all([
       prisma.creatorProfile.findMany({

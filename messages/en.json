@@ -52,6 +52,14 @@
     "slide2Title": "Lando Norris",
     "slide3Title": "Juice Monster Voodoo Grape"
   },
+  "program": {
+    "heroTagline": "Ambassadors Program",
+    "heroTitle": "BE A MONSTER",
+    "heroSub": "A 9-month content creator development program across MENA",
+    "registerNow": "Register Now",
+    "learnMore": "Learn More",
+    "aboutProgram": "About the Program"
+  },
   "news": {
     "sectionTitle": "LATEST NEWS",
     "readMore": "READ MORE",
@@ -206,7 +214,7 @@
     "rule1": "You must be from Saudi Arabia, Egypt, or Morocco",
     "rule2": "You must not be contracted with a competing brand",
     "rule3": "Your primary content language must be Arabic",
-    "rulesFooter": "Registration closes once 5 content creators have been selected.",
+    "rulesFooter": "Registration closes once 5 content creators have been selected monthly.",
     "realName": "Real Name",
     "realNamePlaceholder": "Full name",
     "nickname": "Nickname",

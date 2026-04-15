@@ -1,6 +1,5 @@
-// src/components/auth/UserMenu.tsx
+// src/components/main/UserMenu.tsx
 "use client";
-
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
@@ -28,7 +27,6 @@ export default function UserMenu() {
   const [profileChecked, setProfileChecked] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     function handle(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -37,7 +35,6 @@ export default function UserMenu() {
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
-  // Fetch profile registration status once when user is available
   useEffect(() => {
     if (!user || profileChecked) return;
     setProfileChecked(true);
@@ -122,7 +119,6 @@ export default function UserMenu() {
             {/* Nav links */}
             <div className="py-1.5">
 
-              {/* Profile — always clickable */}
               <Link
                 href={`/${locale}/auth/profile`}
                 onClick={() => setOpen(false)}
@@ -132,7 +128,6 @@ export default function UserMenu() {
                 {t("profile")}
               </Link>
 
-              {/* New Submission — active only when approved, otherwise greyed out */}
               {isApproved ? (
                 <Link
                   href={`/${locale}/submissions/submit`}
@@ -153,7 +148,6 @@ export default function UserMenu() {
                 </div>
               )}
 
-              {/* View Submissions — always visible */}
               <Link
                 href={`/${locale}/submissions`}
                 onClick={() => setOpen(false)}
@@ -165,10 +159,8 @@ export default function UserMenu() {
 
             </div>
 
-            {/* Thick separator */}
             <div className="h-0.75 bg-zinc-800 mx-4 rounded-full" />
 
-            {/* Logout */}
             <div className="py-1.5">
               <button
                 onClick={() => { setOpen(false); logout(); }}

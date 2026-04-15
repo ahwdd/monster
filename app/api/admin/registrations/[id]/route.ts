@@ -1,11 +1,12 @@
 // src/app/api/admin/registrations/[id]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
-  status:     z.enum(["APPROVED","REJECTED"]),
+  status:     z.enum(["APPROVED", "REJECTED"]),
   adminNotes: z.string().optional().nullable(),
 });
 
@@ -31,7 +32,7 @@ export async function PATCH(
       data: {
         status:     data.status,
         adminNotes: data.adminNotes ?? null,
-        // Set approvedAt only on first approval (don't reset month clock on re-approve)
+        // Set approvedAt only on first approval — month clock must not reset on re-approval
         ...(data.status === "APPROVED" && !profile.approvedAt
           ? { approvedAt: new Date() }
           : {}),
