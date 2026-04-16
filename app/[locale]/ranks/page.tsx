@@ -12,8 +12,8 @@ import Header from "@/components/Header";
 
 export default function RanksPage() {
   const locale = useLocale();
-  const t = useTranslations("ranks"); // ranks.* namespace
-  const tn = useTranslations("nav"); // nav.* for CTA buttons
+  const t = useTranslations("rank");
+  const tn = useTranslations("nav");
   const isAr = locale === "ar";
 
   return (
@@ -55,7 +55,7 @@ export default function RanksPage() {
 
               {/* Icon gradient top-right */}
               <div
-                className="absolute top-0 end-0 w-48 h-48 pointer-events-none"
+                className="absolute top-0 inset-e-0 w-48 h-48 pointer-events-none"
                 style={{
                   background: `linear-gradient(to bottom left, ${rank.color}18 0%, transparent 70%)`,
                 }}

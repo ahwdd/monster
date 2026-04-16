@@ -7,12 +7,12 @@ import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import LocationPopup from "@/components/main/LocationPopup";
 import WhereToBuyPopup from "@/components/main/WhereToBuyPopup";
-import { IoChevronDown } from "react-icons/io5";
+import UserMenu from "./auth/UserMenu";
+import { IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
 import { MdOutlineLocationOn } from "react-icons/md";
 import { PiGlobeLight } from "react-icons/pi";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Easing } from "framer-motion";
 import { navLinks, rankLinks } from "@/lib/data/navLinks";
-import UserMenu from "./auth/UserMenu";
 
 export default function Header() {
   const t = useTranslations();
@@ -20,6 +20,7 @@ export default function Header() {
   const isRTL = locale === "ar";
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -33,6 +34,21 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMobileOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
     if (dropdownOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setDropdownPos({ top: rect.bottom });
@@ -43,29 +59,29 @@ export default function Header() {
     function handle(e: MouseEvent) {
       const target = e.target as Node;
       if (dropRef.current?.contains(target)) return;
-      const portal = document.getElementById("dropdown-portal-root");
-      if (portal?.contains(target)) return;
+      if (document.getElementById("dropdown-portal-root")?.contains(target))
+        return;
       setDropdownOpen(false);
     }
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
-  // ── Same animation variants as the original ───────────────
-  const backdropVariants = {
+  // ── Animation variants ────────────────────────────────────
+  const backdropV = {
     hidden: { scaleY: 0, originY: 0 },
     visible: {
       scaleY: 1,
       originY: 0,
-      transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] as const },
+      transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] as Easing },
     },
     exit: {
       scaleY: 0,
       originY: 0,
-      transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+      transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as Easing },
     },
   };
-  const itemVariants = {
+  const itemV = {
     hidden: { opacity: 0, y: 16, scaleY: 0.85 },
     visible: (i: number) => ({
       opacity: 1,
@@ -74,24 +90,45 @@ export default function Header() {
       transition: {
         delay: 0.1 + i * 0.035,
         duration: 0.2,
-        ease: [0, 0, 0.2, 1] as const,
+        ease: [0, 0, 0.2, 1] as Easing,
       },
     }),
-    exit: {
-      opacity: 0,
-      y: 8,
-      scaleY: 0.9,
-      transition: { duration: 0.12, ease: [0.4, 0, 1, 1] as const },
-    },
+    exit: { opacity: 0, y: 8, scaleY: 0.9, transition: { duration: 0.12 } },
   };
 
-  // ── Dropdown portal — mirrors flavor dropdown exactly ─────
-  const dropdownContent = (
+  const panelV = {
+    hidden: { x: isRTL ? "100%" : "-100%", opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] as Easing },
+    },
+    exit: {
+      x: isRTL ? "100%" : "-100%",
+      opacity: 0,
+      transition: { duration: 0.24, ease: [0.4, 0, 1, 1] as Easing },
+    },
+  };
+  const mItemV = {
+    hidden: { opacity: 0, x: isRTL ? 24 : -24 },
+    visible: (i: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        delay: 0.15 + i * 0.055,
+        duration: 0.22,
+        ease: [0, 0, 0.2, 1] as Easing,
+      },
+    }),
+  };
+
+  // ── Desktop dropdown ──────────────────────────────────────
+  const desktopDropdown = (
     <AnimatePresence>
       {dropdownOpen && (
         <motion.div
           id="dropdown-portal-root"
-          variants={backdropVariants}
+          variants={backdropV}
           initial="hidden"
           animate="visible"
           exit="exit"
@@ -104,7 +141,6 @@ export default function Header() {
             transformOrigin: "top",
           }}
           className="bg-black w-screen">
-          {/* Inner container — same as original: bg-[#111], border, centered flex row */}
           <div
             className="flex items-stretch justify-center bg-[#111] border border-[#222] border-t-0
             w-full overflow-hidden gap-0 max-w-375 m-auto">
@@ -112,7 +148,7 @@ export default function Header() {
               <motion.div
                 key={rank.href}
                 custom={i}
-                variants={itemVariants}
+                variants={itemV}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
@@ -131,10 +167,9 @@ export default function Header() {
                     (e.currentTarget as HTMLElement).style.borderBottomColor =
                       "transparent";
                   }}>
-
                   <div className="text-center">
                     <p
-                      className="text-white font-medium header-small uppercase"
+                      className="font-medium header-small uppercase"
                       style={{ color: rank.color }}>
                       {t(rank.labelKey)}
                     </p>
@@ -142,7 +177,6 @@ export default function Header() {
                       {t(rank.subKey)}
                     </p>
                   </div>
-
                   <div className="relative shrink-0 aspect-square w-1/2">
                     <Image
                       src={rank.img}
@@ -154,7 +188,6 @@ export default function Header() {
                 </Link>
               </motion.div>
             ))}
-
             <Link
               href={`/${locale}/ranks`}
               onClick={() => setDropdownOpen(false)}
@@ -171,27 +204,183 @@ export default function Header() {
     </AnimatePresence>
   );
 
+  // ── Mobile nav panel ──────────────────────────────────────
+  const mobilePanel = (
+    <AnimatePresence>
+      {mobileOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 bg-black/75 z-9997 md:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+
+          <motion.aside
+            variants={panelV}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className={`fixed top-0 bottom-0 z-9999 w-72 bg-[#0a0a0a]
+              flex flex-col md:hidden overflow-hidden
+              ${isRTL ? "right-0 border-l border-zinc-800" : "left-0 border-r border-zinc-800"}`}>
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-5 h-16 border-b border-zinc-800 shrink-0">
+              <Image
+                src="/assets/logo.png"
+                alt="Monster"
+                width={110}
+                height={47}
+                className="object-contain h-7 w-auto"
+              />
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="p-2 text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-zinc-800">
+                <IoClose className="size-5" />
+              </button>
+            </div>
+
+            {/* Scrollable nav body */}
+            <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
+              {/* Ranks group */}
+              <motion.p
+                custom={0}
+                variants={mItemV}
+                initial="hidden"
+                animate="visible"
+                className="txt-smaller text-zinc-500 uppercase tracking-[0.2em] font-semibold px-3 pt-3 pb-1.5">
+                {t("nav.ranks")}
+              </motion.p>
+
+              {rankLinks.map((rank, i) => (
+                <motion.div
+                  key={rank.href}
+                  custom={i + 1}
+                  variants={mItemV}
+                  initial="hidden"
+                  animate="visible">
+                  <Link
+                    href={`/${locale}${rank.href}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-zinc-800/70 transition-colors">
+                    <div
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
+                      style={{ background: rank.color }}
+                    />
+                    <span
+                      className="txt-small font-bold uppercase"
+                      style={{ color: rank.color }}>
+                      {t(rank.labelKey)}
+                    </span>
+                    <span className="txt-smaller text-zinc-600 ms-auto">
+                      {t(rank.subKey)}
+                    </span>
+                  </Link>
+                </motion.div>
+              ))}
+
+              <motion.div
+                custom={rankLinks.length + 1}
+                variants={mItemV}
+                initial="hidden"
+                animate="visible">
+                <Link
+                  href={`/${locale}/ranks`}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-800/70 transition-colors">
+                  <span className="txt-smaller text-zinc-400">
+                    {t("nav.allRanks")} →
+                  </span>
+                </Link>
+              </motion.div>
+
+              <div className="h-px bg-zinc-800 my-3 mx-3" />
+
+              {/* Static links */}
+              {navLinks.map(({ labelKey, href }, i) => (
+                <motion.div
+                  key={labelKey}
+                  custom={rankLinks.length + i + 2}
+                  variants={mItemV}
+                  initial="hidden"
+                  animate="visible">
+                  <Link
+                    href={`/${locale}${href}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-zinc-800/70 transition-colors">
+                    <span className="txt-small font-semibold uppercase text-stone-300">
+                      {t(labelKey)}
+                    </span>
+                  </Link>
+                </motion.div>
+              ))}
+
+              <div className="h-px bg-zinc-800 my-3 mx-3" />
+
+              {/* Utility */}
+              <motion.div
+                custom={rankLinks.length + navLinks.length + 3}
+                variants={mItemV}
+                initial="hidden"
+                animate="visible"
+                className="flex gap-2 px-3">
+                <button
+                  onClick={() => {
+                    setLocationOpen(true);
+                    setMobileOpen(false);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg
+                    bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 hover:text-white txt-smaller transition-colors">
+                  <PiGlobeLight className="size-4" />
+                  {t("location.title").split(" ")[0]}
+                </button>
+                <button
+                  onClick={() => {
+                    setStoreOpen(true);
+                    setMobileOpen(false);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg
+                    bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 hover:text-white txt-smaller transition-colors">
+                  <MdOutlineLocationOn className="size-4" />
+                  {t("store.title").split(" ")[0]}
+                </button>
+              </motion.div>
+            </nav>
+
+            {/* User area pinned to bottom */}
+            <div className="border-t border-zinc-800 p-4 shrink-0">
+              <UserMenu />
+            </div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <>
       <header
-        className="fixed top-0 inset-x-0 z-40 flex items-center h-20.5
+        className="fixed top-0 inset-x-0 z-40 flex items-center h-16 md:h-20.5
         bg-[rgba(5,5,5,0.97)] border-b border-zinc-900 backdrop-blur-sm">
         {/* Logo */}
         <Link
           href={`/${locale}`}
-          className="logo relative bg-[#171717] py-3 px-7.5 w-55 h-23.5 flex items-center justify-center shrink-0">
+          className="logo relative bg-[#171717] flex items-center justify-center shrink-0
+            py-2 px-4 h-16 w-36
+            md:py-3 md:px-7.5 md:h-23.5 md:w-55">
           <Image
             src="/assets/logo.png"
             alt="Monster Energy"
             width={220}
             height={94}
-            className="object-contain object-center pt-2.5"
+            className="object-contain object-center md:pt-2.5 max-h-10 md:max-h-none"
           />
         </Link>
 
-        {/* Nav */}
-        <nav className="flex items-center flex-1 px-2 h-full gap-0.5 overflow-x-auto header-smaller">
-          {/* Ranks dropdown trigger */}
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center flex-1 px-2 h-full gap-0.5 overflow-x-auto header-smaller">
           <div
             ref={dropRef}
             className="relative h-full flex items-center shrink-0">
@@ -209,8 +398,6 @@ export default function Header() {
               />
             </button>
           </div>
-
-          {/* Static links */}
           {navLinks.map(({ labelKey, href }) => (
             <Link
               key={labelKey}
@@ -226,25 +413,42 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Right side */}
-        <div className="flex items-center gap-1 pe-2.5 shrink-0">
+        {/* Right controls */}
+        <div className="flex items-center gap-0.5 ms-auto pe-3 md:pe-2.5 shrink-0">
           <button
-            className="size-10.5 flex items-center justify-center text-white transition-colors"
-            onClick={() => setLocationOpen(true)}
-            aria-label={t("location.title")}>
+            className="hidden md:flex size-10.5 items-center justify-center text-white transition-colors"
+            onClick={() => setLocationOpen(true)}>
             <PiGlobeLight className="size-5.5" />
           </button>
           <button
-            className="size-10.5 flex items-center justify-center text-white transition-colors"
-            onClick={() => setStoreOpen(true)}
-            aria-label={t("store.title")}>
+            className="hidden md:flex size-10.5 items-center justify-center text-white transition-colors"
+            onClick={() => setStoreOpen(true)}>
             <MdOutlineLocationOn className="size-5.5" />
           </button>
-          <UserMenu />
+          <div className="hidden md:flex">
+            <UserMenu />
+          </div>
+
+          {/* Hamburger */}
+          <button
+            className="md:hidden p-2.5 text-white hover:text-[#78be20] transition-colors rounded-lg"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Toggle menu">
+            <motion.div
+              animate={{ rotate: mobileOpen ? 90 : 0 }}
+              transition={{ duration: 0.2 }}>
+              {mobileOpen ? (
+                <IoClose className="size-6" />
+              ) : (
+                <IoMenu className="size-6" />
+              )}
+            </motion.div>
+          </button>
         </div>
       </header>
 
-      {mounted && createPortal(dropdownContent, document.body)}
+      {mounted && createPortal(desktopDropdown, document.body)}
+      {mounted && createPortal(mobilePanel, document.body)}
       {locationOpen && <LocationPopup onClose={() => setLocationOpen(false)} />}
       {storeOpen && <WhereToBuyPopup onClose={() => setStoreOpen(false)} />}
     </>

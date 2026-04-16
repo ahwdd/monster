@@ -386,6 +386,15 @@
     "previousAccepted": "الوصول المقبول السابق"
   },
   "rank": {
+    "pageTitle": "التصنيفات",
+    "subtitle": "كل مستوى يُكتسب بالثبات والوصول وموافقة الفريق.",
+    "requirements": "المتطلبات",
+    "rewards": "المكافآت",
+    "grandPrize": "الجائزة الكبرى",
+    "grandPrizeDesc": "3M مشاهدة = كريدت PC كامل من متجر AHW",
+    "readyTitle": "مستعد للبدء؟",
+    "registerCta": "سجّل الآن",
+    "leaderboardCta": "لوحة الصدارة",
     "unranked": "غير مصنّف",
     "rookie": "مبتدئ",
     "mega": "ميقا مونستر",
@@ -399,16 +408,7 @@
     "rookieNote": "اصل لـ 500K لتصبح Rising",
     "risingNote": "اصل لـ 1M لتصبح Cold",
     "coldNote": "أعلى تصنيف — استمر!",
-    "decorative": "يُعرف أيضاً بـ: {title}",
-    "pageTitle": "التصنيفات",
-    "subtitle": "لا ترقيات تلقائية. كل مستوى يُكتسب بالثبات والوصول وموافقة الفريق.",
-    "requirements": "المتطلبات",
-    "rewards": "المكافآت",
-    "grandPrize": "الجائزة الكبرى",
-    "grandPrizeDesc": "3M مشاهدة = كريدت PC كامل من متجر AHW",
-    "readyTitle": "مستعد للبدء؟",
-    "registerCta": "سجّل الآن",
-    "leaderboardCta": "لوحة الصدارة"
+    "decorative": "يُعرف أيضاً بـ: {title}"
   },
   "footer": {
     "program": "البرنامج",

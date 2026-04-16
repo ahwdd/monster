@@ -140,7 +140,7 @@ export default function LeaderboardPage() {
                       )}
                       {/* Placement badge */}
                       <div
-                        className="absolute -top-1 -start-1 w-5 h-5 rounded-full flex items-center
+                        className="absolute -top-1 -inset-s-1 w-5 h-5 rounded-full flex items-center
                           justify-center font-display font-black text-black"
                         style={{
                           background: rankCfg.color,
@@ -172,7 +172,7 @@ export default function LeaderboardPage() {
 
                     {/* Stats — reach + placement */}
                     <div className="flex items-center divide-x divide-zinc-800 shrink-0">
-                      <div className="px-6 py-3 text-center min-w-[100px]">
+                      <div className="px-6 py-3 text-center min-w-25">
                         <p
                           className="font-display font-black text-white text-2xl leading-none"
                           style={{ color: rankCfg.color }}>
@@ -182,7 +182,7 @@ export default function LeaderboardPage() {
                           {locale === "ar" ? "إجمالي الوصول" : "TOTAL REACH"}
                         </p>
                       </div>
-                      <div className="px-6 py-3 text-center min-w-[80px]">
+                      <div className="px-6 py-3 text-center min-w-20">
                         <p className="font-display font-black text-white text-2xl leading-none">
                           {placement}
                         </p>
