@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import SkewBtn from "../ui/SkewBtn";
 import { flavorItems } from "@/lib/data/flavors";
 
 export default function FlavorsSection() {
@@ -21,7 +20,7 @@ export default function FlavorsSection() {
             {tn("energyDrinks").split(" ").slice(-1)[0]}
           </span>
         </h2>
-        <SkewBtn href="/flavors" text={tn("shopAllFlavors")} />
+        {/* <SkewBtn href="/flavors" text={tn("shopAllFlavors")} /> */}
       </div>
 
       {/* ── Grid: 3 cols mobile → 6 cols desktop ── */}
