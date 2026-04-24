@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { newsArticles } from "@/lib/data/news";
-import SkewBtn from "@/components/ui/SkewBtn";
+import OutlinedParaBtn from "../ui/OutlinedParaBtn";
 
 export default function NewsSection() {
   const t = useTranslations("news");
@@ -58,8 +58,10 @@ export default function NewsSection() {
         </div>
 
         {/* ── View All CTA ── */}
-        <div className="relative z-10 flex justify-center mt-8 sm:mt-10">
-          <SkewBtn href="/news" text={t("viewAll")} />
+        <div className="relative z-10 flex justify-center mt-8 sm:mt-10">          
+          <OutlinedParaBtn href={`/${locale}`} withBorder>
+            {t("viewAll")}
+          </OutlinedParaBtn>
         </div>
       </div>
     </section>
@@ -118,7 +120,7 @@ function NewsCard({
           </p>
 
           {/* Date — absolute bottom */}
-          <p className="txt-small sm:txt-larger font-semibold not-italic absolute bottom-5 sm:bottom-7.5 inset-s-5 sm:start-7.5">
+          <p className="txt-small sm:txt-larger font-semibold not-italic absolute bottom-5 sm:bottom-7.5 inset-s-5 sm:inset-s-7.5">
             <span className="text-[#6bd41a]">
               {isAr ? article.dateAr : article.date}
             </span>

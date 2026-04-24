@@ -5,8 +5,8 @@ import Link         from "next/link";
 import Image        from "next/image";
 import { useLocale }            from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
-import SkewBtn      from "@/components/ui/SkewBtn";
 import { LANDING_RANKS } from "@/lib/data/program";
+import OutlinedParaBtn from "../ui/OutlinedParaBtn";
 
 const CYCLE_MS = 2800;
 
@@ -55,7 +55,10 @@ export default function RanksSection() {
             : <>RISE THROUGH THE <span className="text-accent">RANKS</span></>
           }
         </h2>
-        <SkewBtn href={`/${locale}/ranks`} text={locale === "ar" ? "عرض جميع التصنيفات" : "VIEW ALL RANKS"} />
+        
+        <OutlinedParaBtn href={`/${locale}/ranks`} withBorder>
+          {locale === "ar" ? "عرض جميع التصنيفات" : "VIEW ALL RANKS"}
+        </OutlinedParaBtn>
       </div>
 
       {/* ── Desktop layout: can + floating labels ── */}
