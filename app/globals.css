@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* ─── XD Design Tokens ─────────────────────────────────────── */
 :root {
   --color-bg:          #000000;
   --color-surface:     #0d0d0d;
@@ -49,10 +48,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-html[lang="en"] body { font-family: var(--font-proxima), system-ui, sans-serif; }
-html[lang="ar"] body { font-family: var(--font-cairo), system-ui, sans-serif; }
-html[lang="en"] .font-display { font-family: var(--font-teko), system-ui, sans-serif; }
-.font-proxima, .font-proxima * { font-variant-ligatures: none; }
+div[lang="en"] body { font-family: var(--font-proxima), system-ui, sans-serif; }
+div[lang="ar"] body { font-family: var(--font-cairo), system-ui, sans-serif; }
+
+/* EN: display font = Teko */
+div[lang="en"] .font-display { font-family: var(--font-teko), system-ui, sans-serif; }
+
+/* AR: display font = Lemonada */
+div[lang="ar"] .font-display { font-family: var(--font-lemonada), system-ui, sans-serif; }
 
 div[lang="ar"] .font-proxima,
 div[lang="ar"] .font-proxima * { font-family: var(--font-cairo), system-ui, sans-serif; }
@@ -60,7 +63,7 @@ div[lang="ar"] .font-proxima * { font-family: var(--font-cairo), system-ui, sans
 input, select, optgroup, textarea {
   font-family: var(--font-proxima), "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
-html[lang="ar"] input, html[lang="ar"] textarea, html[lang="ar"] select {
+div[lang="ar"] input, div[lang="ar"] textarea, div[lang="ar"] select {
   font-family: var(--font-cairo), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
@@ -82,10 +85,10 @@ html[lang="ar"] input, html[lang="ar"] textarea, html[lang="ar"] select {
 
   .font-teko         { font-family: var(--font-teko), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
   .font-cairo        { font-family: var(--font-cairo), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
-  .font-display      { font-family: var(--font-teko), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
-  .font-proxima      { font-family: var(--font-proxima); unicode-range: U+0000-00FF; }
+  .font-lemonada     { font-family: var(--font-lemonada), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+  .font-proxima      { font-family: var(--font-proxima); }
 
-  html[lang="ar"] .font-display { font-family: var(--font-cairo), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+  .font-display      { font-family: var(--font-teko), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
 
   /* XD Section layout helpers */
   .section-px   { padding-inline: var(--section-px); }
@@ -146,7 +149,7 @@ html[lang="ar"] input, html[lang="ar"] textarea, html[lang="ar"] select {
 .animate-slide-out-right { animation: slideOutToRight   .6s ease-in-out forwards; }
 
 /* ─── Typography Scale ───────────────────────────────────────── */
-/* Display — Teko font */
+/* Display — Teko (EN) / Lemonada (AR) via .font-display override above */
 .header-huge    { font-size: clamp(2.5rem, 5vw, 6rem);    line-height: 1.0; }
 .header-larger  { font-size: clamp(2rem, 3.5vw, 4rem);    line-height: 1.05; }
 .header-large   { font-size: clamp(1.75rem, 2.5vw, 3rem); line-height: 1.1; }
@@ -154,8 +157,8 @@ html[lang="ar"] input, html[lang="ar"] textarea, html[lang="ar"] select {
 .header-small   { font-size: clamp(1.25rem, 1.5vw, 1.8rem); line-height: 1.2; }
 .header-smaller { font-size: clamp(1.1rem, 1.2vw, 1.4rem);  line-height: 1.25; }
 
-/* Body — Proxima Nova */
-.txt-huge    { font-size: 1.125rem; line-height: 1.6; } /* 18px */
+/* Body — Proxima Nova (EN) / Cairo (AR) */
+.txt-huge    { font-size: 1.125rem; line-height: 1.6; }  /* 18px */
 .txt-larger  { font-size: 1rem;     line-height: 1.65; } /* 16px */
 .txt-large   { font-size: 0.9375rem; line-height: 1.7; } /* 15px */
 .txt-regular { font-size: 0.875rem;  line-height: 1.7; } /* 14px */
@@ -252,6 +255,10 @@ header .logo::after {
 .xd-input:focus        { border-color: var(--color-accent); }
 .xd-input.error        { border-color: #ef4444; }
 
+div[lang="ar"] .xd-input {
+  font-family: var(--font-cairo), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
 /* XD: readonly inputs */
 .xd-input-readonly {
   width: 100%;
@@ -291,6 +298,11 @@ header .logo::after {
 }
 .skew-btn-primary:hover { opacity: 0.9; }
 .skew-btn-primary .btn-text { transform: skewX(11.6deg); display: block; position: relative; z-index: 1; }
+
+/* AR override: Lemonada for skew buttons */
+div[lang="ar"] .skew-btn-primary {
+  font-family: var(--font-lemonada), system-ui, sans-serif;
+}
 
 /* Default variant: outlined with corner square + left sliver */
 .skew-btn-default {
@@ -333,6 +345,11 @@ header .logo::after {
   background: #636363;
 }
 
+/* AR override: Lemonada for skew buttons */
+div[lang="ar"] .skew-btn-default {
+  font-family: var(--font-lemonada), system-ui, sans-serif;
+}
+
 /* ─── Admin Sidebar ──────────────────────────────────────────── */
 .admin-sidebar {
   width: 240px;
@@ -364,6 +381,11 @@ header .logo::after {
 .status-pill-pending  { background: var(--color-pending); }
 .status-pill-rejected { background: #ef4444; color: #fff; }
 
+/* AR override: Lemonada for status pills */
+div[lang="ar"] .status-pill {
+  font-family: var(--font-lemonada), system-ui, sans-serif;
+}
+
 /* ─── Table XD styles ────────────────────────────────────────── */
 .xd-table-header {
   display: grid;
@@ -387,6 +409,13 @@ header .logo::after {
 }
 .xd-table-row:hover { background: #0a0a0a; }
 
+div[lang="ar"] .xd-table-header {
+  font-family: var(--font-lemonada), system-ui, sans-serif;
+}
+div[lang="ar"] .xd-table-row {
+  font-family: var(--font-cairo), system-ui, sans-serif;
+}
+
 /* ─── Page breadcrumb bar ────────────────────────────────────── */
 .breadcrumb-bar {
   height: 58px;
@@ -397,6 +426,10 @@ header .logo::after {
   font-family: var(--font-proxima), "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 14px;
   color: var(--color-text-muted);
+}
+
+div[lang="ar"] .breadcrumb-bar {
+  font-family: var(--font-cairo), system-ui, sans-serif;
 }
 
 /* ─── Containers ─────────────────────────────────────────────── */
