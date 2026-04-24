@@ -1,86 +1,89 @@
 // src/components/landing/ProgramOverview.tsx
 "use client";
 import Image from "next/image";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
+import { PROGRAM_STATS } from "@/lib/data/program";
+import FadeInView from "../FadeInView";
 
-// XD sec1: stats show 5 New/Mo, 30 Creators, 9 Months in #6bd41a
-const STATS = [
-  { numEn: "9",  numAr: "٩",  labelEn: "Months",   labelAr: "أشهر" },
-  { numEn: "30", numAr: "٣٠", labelEn: "Creators",  labelAr: "صانع محتوى" },
-  { numEn: "5",  numAr: "٥",  labelEn: "New / Mo",  labelAr: "جديد / شهر" },
-];
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+// XD sec1 shows 3 specific stats: 9 Months / 30 Creators / 5 New/Mo
+// We use the first 3 from PROGRAM_STATS
 
 export default function ProgramOverview() {
   const locale = useLocale();
-  const isAr   = locale === "ar";
+  const t = useTranslations("hero");
+  const isAr = locale === "ar";
+    
+  const DISPLAY_STATS = [
+    { val: "9",  label: t("overviewMonths") },
+    { val: "30", label: t("overviewCreators") },
+    { val: "5", label: t("overviewNewPerMonth") },
+  ];
 
   return (
-    // XD sec1: bg #000000, full width, image on right ~720px wide
     <section className="w-full bg-black">
-      <div className="max-w-480 mx-auto px-35 py-25
-        grid grid-cols-2 gap-16 items-center">
+      <div
+        className="container xl:px-8 px-4 py-25 grid grid-cols-2 gap-20 items-center">
 
-        {/* Left: text + stats */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}>
+          transition={{ duration: 0.55, ease: EASE }}
+          className="max-w-120">
 
-          {/* XD: "PROGRAM OVERVIEW" — white, font-display */}
-          <h2 className="font-display font-black text-white uppercase mb-6"
-            style={{ fontSize: "clamp(2rem, 3.5vw, 4rem)", letterSpacing: "0.03em" }}>
-            {isAr ? "نظرة عامة" : "PROGRAM OVERVIEW"}
+          <h2
+            className="header-regular font-display font-black text-white uppercase mb-6 tracking-wide">
+            {t("overviewTitle")}
           </h2>
 
-          {/* XD: body text #ccccd0 */}
-          <p className="font-proxima text-[#ccccd0] leading-relaxed mb-4"
-            style={{ fontSize: "clamp(14px, 1.1vw, 16px)" }}>
-            {isAr
-              ? "برنامج السفراء من مونستر هو برنامج تطوير لمدة 9 أشهر مصمم لتعزيز مكانة مونستر إنرجي كعلامة رائدة بين الغيمرز وصناع المحتوى في منطقة MENA."
-              : "Monster Ambassadors is a 9-month development program designed to position Monster Energy as a leading brand among grassroots gamers and content creators across the MENA region."}
-          </p>
-          <p className="font-proxima text-[#ccccd0] leading-relaxed mb-14"
-            style={{ fontSize: "clamp(14px, 1.1vw, 16px)" }}>
-            {isAr
-              ? "يكتسب المشاركون الاعتراف بالعلامة، يوسّعون وصولهم، يبنون روابط قيّمة، ويحصلون على فرص المشاركة في فعاليات مونستر."
-              : "Participants gain brand recognition, expand their reach, build valuable connections, and unlock opportunities to take part in Monster events."}
+          <p
+            className="text-larger font-proxima text-[#ccccd0] leading-relaxed mb-4 ">
+            {t("overviewDesc1")}
           </p>
 
-          {/* XD stats: large #6bd41a number, #b6b6b6 label below */}
-          <div className="flex items-start gap-16">
-            {STATS.map((s) => (
-              <div key={s.numEn} className="text-center">
-                <p className="font-display font-black leading-none"
-                  style={{ fontSize: "clamp(3rem, 5vw, 6rem)", color: "#6bd41a" }}>
-                  {isAr ? s.numAr : s.numEn}
-                </p>
-                <p className="font-proxima text-[#b6b6b6] uppercase tracking-widest mt-2"
-                  style={{ fontSize: "12px" }}>
-                  {isAr ? s.labelAr : s.labelEn}
-                </p>
-              </div>
+          <p
+            className="text-larger font-proxima text-[#ccccd0] leading-relaxed mb-14 ">
+            {t("overviewDesc2")}
+          </p>
+
+          <div className="flex items-start gap-4">
+            {DISPLAY_STATS.map((s, i) => (
+              <motion.div
+                key={s.val}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: 0.2 + i * 0.08, ease: EASE }}>
+                <div className=" bg-[#171717] -skew-x-12 xl:px-8 xl:py-4 px-4 py-2 flex flex-col items-center justify-center">
+                  <p className="skew-x-12 font-display font-black leading-none text-accent header-large">
+                    {s.val}
+                  </p>
+                  <p className="skew-x-12 font-proxima text-[#b6b6b6] txt-smaller uppercase tracking-widest mt-2">
+                    {s.label}
+                  </p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* Right: image — XD shows a Monster event/booth photo */}
+        {/* Right: image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.1 }}
-          className="relative w-full overflow-hidden bg-[#111]"
-          style={{ aspectRatio: "16/10" }}>
+          transition={{ duration: 0.55, delay: 0.1, ease: EASE }}
+          className="relative w-full overflow-hidden max-w-120 h-full">
           <Image
-            src="/assets/textures/texture.webp"
+            src="/assets/hero/overview.png"
             alt="Monster Energy Program"
             fill
-            className="object-cover object-center opacity-60"
+            className="object-cover object-center opacity-60 rtl:-scale-x-100"
           />
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-linear-to-r from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0" />
         </motion.div>
       </div>
     </section>

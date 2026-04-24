@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Teko, Cairo } from "next/font/google";
+import { Teko, Cairo, Lemonada } from "next/font/google";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
@@ -22,9 +22,17 @@ const cairo = Cairo({
   variable: "--font-cairo",
 });
 
+
+const lemonada = Lemonada({
+  subsets:  ["latin"],
+  weight:   ["400", "500", "600", "700"],
+  variable: "--font-lemonada",
+});
+
 const proximaNova = localFont({
   variable: "--font-proxima",
   display:  "swap",
+  fallback: ["system-ui", "Arial"],
   src: [
     { path: "../../public/fonts/proxima-nova/proximanova-thin.otf",          weight: "100", style: "normal"  },
     { path: "../../public/fonts/proxima-nova/proximanova-thinit.otf",        weight: "100", style: "italic"  },
@@ -67,14 +75,12 @@ export default async function LocaleLayout({ children, params }: Props) {
   const isRTL    = locale === "ar";
 
   return (
-    <html lang={locale} dir={isRTL ? "rtl" : "ltr"} suppressHydrationWarning data-scroll-behavior="smooth"
+    <div lang={locale} dir={isRTL ? "rtl" : "ltr"} data-scroll-behavior="smooth"
       className={`${teko.variable} ${cairo.variable} ${proximaNova.variable}`}>
-      <body className="font-display txt-regular">
-        <Providers locale={locale} messages={messages}>
-          {children}
-          <Footer />
-        </Providers>
-      </body>
-    </html>
+      <Providers locale={locale} messages={messages}>
+        {children}
+        <Footer />
+      </Providers>
+    </div>
   );
 }

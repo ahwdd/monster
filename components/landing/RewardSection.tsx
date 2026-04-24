@@ -1,119 +1,88 @@
-// src/components/landing/RewardsSection.tsx
+// src/components/landing/RewardSection.tsx
 "use client";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
+import { REWARD_PACKS } from "@/lib/data/program";
+import FadeInView from "../FadeInView";
+import { hexToRgba } from "@/lib/utils/colors";
+import { BsTrophy } from "react-icons/bs";
 
-// XD sec5 exact data
-const PACKS = [
-  {
-    titleEn: "ROOKIE PACK",
-    titleAr: "حزمة المبتدئ",
-    color:   "#22bb39",
-    itemsEn: [
-      "1 Monster Energy Drink (Monthly – for 3 months only)",
-      "Rookie Certificate (End of Program)",
-    ],
-    itemsAr: [
-      "١ مشروب مونستر إنرجي (شهرياً - لمدة 3 أشهر فقط)",
-      "شهادة Rookie (نهاية البرنامج)",
-    ],
-  },
-  {
-    titleEn: "RISING PACK",
-    titleAr: "حزمة الصاعد",
-    color:   "#d4ff00",
-    itemsEn: [
-      "2 Monster Energy Shrinks (Monthly)",
-      "$250 Financial Reward (End of Program)",
-      "Headset + Camera + Microphone + Customized Fridge",
-      "2 Tickets for Local Event",
-      "Rising Trophy",
-    ],
-    itemsAr: [
-      "٢ Monster Shrink شهرياً",
-      "$250 مكافأة مالية (نهاية البرنامج)",
-      "سماعة + كاميرا + مايك + ثلاجة مخصصة",
-      "٢ تذكرة لحدث محلي",
-      "كأس Rising",
-    ],
-  },
-  {
-    titleEn: "COLD PACK",
-    titleAr: "حزمة الكولد",
-    color:   "#00cfff",
-    itemsEn: [
-      "3 Monster Energy Shrinks (Monthly)",
-      "$750 Financial Reward (End of Program)",
-      "Lights + Gaming Chair + Joystick",
-      "1 Trip to Global Gaming Event (Top 2 only)",
-      "Cold Trophy / Plaque",
-    ],
-    itemsAr: [
-      "٣ Monster Shrink شهرياً",
-      "$750 مكافأة مالية (نهاية البرنامج)",
-      "إضاءة + كرسي ألعاب + جويستيك",
-      "رحلة لحدث ألعاب عالمي (أفضل ٢ فقط)",
-      "كأس / لوحة شرف كولد مونستر",
-    ],
-  },
-];
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+const XD_COLORS: Record<string, string> = {
+  "Rookie Pack": "#22bb39",
+  "Rising Pack": "#d4ff00",
+  "Cold Pack": "#00cfff",
+};
 
 export default function RewardsSection() {
   const locale = useLocale();
-  const isAr   = locale === "ar";
+  const t = useTranslations("hero")
+  const isAr = locale === "ar";
 
   return (
-    <section className="w-full bg-black py-25 px-35">
-      <div className="max-w-480 mx-auto">
+    <section className="w-full bg-black py-25 px-35 relative">
+    <img src="/assets/textures/skew-texture.png" alt="" 
+    className="absolute size-full inset-x-0 top-8 z-1 object-cover" />
+      <div className="container relative z-2">
+        <FadeInView className="text-center mb-16">
+          <h2
+            className="header-larger tracking-wide font-display font-black text-white uppercase">
+            {t("rewards")}
+          </h2>
+        </FadeInView>
 
-        {/* XD: "Rewards" white heading centered */}
-        <motion.h2
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="font-display font-black text-white uppercase text-center mb-16"
-          style={{ fontSize: "clamp(2rem, 3.5vw, 4rem)", letterSpacing: "0.03em" }}>
-          {isAr ? "المكافآت" : "Rewards"}
-        </motion.h2>
-
-        {/* XD: 3 pack columns side by side */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PACKS.map((pack, i) => (
-            <motion.div
-              key={pack.titleEn}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.1 }}
-              className="bg-[#0a0a0a] border border-[#171717] p-8">
+          {REWARD_PACKS.map((pack, i) => {
+            const color = XD_COLORS[pack.titleEn] ?? pack.color;
+            return (
+              <motion.div
+                key={pack.titleEn}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
+                className="p-8 relative overflow-hidden"
+                style={{
+                    background: `linear-gradient(
+                      to top,
+                      ${hexToRgba(color, 0.3)} 0%,
+                      ${hexToRgba(color, 0.2)} 10%,
+                      ${hexToRgba(color, 0)} 100%
+                    )`
+                  }}>
+                  <BsTrophy className="absolute top-2 inset-e-2 size-10" style={{color}} />
+                  <span className="absolute top-3 -left-3 h-2 w-3/4 skew-x-[-45deg]" style={{backgroundColor: color}} />
+                <h3
+                  className="font-display font-black tracking-wide header-small uppercase mb-3"
+                  style={{
+                    color,
+                  }}>
+                  {isAr ? pack.titleAr : pack.titleEn}
+                </h3>
 
-              {/* XD: pack title in rank color */}
-              <h3 className="font-display font-black uppercase mb-6"
-                style={{ fontSize: "clamp(1rem, 1.5vw, 1.2rem)", color: pack.color, letterSpacing: "0.06em" }}>
-                {isAr ? pack.titleAr : pack.titleEn}
-              </h3>
+                <p className="-ms-1 font-proxima text-white tracking-wide font-semibold mb-2 txt-large">
+                  {t("includes")}:
+                </p>
 
-              {/* XD: "Includes:" white */}
-              <p className="font-proxima text-white font-semibold mb-4" style={{ fontSize: "14px" }}>
-                {isAr ? "يتضمن:" : "Includes:"}
-              </p>
-
-              {/* XD: items with 8×8 colored square bullet + #ccccd0 text */}
-              <div className="flex flex-col gap-3">
-                {(isAr ? pack.itemsAr : pack.itemsEn).map((item, j) => (
-                  <div key={j} className="flex items-start gap-3">
-                    <div
-                      className="mt-1.5 shrink-0"
-                      style={{ width: "8px", height: "8px", background: pack.color }}
-                    />
-                    <span className="font-proxima text-[#ccccd0]" style={{ fontSize: "14px", lineHeight: "1.5" }}>
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+                <div className="flex flex-col gap-3">
+                  {(isAr ? pack.itemsAr : pack.itemsEn).map((item) => (
+                    <div key={item} className="flex items-start gap-0.5">
+                      <div
+                        className="mt-1.5 shrink-0 size-2"
+                        style={{ background: color, }}
+                      />
+                      <span
+                        className="font-proxima text-[#ccccd0] txt-regular"
+                        style={{ lineHeight: "1.5" }}>
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

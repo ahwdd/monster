@@ -483,28 +483,28 @@ export const CONTENT_APPROVAL_NOTE = {
 
 export const PROGRAM_REQUIREMENTS: Requirement[] = [
   {
-    icon:    "heart",
+    icon: "shield",
+    titleEn: "Keep It Clean",
+    titleAr: "حافظ على المحتوى نظيفًا",
+    descEn: "We aim to have respectful and family-friendly content. Content branded under Monster Energy must be free of profanity, smoking, religious talk, and political talk.",
+    descAr: "نهدف إلى محتوى محترم ومناسب للعائلة. يجب أن يكون المحتوى الخاص بـ Monster Energy خاليًا من الألفاظ النابية، والتدخين، والمواضيع الدينية والسياسية.",
+    color: "#a3e635",
+  },
+  {
+    icon: "heart",
     titleEn: "Loyalty",
     titleAr: "الولاء",
-    descEn:  "You cannot promote a direct competitor product (e.g. Red Bull) across any of your platforms while in the program.",
-    descAr:  "لا يمكنك الترويج لمنتج منافس مباشر (مثل Red Bull) على أي من منصاتك خلال فترة انضمامك للبرنامج.",
-    color:   "#78be20",
+    descEn: "To be part of the program, you must not promote any direct competitor products across your platforms.",
+    descAr: "للانضمام إلى البرنامج، يجب ألا تقوم بالترويج لأي منتجات منافسة مباشرة عبر منصاتك.",
+    color: "#78be20",
   },
   {
-    icon:    "shield",
-    titleEn: "Keep It Clean",
-    titleAr: "حافظ على النظافة",
-    descEn:  "Content must be respectful and family-friendly. No profanity, smoking, or religious/political topics.",
-    descAr:  "يجب أن يكون المحتوى محترماً وملائماً للعائلة. لا ألفاظ نابية أو تدخين أو مواضيع دينية/سياسية.",
-    color:   "#a3e635",
-  },
-  {
-    icon:    "video",
+    icon: "video",
     titleEn: "Content",
     titleAr: "المحتوى",
-    descEn:  "Achieve your monthly KPIs. Submit content links weekly for validation. Insights screenshots required with each link.",
-    descAr:  "حقق KPIs الشهرية. أرسل روابط المحتوى أسبوعياً للتحقق. لقطات الشاشة للإحصائيات مطلوبة مع كل رابط.",
-    color:   "#38bdf8",
+    descEn: "A total of 25 pieces of content are required. Your content will evolve and improve as part of the program.",
+    descAr: "مطلوب إنتاج 25 قطعة محتوى إجمالاً. سيتطور محتواك ويتحسن كجزء من البرنامج.",
+    color: "#38bdf8",
   },
 ];
 
@@ -528,28 +528,36 @@ export const PROGRESSION_RULES = {
 
 export const HOW_IT_WORKS_STEPS: HowItWorksStep[] = [
   {
-    numEn:   "01",
+    numEn:   "1",
     icon:    "document",
     titleEn: "Apply",
     titleAr: "قدّم طلبك",
-    descEn:  "Fill out the registration form. Selection based on content consistency, gaming/esports relevance, brand fit, and live streaming.",
-    descAr:  "أكمل استمارة التسجيل. الاختيار يعتمد على ثبات المحتوى، الصلة بالألعاب، ملاءمة العلامة، والبث المباشر.",
+    descEn:  "Creators apply via the website form",
+    descAr:  "يتقدّم صناع المحتوى عبر نموذج الموقع",
   },
   {
-    numEn:   "02",
+    numEn:   "2",
     icon:    "checkmark",
     titleEn: "Get Selected",
-    titleAr: "احصل على القبول",
-    descEn:  "Top creators are shortlisted. Accepted creators receive acceptance message + KPI requirements. Process repeats quarterly until 45 Monsters.",
-    descAr:  "أفضل صناع المحتوى يُختارون. المقبولون يتلقون رسالة قبول + متطلبات KPI. تتكرر العملية ربعياً حتى الوصول لـ 45 سفيراً.",
+    titleAr: "يتم اختيارك",
+    descEn:  "Selection based on content consistency, relevance, and brand fit",
+    descAr:  "يتم الاختيار بناءً على استمرارية المحتوى، مدى صلته، وتوافقه مع العلامة التجارية",
   },
   {
-    numEn:   "03",
+    numEn:   "3",
+    icon:    "checkmark",
+    titleEn: "Prove Consistancy",
+    titleAr: "أثبت استمراريتك",
+    descEn:  "Submit weekly content and meet performance requirements",
+    descAr:  "قدّم محتوى أسبوعيًا وحقق متطلبات الأداء",
+  },
+  {
+    numEn:   "4",
     icon:    "trophy",
     titleEn: "Level Up",
     titleAr: "ارتقِ بمستواك",
-    descEn:  "Deliver consistently, hit your KPIs, and earn admin rank-ups every quarter. Every level unlocks bigger rewards and gear.",
-    descAr:  "سلّم بثبات، حقق KPIs، واكسب ترقية تصنيفك كل ربع سنة. كل مستوى يفتح مكافآت ومعدات أكبر.",
+    descEn:  "Progress through levels based on performance",
+    descAr:  "تقدّم عبر المستويات بناءً على أدائك",
   },
 ];
 

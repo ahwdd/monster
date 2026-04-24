@@ -28,27 +28,29 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#050505] border-t border-zinc-900">
+    <footer className="bg-black border-t border-[#272727]">
+      {/* XD: 4-column grid — Brand | Program | Join | Connect */}
       <div
-        className="max-w-7xl mx-auto px-5 py-10 md:py-16
-        grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
-
-        <div className="col-span-2 md:col-span-1">
+        className="container px-35 py-12 grid gap-12"
+        style={{ gridTemplateColumns: "1fr 200px 200px 200px" }}>
+        {/* Brand column */}
+        <div>
           <Link href={`/${locale}`} className="inline-block mb-4">
             <Image
               src="/assets/logo.png"
               alt="Monster Energy"
               width={140}
               height={60}
-              className="object-contain h-8 md:h-10 w-auto"
+              className="object-contain h-10 w-auto"
             />
           </Link>
-          <p className="font-proxima txt-small text-zinc-500 leading-relaxed mb-5 max-w-xs">
+          <p className="font-proxima txt-small text-[#ccccd0] leading-relaxed mb-5 max-w-65">
             {locale === "ar"
               ? "برنامج تطوير لصناع محتوى الألعاب في منطقة MENA."
               : "A gaming content creator development program across MENA."}
           </p>
-          <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Social icons */}
+          <div className="flex items-center gap-2 flex-wrap">
             {SOCIALS.map(({ Icon, href, label }) => (
               <a
                 key={label}
@@ -56,62 +58,44 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="w-8 h-8 flex items-center justify-center text-zinc-500
-                  hover:text-[#78be20] transition-colors duration-200">
-                <Icon className="size-4" />
+                className="w-8 h-8 border border-[#333] flex items-center justify-center text-[#ccccd0] hover:text-white hover:border-[#555] transition-colors">
+                <Icon className="size-3.5" />
               </a>
             ))}
           </div>
         </div>
 
-
+        {/* Link columns from navLinks.ts footerLinks */}
         {footerLinks.map((col) => (
           <div key={col.titleKey}>
-            <p className="font-display font-bold text-white uppercase tracking-widest txt-small mb-4">
+            <p className="font-display font-bold text-white uppercase tracking-[0.15em] txt-small mb-4">
               {t(col.titleKey)}
             </p>
-            <ul className="space-y-2.5">
+            <div className="flex flex-col gap-3">
               {col.links.map(({ labelKey, href }) => (
-                <li key={labelKey}>
-                  <Link
-                    href={`/${locale}${href}`}
-                    className="font-proxima txt-small text-zinc-500 hover:text-[#78be20]
-                      transition-colors duration-200 flex items-center gap-1.5 group">
-                    <span
-                      className="w-1 h-1 rounded-full bg-zinc-700
-                      group-hover:bg-[#78be20] transition-colors shrink-0"
-                    />
-                    {t(labelKey)}
-                  </Link>
-                </li>
+                <Link
+                  key={labelKey}
+                  href={`/${locale}${href}`}
+                  className="font-proxima txt-small text-[#ccccd0] hover:text-white transition-colors footer-link">
+                  {t(labelKey)}
+                </Link>
               ))}
-            </ul>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="border-t border-zinc-900">
+      {/* Bottom bar */}
+      <div className="border-t border-[#272727]">
         <div
-          className="max-w-7xl mx-auto px-5 py-4 flex flex-col sm:flex-row items-center
-          justify-between gap-2 txt-smaller text-zinc-600">
-          <p>© {year} Monster Energy Ambassadors Program.</p>
-          <div className="flex items-center gap-3 flex-wrap justify-center">
-            <Link
-              href={`/${locale}/program`}
-              className="hover:text-zinc-400 transition-colors">
-              {locale === "ar" ? "البرنامج" : "About"}
-            </Link>
-            <Link
-              href={`/${locale}/ranks`}
-              className="hover:text-zinc-400 transition-colors">
-              {locale === "ar" ? "التصنيفات" : "Ranks"}
-            </Link>
-            <Link
-              href={`/${locale}/leaderboard`}
-              className="hover:text-zinc-400 transition-colors">
-              {locale === "ar" ? "الصدارة" : "Leaderboard"}
-            </Link>
-          </div>
+          className="container px-35 flex items-center justify-between font-proxima text-[#ccccd0]"
+          style={{ height: "58px", fontSize: "13px" }}>
+          <span>© {year} Monster Energy Ambassadors Program.</span>
+          <Link
+            href={`/${locale}/terms`}
+            className="hover:text-white transition-colors">
+            {t("footer.terms")}
+          </Link>
         </div>
       </div>
     </footer>

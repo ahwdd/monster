@@ -1,100 +1,48 @@
 // src/components/landing/HowItWorksSection.tsx
 "use client";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
+import { HOW_IT_WORKS_STEPS } from "@/lib/data/program";
+import FadeInView from "../FadeInView";
 
-// XD sec4 exact text
-const STEPS = [
-  {
-    numEn: "1",
-    titleEn: "APPLY",
-    titleAr: "قدّم طلبك",
-    descEn: "Creators apply via the website form",
-    descAr: "يتقدم صناع المحتوى عبر نموذج الموقع",
-  },
-  {
-    numEn: "2",
-    titleEn: "GET SELECTED",
-    titleAr: "احصل على القبول",
-    descEn: "Selection based on content consistency, relevance, and brand fit",
-    descAr: "الاختيار بناءً على ثبات المحتوى، الصلة بالمجال، وملاءمة العلامة",
-  },
-  {
-    numEn: "3",
-    titleEn: "PROVE CONSISTENCY",
-    titleAr: "أثبت ثباتك",
-    descEn: "Submit weekly content and meet performance requirements",
-    descAr: "أرسل محتوى أسبوعياً واستوفِ متطلبات الأداء",
-  },
-  {
-    numEn: "4",
-    titleEn: "LEVEL UP",
-    titleAr: "ارتقِ بمستواك",
-    descEn: "Progress through levels based on performance",
-    descAr: "تقدّم عبر التصنيفات بناءً على أدائك",
-  },
-];
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function HowItWorksSection() {
   const locale = useLocale();
+  const t = useTranslations("hero")
   const isAr = locale === "ar";
 
   return (
-    // XD sec4: bg #000000
     <section className="w-full bg-black py-25 px-35">
-      <div className="max-w-480 mx-auto">
-        {/* XD heading + subtitle */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16">
+      <div className="container">
+        <FadeInView className="text-center mb-16">
           <h2
-            className="font-display font-black text-white uppercase mb-4"
-            style={{
-              fontSize: "clamp(2rem, 3.5vw, 4rem)",
-              letterSpacing: "0.03em",
-            }}>
-            {isAr ? "كيف يعمل البرنامج" : "HOW IT WORKS"}
+            className="header-larger tracking-wide font-display font-black text-white uppercase mb-4">
+            {t("howItWorks")}
           </h2>
-          <p
-            className="font-proxima text-[#ccccd0] max-w-2xl mx-auto"
-            style={{ fontSize: "14px" }}>
-            {isAr
-              ? "يتقدم صناع المحتوى → يُختارون → يُثبتون ثباتهم → يرتقون بناءً على استيفاء متطلبات كل مستوى"
-              : "Creators apply → get selected → prove consistency → level up based on meeting level requirements"}
+          <p className="font-proxima text-[#ccccd0] max-w-92 mx-auto txt-regular">
+            {t("howItWorksDesc")}
           </p>
-        </motion.div>
+        </FadeInView>
 
-        {/* XD: 4 steps in a row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {STEPS.map((step, i) => (
+        <div className="flex flex-wrap gap-8 items-start justify-center">
+          {HOW_IT_WORKS_STEPS.map((step, i) => (
             <motion.div
               key={step.numEn}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.1 }}
-              className="flex flex-col items-center text-center">
-              {/* XD: 86×86 #171717 square with #22bb39 number */}
+              transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
+              className="flex flex-col justify-between items-start w-full sm:w-[40%] lg:w-[23%]">
+
               <div
-                className="flex items-center justify-center mb-6"
-                style={{
-                  width: "86px",
-                  height: "86px",
-                  background: "#171717",
-                }}>
+                className="flex items-center justify-center mb-6 bg-[#171717] size-16 rounded">
                 <span
-                  className="font-display font-black"
-                  style={{
-                    fontSize: "clamp(1.8rem, 3vw, 2.5rem)",
-                    color: "#22bb39",
-                  }}>
+                  className="font-display font-black header-regular text-accent">
                   {step.numEn}
                 </span>
               </div>
 
-              {/* XD: title white */}
               <h3
                 className="font-display font-black text-white uppercase mb-3"
                 style={{
@@ -104,10 +52,9 @@ export default function HowItWorksSection() {
                 {isAr ? step.titleAr : step.titleEn}
               </h3>
 
-              {/* XD: desc #ccccd0 */}
               <p
-                className="font-proxima text-[#ccccd0]"
-                style={{ fontSize: "14px", lineHeight: "1.6" }}>
+                className="font-proxima text-[#ccccd0] txt-regular max-w-44"
+                style={{ lineHeight: "1.6" }}>
                 {isAr ? step.descAr : step.descEn}
               </p>
             </motion.div>

@@ -1,30 +1,76 @@
+// src/components/ui/LangToggle.tsx
 "use client";
-
-import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { useLocale } from "next-intl";
-import { useTransition } from "react";
+import { usePathname } from "next/navigation";
 
-type Props = { label: string };
+type Props = {
+  className?: string;
+};
 
-export default function LangToggle({ label }: Props) {
-  const locale   = useLocale();
-  const router   = useRouter();
+export default function LangToggle({ className = "" }: Props) {
+  const locale = useLocale();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const isAr = locale === "ar";
 
-  function toggle() {
-    const nextLocale = locale === "en" ? "ar" : "en";
-    const newPath    = pathname.replace(`/${locale}`, `/${nextLocale}`);
-    startTransition(() => router.push(newPath));
-  }
+  const enPath = pathname.replace(/^\/(ar)/, "/en");
+  const arPath = pathname.replace(/^\/(en)/, "/ar");
 
   return (
-    <button
-      onClick={toggle}
-      disabled={isPending}
-      className="px-3 py-1 txt-smaller font-bold rounded-sm border border-[#333] text-accent bg-transparent cursor-pointer transition-all disabled:opacity-50"
-    >
-      {label}
-    </button>
+    <div
+      className={`flex items-center overflow-hidden border border-[#333] ${className}`}
+      style={{ height: "30px" }}>
+      {!isAr ? (
+        <span
+          className="flex items-center justify-center px-3 font-display font-bold uppercase"
+          style={{
+            fontSize: "11px",
+            letterSpacing: "1px",
+            background: "#6bd41a",
+            color: "#000",
+            height: "100%",
+          }}>
+          EN
+        </span>
+      ) : (
+        <Link
+          href={enPath}
+          className="flex items-center justify-center px-3 font-display font-bold uppercase hover:text-white transition-colors"
+          style={{
+            fontSize: "11px",
+            letterSpacing: "1px",
+            color: "#666",
+            height: "100%",
+          }}>
+          EN
+        </Link>
+      )}
+      <div className="w-px h-full bg-[#333]" />
+      {isAr ? (
+        <span
+          className="flex items-center justify-center px-3 font-display font-bold uppercase"
+          style={{
+            fontSize: "11px",
+            letterSpacing: "1px",
+            background: "#6bd41a",
+            color: "#000",
+            height: "100%",
+          }}>
+          AR
+        </span>
+      ) : (
+        <Link
+          href={arPath}
+          className="flex items-center justify-center px-3 font-display font-bold uppercase hover:text-white transition-colors"
+          style={{
+            fontSize: "11px",
+            letterSpacing: "1px",
+            color: "#666",
+            height: "100%",
+          }}>
+          AR
+        </Link>
+      )}
+    </div>
   );
 }

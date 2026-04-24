@@ -5,9 +5,10 @@ import { useLocale } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Header from "@/components/Header";
-import { getRankConfig } from "@/lib/data/program";
 import { formatNumber } from "@/lib/utils/rank";
+import Header from "@/components/Header";
+import FadeInView from "@/components/FadeInView";
+import { SkeletonTableRow } from "@/components/Skeleton";
 
 type Leader = {
   id: string;
@@ -18,13 +19,13 @@ type Leader = {
   channelLogo: string | null;
 };
 
-// XD rank label map
 const RANK_LABEL_EN: Record<string, string> = {
   UNRANKED: "Unranked",
   ROOKIE: "Rookie Monster",
   RISING: "Rising Monster",
   COLD: "Cold Monster",
 };
+
 const RANK_LABEL_AR: Record<string, string> = {
   UNRANKED: "غير مصنّف",
   ROOKIE: "مبتدئ مونستر",
@@ -49,15 +50,19 @@ export default function LeaderboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const HEADERS = isAr
+    ? ["المرتبة", "صانع المحتوى", "التصنيف", "المشاهدات"]
+    : ["Rank", "Creator", "Level", "Views"];
+
   return (
     <div className="min-h-screen bg-black">
       <Header />
 
-      {/* XD: breadcrumb bar same pattern as AuthShell */}
+      {/* Breadcrumb bar */}
       <div className="mt-20 border-b border-[#171717]">
         <div
-          className="max-w-480 mx-auto px-35 h-14.5 flex items-center gap-3
-          font-proxima text-[#ccccd0] text-sm">
+          className="container px-35 flex items-center gap-3 font-proxima text-[#ccccd0] txt-regular"
+          style={{ height: "58px" }}>
           <Link
             href={`/${locale}`}
             className="hover:text-white transition-colors">
@@ -68,10 +73,8 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="max-w-480 mx-auto px-35 py-16">
-        {/* XD: heading + subtitle (same pattern as sec6 in Home) */}
-        <div className="text-center mb-14">
+      <div className="container px-35 py-16">
+        <FadeInView className="text-center mb-14">
           <h1
             className="font-display font-black text-white uppercase mb-3"
             style={{
@@ -80,64 +83,61 @@ export default function LeaderboardPage() {
             }}>
             {isAr ? "لوحة الصدارة" : "Leaderboard"}
           </h1>
-          <p
-            className="font-proxima text-[#ccccd0]"
-            style={{ fontSize: "14px" }}>
+          <p className="font-proxima text-[#ccccd0] txt-regular">
             {isAr ? "تنافس. احتل مكانك. سيطر." : "Compete. Rank. Dominate."}
           </p>
-        </div>
+        </FadeInView>
 
-        {loading ? (
-          <div className="flex justify-center py-24">
-            <div className="w-10 h-10 border-2 border-[#6bd41a] border-t-transparent rounded-full animate-spin" />
+        <FadeInView delay={0.1} className="max-w-225 mx-auto">
+          {/* Table header — identical to TopMonstersSection */}
+          <div className="grid grid-cols-[80px_1fr_1fr_1fr] border-b border-[#272727] pb-3">
+            {HEADERS.map((h, i) => (
+              <span
+                key={i}
+                className="font-display font-bold text-white uppercase"
+                style={{ fontSize: "13px", letterSpacing: "0.08em" }}>
+                {h}
+              </span>
+            ))}
           </div>
-        ) : leaders.length === 0 ? (
-          <div className="text-center py-24">
-            <p className="font-proxima text-[#ccccd0] text-sm">
-              {isAr ? "لا توجد بيانات بعد" : "No ambassadors ranked yet."}
-            </p>
-          </div>
-        ) : (
-          <div className="max-w-275 mx-auto">
-            {/* XD table header — white text */}
-            <div
-              className="grid grid-cols-[80px_1fr_240px_160px] gap-6
-              pb-3 border-b border-[#272727]">
-              {["Rank", "Creator", "Level", "Views"].map((h, i) => (
-                <span
+
+          {/* Skeleton rows */}
+          {loading && (
+            <>
+              {Array.from({ length: 10 }).map((_, i) => (
+                <SkeletonTableRow
                   key={i}
-                  className="font-display font-bold text-white uppercase"
-                  style={{ fontSize: "13px", letterSpacing: "0.08em" }}>
-                  {isAr
-                    ? ["المرتبة", "صانع المحتوى", "التصنيف", "المشاهدات"][i]
-                    : h}
-                </span>
+                  cols={4}
+                  className="grid-cols-[80px_1fr_1fr_1fr]"
+                />
               ))}
-            </div>
+            </>
+          )}
 
-            {/* XD rows — #ccccd0 text, #272727 dividers */}
-            {leaders.map((leader, i) => {
+          {!loading && leaders.length === 0 && (
+            <div className="py-16 text-center font-proxima text-[#ccccd0] txt-regular">
+              {isAr ? "لا توجد بيانات بعد" : "No ambassadors ranked yet."}
+            </div>
+          )}
+
+          {!loading &&
+            leaders.map((leader, i) => {
               const initial = leader.nickname?.charAt(0)?.toUpperCase() ?? "?";
-              const labelEn = RANK_LABEL_EN[leader.rank] ?? leader.rank;
-              const labelAr = RANK_LABEL_AR[leader.rank] ?? leader.rank;
+              const levelLabel = isAr
+                ? (RANK_LABEL_AR[leader.rank] ?? leader.rank)
+                : (RANK_LABEL_EN[leader.rank] ?? leader.rank);
 
               return (
                 <motion.div
                   key={leader.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.06 }}
-                  className="grid grid-cols-[80px_1fr_240px_160px] gap-6 py-5
-                    border-b border-[#272727] items-center
-                    hover:bg-[#0a0a0a] transition-colors">
-                  {/* Rank number */}
-                  <span
-                    className="font-proxima text-[#ccccd0]"
-                    style={{ fontSize: "14px" }}>
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.35, delay: i * 0.06 }}
+                  className="grid grid-cols-[80px_1fr_1fr_1fr] py-4 border-b border-[#272727] hover:bg-[#0a0a0a] transition-colors items-center">
+                  <span className="font-proxima text-[#ccccd0] txt-regular">
                     {i + 1}
                   </span>
 
-                  {/* Creator — avatar + nickname */}
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="relative w-10 h-10 shrink-0 overflow-hidden bg-[#171717]">
                       {leader.channelLogo ? (
@@ -148,42 +148,29 @@ export default function LeaderboardPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div
-                          className="w-full h-full flex items-center justify-center
-                          font-display font-black text-[#ccccd0]"
-                          style={{ fontSize: "1rem" }}>
+                        <div className="w-full h-full flex items-center justify-center font-display font-black text-[#ccccd0] txt-regular">
                           {initial}
                         </div>
                       )}
                     </div>
-                    <span
-                      className="font-proxima text-[#ccccd0] truncate"
-                      style={{ fontSize: "14px" }}>
+                    <span className="font-proxima text-[#ccccd0] txt-regular truncate">
                       {leader.nickname}
                     </span>
                   </div>
 
-                  {/* Level — plain text, no pill */}
-                  <span
-                    className="font-proxima text-[#ccccd0]"
-                    style={{ fontSize: "14px" }}>
-                    {isAr ? labelAr : labelEn}
+                  <span className="font-proxima text-[#ccccd0] txt-regular">
+                    {levelLabel}
                   </span>
-
-                  {/* Views */}
-                  <span
-                    className="font-proxima text-[#ccccd0]"
-                    style={{ fontSize: "14px" }}>
+                  <span className="font-proxima text-[#ccccd0] txt-regular">
                     {formatNumber(leader.totalReachAllTime)}
                   </span>
                 </motion.div>
               );
             })}
-          </div>
-        )}
+        </FadeInView>
       </div>
 
-      {/* XD sec7 CTA strip — same green strip as landing */}
+      {/* XD: green CTA strip */}
       <div
         className="w-full py-16 text-center"
         style={{ background: "#6bd41a" }}>
@@ -195,27 +182,23 @@ export default function LeaderboardPage() {
           }}>
           {isAr ? "مستعد لتصبح مونستر؟" : "READY TO BECOME A MONSTER?"}
         </h2>
-        <p
-          className="font-proxima text-white mb-8"
-          style={{ fontSize: "15px" }}>
+        <p className="font-proxima text-white mb-8 txt-larger">
           {isAr
-            ? "لن نطور أداءك فحسب."
+            ? "انضم للبرنامج وأثبت نفسك."
             : "Join the program and prove your performance."}
         </p>
         <Link
           href={`/${locale}/submissions/register`}
-          className="inline-flex items-center justify-center h-12 px-12
-            bg-black text-white font-display font-black uppercase tracking-[2px] text-sm
-            hover:bg-[#111] transition-colors">
+          className="inline-flex items-center justify-center h-12 px-12 bg-black text-white font-display font-black uppercase tracking-[2px] txt-small hover:bg-[#111] transition-colors">
           {isAr ? "انضم الآن" : "Join Now"}
         </Link>
       </div>
 
-      {/* Footer — reuse same pattern as AuthShell */}
+      {/* Footer */}
       <footer className="bg-black border-t border-[#272727]">
         <div
-          className="max-w-480 mx-auto px-35 h-14.5 flex items-center justify-between
-          font-proxima text-[#ccccd0] text-[13px]">
+          className="container px-35 flex items-center justify-between font-proxima text-[#ccccd0]"
+          style={{ height: "58px", fontSize: "13px" }}>
           <span>© 2026 Monster Energy Ambassadors Program.</span>
           <Link
             href={`/${locale}/program`}
