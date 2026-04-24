@@ -8,7 +8,8 @@ import PageTitle from "@/components/ui/PageTitle";
 import { RANK_DETAILS } from "@/lib/data/program";
 import Header from "@/components/Header";
 import FadeInView from "@/components/FadeInView";
-import SkewButton from "@/components/ui/SkewBtn";
+import OutlinedParaBtn from "@/components/ui/OutlinedParaBtn";
+import SolidParaBtn from "@/components/ui/SolidParaBtn";
 
 export default function RanksPage() {
   const locale = useLocale();
@@ -161,14 +162,14 @@ export default function RanksPage() {
             {t("readyTitle")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <SkewButton
-              href={`/${locale}/submissions/register`}
-              variant="primary">
+            
+            <OutlinedParaBtn href={`/${locale}/submissions/register`} withBorder>
               {t("registerCta")}
-            </SkewButton>
-            <SkewButton href={`/${locale}/leaderboard`} variant="default">
+            </OutlinedParaBtn>
+            
+            <SolidParaBtn href={`/${locale}/leaderboard`}>
               {t("leaderboardCta")}
-            </SkewButton>
+            </SolidParaBtn>
           </div>
         </FadeInView>
       </div>

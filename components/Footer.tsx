@@ -11,15 +11,18 @@ import {
   IoLogoFacebook,
   IoLogoTiktok,
 } from "react-icons/io5";
-import { SiKick } from "react-icons/si";
+import { SiKick, SiX } from "react-icons/si";
+import { FaSnapchatGhost } from "react-icons/fa";
 
 const SOCIALS = [
-  { Icon: IoLogoYoutube, href: "https://youtube.com", label: "YouTube" },
+  { Icon: IoLogoFacebook, href: "https://facebook.com", label: "Facebook" },
   { Icon: IoLogoInstagram, href: "https://instagram.com", label: "Instagram" },
+  { Icon: IoLogoYoutube, href: "https://youtube.com", label: "YouTube" },
+  { Icon: SiX, href: "https://x.com", label: "X"},
+  { Icon: IoLogoTiktok, href: "https://tiktok.com", label: "TikTok" },
+  { Icon: FaSnapchatGhost, href: "https://snapchat.com", label: "Snapchat" },
   { Icon: IoLogoTwitch, href: "https://twitch.tv", label: "Twitch" },
   { Icon: SiKick, href: "https://kick.com", label: "Kick" },
-  { Icon: IoLogoTiktok, href: "https://tiktok.com", label: "TikTok" },
-  { Icon: IoLogoFacebook, href: "https://facebook.com", label: "Facebook" },
 ];
 
 export default function Footer() {
@@ -49,8 +52,33 @@ export default function Footer() {
               ? "برنامج تطوير لصناع محتوى الألعاب في منطقة MENA."
               : "A gaming content creator development program across MENA."}
           </p>
-          {/* Social icons */}
-          <div className="flex items-center gap-2 flex-wrap">
+        </div>
+
+        {/* Link columns from navLinks.ts footerLinks */}
+        {footerLinks.map((col) => (
+          <div key={col.titleKey}>
+            <p className="font-display font-bold text-white uppercase tracking-[0.15em] txt-small mb-2">
+              {t(col.titleKey)}
+            </p>
+            <div className="flex flex-col gap-1">
+              {col.links.map(({ labelKey, href }) => (
+                <Link
+                  key={labelKey}
+                  href={`/${locale}${href}`}
+                  className="font-proxima txt-small text-white transition-colors footer-link">
+                  {t(labelKey)}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+        
+        <div className="">
+          <p className="font-display font-bold text-white uppercase tracking-[0.15em] txt-small mb-3">
+            {t("footer.connect")}
+          </p>
+          
+          <div className="grid grid-cols-4 gap-x-2 gap-y-8 h-fit">       
             {SOCIALS.map(({ Icon, href, label }) => (
               <a
                 key={label}
@@ -58,31 +86,12 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="w-8 h-8 border border-[#333] flex items-center justify-center text-[#ccccd0] hover:text-white hover:border-[#555] transition-colors">
-                <Icon className="size-3.5" />
+                className="text-white block h-fit">
+                <Icon className="size-4" />
               </a>
             ))}
           </div>
         </div>
-
-        {/* Link columns from navLinks.ts footerLinks */}
-        {footerLinks.map((col) => (
-          <div key={col.titleKey}>
-            <p className="font-display font-bold text-white uppercase tracking-[0.15em] txt-small mb-4">
-              {t(col.titleKey)}
-            </p>
-            <div className="flex flex-col gap-3">
-              {col.links.map(({ labelKey, href }) => (
-                <Link
-                  key={labelKey}
-                  href={`/${locale}${href}`}
-                  className="font-proxima txt-small text-[#ccccd0] hover:text-white transition-colors footer-link">
-                  {t(labelKey)}
-                </Link>
-              ))}
-            </div>
-          </div>
-        ))}
       </div>
 
       {/* Bottom bar */}

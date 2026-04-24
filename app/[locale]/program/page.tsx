@@ -26,7 +26,6 @@ import {
 } from "react-icons/io5";
 import Header from "@/components/Header";
 import PageTitle from "@/components/ui/PageTitle";
-import SkewBtn from "@/components/ui/SkewBtn";
 import KpiTable from "@/components/program/KpiTable";
 import ScoringSystem from "@/components/program/ScoringSystem";
 import {
@@ -41,6 +40,7 @@ import {
   PROGRAM_STATS,
   PROGRESSION_RULES,
 } from "@/lib/data/program";
+import OutlinedParaBtn from "@/components/ui/OutlinedParaBtn";
 
 function GlassCard({
   children,
@@ -182,10 +182,9 @@ export default function ProgramPage() {
                   ))}
                 </div>
                 <div className="mt-6">
-                  <SkewBtn
-                    href={`/${locale}/submissions/register`}
-                    text={isAr ? "سجّل الآن" : "REGISTER NOW"}
-                  />
+                  <OutlinedParaBtn href={`/${locale}/submissions/register`} withBorder>
+                    {isAr ? "سجّل الآن" : "REGISTER NOW"}
+                  </OutlinedParaBtn>
                 </div>
               </motion.div>
               <motion.div
@@ -747,10 +746,9 @@ export default function ProgramPage() {
               ? "لا مكافآت مضمونة — كل شيء يُكتسَب."
               : "No guaranteed rewards — everything is earned."}
           </p>
-          <SkewBtn
-            href={`/${locale}/submissions/register`}
-            text={isAr ? "سجّل الآن" : "REGISTER NOW"}
-          />
+          <OutlinedParaBtn href={`/${locale}/submissions/register`} withBorder>
+            {isAr ? "سجّل الآن" : "REGISTER NOW"}
+          </OutlinedParaBtn>
         </div>
       </div>
     </div>

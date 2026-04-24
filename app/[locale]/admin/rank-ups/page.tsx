@@ -125,7 +125,6 @@ export default function AdminRankUpsPage() {
 
   const warnCreator = creators.find((c) => c.id === warnId);
 
-  // Status helpers
   function statusColor(ok: boolean) {
     return ok ? "text-[#22bb39]" : "text-red-400";
   }
@@ -192,6 +191,17 @@ export default function AdminRankUpsPage() {
               c.approvedAt ? new Date(c.approvedAt) : null,
             );
             const [, maxMonth] = MONTH_RANGE[c.rank] ?? [0, 1];
+            const neededReach = RANK_THRESHOLDS[c.rank] ?? 0;
+            const currentReach = c.currentRankReach;
+            const neededMonths = MIN_MONTHS[c.rank] ?? 0;
+            const neededContent =
+              c.pictureCount +
+              c.storyCount +
+              c.reelCount +
+              c.longVideoCount +
+              c.postCount +
+              e.missingContent;
+
             return (
               <motion.div
                 key={c.id}
@@ -234,7 +244,6 @@ export default function AdminRankUpsPage() {
                   </button>
                 </div>
 
-                {/* Eligibility grid */}
                 <div className="grid grid-cols-3 gap-3">
                   {/* Reach */}
                   <div className={`p-3 border ${statusBg(e.reachOk)}`}>
@@ -243,11 +252,16 @@ export default function AdminRankUpsPage() {
                     </p>
                     <p
                       className={`txt-regular font-display font-bold ${statusColor(e.reachOk)}`}>
-                      {formatNumber(e.missingReach ?? 0)}
+                      {formatNumber(currentReach)}
                     </p>
                     <p className="txt-smaller text-[#555]">
-                      / {formatNumber(e.neededReach ?? 0)}
+                      / {formatNumber(neededReach)}
                     </p>
+                    {!e.reachOk && (
+                      <p className="txt-smaller text-[#555] mt-0.5">
+                        -{formatNumber(e.missingReach)} left
+                      </p>
+                    )}
                     <div className="flex items-center gap-1 mt-1">
                       {e.reachOk ? (
                         <IoCheckmarkCircle className="size-3 text-[#22bb39]" />
@@ -270,8 +284,13 @@ export default function AdminRankUpsPage() {
                       {months}/{maxMonth}
                     </p>
                     <p className="txt-smaller text-[#555]">
-                      {t("minMonths")}: {e.missingMonths ?? 0}
+                      {t("minMonths")}: {neededMonths}
                     </p>
+                    {!e.monthsOk && (
+                      <p className="txt-smaller text-[#555] mt-0.5">
+                        -{e.missingMonths} left
+                      </p>
+                    )}
                     <div className="flex items-center gap-1 mt-1">
                       {e.monthsOk ? (
                         <IoCheckmarkCircle className="size-3 text-[#22bb39]" />
@@ -295,8 +314,13 @@ export default function AdminRankUpsPage() {
                       {total}
                     </p>
                     <p className="txt-smaller text-[#555]">
-                      {t("min")}: {e.missingContent ?? 0}
+                      {t("min")}: {neededContent}
                     </p>
+                    {!e.contentOk && (
+                      <p className="txt-smaller text-[#555] mt-0.5">
+                        -{e.missingContent} left
+                      </p>
+                    )}
                     <div className="flex items-center gap-1 mt-1">
                       {e.contentOk ? (
                         <IoCheckmarkCircle className="size-3 text-[#22bb39]" />
@@ -346,23 +370,34 @@ export default function AdminRankUpsPage() {
                   <li className="flex items-center gap-2 txt-smaller text-red-400">
                     <IoCloseCircle className="size-4 shrink-0" />
                     {t("reachNotMet")}:{" "}
-                    {formatNumber(warnCreator.eligibility.missingReach ?? 0)} /{" "}
-                    {formatNumber(warnCreator.eligibility.neededReach ?? 0)}
+                    {formatNumber(warnCreator.currentRankReach)} /{" "}
+                    {formatNumber(RANK_THRESHOLDS[warnCreator.rank] ?? 0)} (-
+                    {formatNumber(warnCreator.eligibility.missingReach)})
                   </li>
                 )}
                 {!warnCreator.eligibility.monthsOk && (
                   <li className="flex items-center gap-2 txt-smaller text-red-400">
                     <IoCloseCircle className="size-4 shrink-0" />
-                    {t("monthsNotMet")}: {warnCreator.eligibility.missingMonths}{" "}
-                    / {warnCreator.eligibility.neededMonths}
+                    {t("monthsNotMet")}:{" "}
+                    {getMonthsInProgram(
+                      warnCreator.approvedAt
+                        ? new Date(warnCreator.approvedAt)
+                        : null,
+                    )}{" "}
+                    / {MIN_MONTHS[warnCreator.rank] ?? 0} (-
+                    {warnCreator.eligibility.missingMonths})
                   </li>
                 )}
                 {!warnCreator.eligibility.contentOk && (
                   <li className="flex items-center gap-2 txt-smaller text-red-400">
                     <IoCloseCircle className="size-4 shrink-0" />
                     {t("contentNotMet")}:{" "}
-                    {warnCreator.eligibility.missingContent} /{" "}
-                    {warnCreator.eligibility.neededContent}
+                    {warnCreator.pictureCount +
+                      warnCreator.storyCount +
+                      warnCreator.reelCount +
+                      warnCreator.longVideoCount +
+                      warnCreator.postCount}{" "}
+                    pieces (-{warnCreator.eligibility.missingContent})
                   </li>
                 )}
               </ul>

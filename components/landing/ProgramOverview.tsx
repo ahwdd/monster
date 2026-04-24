@@ -23,7 +23,7 @@ export default function ProgramOverview() {
   ];
 
   return (
-    <section className="w-full bg-black">
+    <section id="overview" className="w-full bg-black">
       <div
         className="container xl:px-8 px-4 py-25 grid grid-cols-2 gap-20 items-center">
 

@@ -53,8 +53,10 @@ export default function TopMonstersSection() {
     : ["Rank", "Creator", "Level", "Views"];
 
   return (
-    <section className="w-full bg-black py-25 px-35">
-      <div className="container">
+    <section id="leaderboard" className="w-full bg-black py-25 px-35 relative">
+    <img src="/assets/textures/monster-texture.png" alt="" 
+    className="absolute size-full inset-x-0 top-8 z-1 object-cover" />
+      <div className="container relative z-2">
         <FadeInView className="text-center mb-14">
           <h2
             className="header-larger tracking-wide font-display font-black text-white uppercase mb-3">
@@ -65,7 +67,7 @@ export default function TopMonstersSection() {
           </p>
         </FadeInView>
 
-        <FadeInView delay={0.1} className="max-w-225 mx-auto">
+        <FadeInView delay={0.1} className="max-w-225 mx-auto px-8 border-s border-s-[#636363] rounded-l">
           {/* Table header */}
           <div className="grid grid-cols-[80px_1fr_1fr_1fr] border-b border-[#272727] pb-3">
             {HEADERS.map((h, i) => (
@@ -112,27 +114,14 @@ export default function TopMonstersSection() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.35, delay: i * 0.07 }}
-                  className="grid grid-cols-[80px_1fr_1fr_1fr] py-4 border-b border-[#272727] hover:bg-[#0a0a0a] transition-colors items-center">
+                  className="grid grid-cols-[80px_1fr_1fr_1fr] py-4 
+                  border-b border-[#272727] hover:bg-[#0a0a0a] transition-colors items-center">
                   <span className="font-proxima text-[#ccccd0] txt-regular">
                     {i + 1}
                   </span>
 
                   {/* Creator with avatar */}
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative w-8 h-8 shrink-0 overflow-hidden bg-[#171717]">
-                      {leader.channelLogo ? (
-                        <Image
-                          src={leader.channelLogo}
-                          alt={leader.nickname}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center font-display font-black text-[#ccccd0] text-sm">
-                          {initial}
-                        </div>
-                      )}
-                    </div>
                     <span className="font-proxima text-[#ccccd0] txt-regular truncate">
                       {leader.nickname}
                     </span>

@@ -21,7 +21,7 @@ export default function LevelingSection() {
   const isAr = locale === "ar";
 
   return (
-    <section className="w-screen py-25 px-35 relative">
+    <section id="levels" className="w-screen py-25 px-35 relative">
       <img src="/assets/textures/skew-texture.png" alt="" 
       className="absolute size-full inset-x-0 top-8 z-1 object-cover" />
       <div className="container relative z-2">

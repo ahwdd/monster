@@ -43,17 +43,17 @@ export default function Header() {
 
   const NAV_ITEMS = [
     { labelEn: "Home", labelAr: "الرئيسية", href: `/${locale}` },
-    { labelEn: "Overview", labelAr: "نظرة عامة", href: `/${locale}/program` },
-    { labelEn: "Levels", labelAr: "التصنيفات", href: `/${locale}/ranks` },
+    { labelEn: "Overview", labelAr: "نظرة عامة", href: `/${locale}/#overview` },
+    { labelEn: "Levels", labelAr: "التصنيفات", href: `/${locale}/#levels` },
     {
       labelEn: "Rewards",
       labelAr: "المكافآت",
-      href: `/${locale}/program#rewards`,
+      href: `/${locale}/#rewards`,
     },
     {
       labelEn: "Leaderboard",
       labelAr: "الصدارة",
-      href: `/${locale}/leaderboard`,
+      href: `/${locale}/#leaderboard`,
     },
   ];
 

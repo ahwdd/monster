@@ -36,9 +36,10 @@ export const footerLinks = [
   {
     titleKey: "footer.program",
     links: [
-      { labelKey: "nav.program",     href: "/program"     },
-      { labelKey: "nav.ranks",       href: "/ranks"       },
-      { labelKey: "nav.leaderboard", href: "/leaderboard" },
+      { labelKey: "nav.overview",      href: "/#overview"     },
+      { labelKey: "nav.levels",        href: "/#levels"     },
+      { labelKey: "nav.rewards",       href: "/#rewards"       },
+      { labelKey: "nav.leaderboard",   href: "/#leaderboard" },
     ],
   },
   {
@@ -47,15 +48,6 @@ export const footerLinks = [
       { labelKey: "nav.register",  href: "/submissions/register" },
       { labelKey: "nav.submit",    href: "/submissions/submit"   },
       { labelKey: "nav.myProfile", href: "/auth/profile"         },
-    ],
-  },
-  {
-    titleKey: "footer.explore",
-    links: [
-      { labelKey: "nav.news",   href: "/news"         },
-      { labelKey: "nav.rookie", href: "/ranks#rookie" },
-      { labelKey: "nav.rising", href: "/ranks#rising" },
-      { labelKey: "nav.cold",   href: "/ranks#cold"   },
     ],
   },
 ] as const;

@@ -254,7 +254,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\Ranim\\arabhardware\\projects\\monstor\\generated\\prisma",
+      "value": "D:\\Ranim\\arabhardware\\projects\\monster\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -268,7 +268,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\Ranim\\arabhardware\\projects\\monstor\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\Ranim\\arabhardware\\projects\\monster\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

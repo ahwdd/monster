@@ -44,7 +44,6 @@ export default function AuthShell({ children, breadcrumbs }: Props) {
 
       <main className="flex-1 bg-black">{children}</main>
 
-      <Footer />
     </div>
   );
 }

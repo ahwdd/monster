@@ -3,6 +3,9 @@
     "profile": "My Profile",
     "newSubmission": "New Submission",
     "logout": "Logout",
+    "overview": "Overview",
+    "levels": "Levels",
+    "rewards": "Rewards",
     "ranks": "Ranks",
     "allRanks": "ALL RANKS",
     "program": "Program",
@@ -483,6 +486,7 @@
   },
 
   "footer": {
+    "connect": "Connect",
     "program": "Program",
     "join": "Join",
     "explore": "Explore",
