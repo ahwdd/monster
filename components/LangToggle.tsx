@@ -18,15 +18,14 @@ export default function LangToggle({ className = "" }: Props) {
 
   return (
     <div
-      className={`flex items-center overflow-hidden border border-[#333] ${className}`}
+      className={`flex items-center overflow-hidden ${className}`}
       style={{ height: "30px" }}>
       {!isAr ? (
         <span
-          className="flex items-center justify-center px-3 font-display font-bold uppercase"
+          className="flex items-center bg-monster justify-center px-3 font-display font-bold uppercase"
           style={{
             fontSize: "11px",
             letterSpacing: "1px",
-            background: "#6bd41a",
             color: "#000",
             height: "100%",
           }}>

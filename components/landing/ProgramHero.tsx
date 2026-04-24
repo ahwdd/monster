@@ -52,7 +52,6 @@ export default function ProgramHero() {
             src={slide.img} loading="eager"
             alt="" width={1900} height={960}
             className="object-cover size-full"
-            style={{ filter: "brightness(0.45) saturate(0.4)" }}
             priority={i === 0}
           />
         </div>

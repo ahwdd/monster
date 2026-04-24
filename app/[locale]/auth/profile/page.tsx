@@ -505,7 +505,7 @@ export default function ProfilePage() {
                 <motion.div
                   initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }}
                   className="bg-[#171717] p-5 md:p-6 overflow-x-auto">
-                  <div className="flex items-center justify-between mb-4 min-w-[400px]">
+                  <div className="flex items-center justify-between mb-4 min-w-100">
                     <p className="font-proxima txt-smaller text-[#b6b6b6] uppercase tracking-wider">
                       {isRTL ? "آخر المشاركات" : "Recent Submissions"}
                     </p>
@@ -517,7 +517,7 @@ export default function ProfilePage() {
                     </Link>
                   </div>
                   {/* Table — scrollable on mobile */}
-                  <div className="min-w-[400px]">
+                  <div className="min-w-100">
                     {/* Header */}
                     <div className="grid grid-cols-[1fr_100px_100px_90px] gap-3 pb-3 border-b border-[#272727]">
                       {(isRTL

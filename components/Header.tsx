@@ -1,4 +1,3 @@
-// src/components/main/Header.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -42,43 +41,33 @@ export default function Header() {
   }, [mobileOpen]);
 
   const NAV_ITEMS = [
-    { labelEn: "Home", labelAr: "الرئيسية", href: `/${locale}` },
-    { labelEn: "Overview", labelAr: "نظرة عامة", href: `/${locale}/#overview` },
-    { labelEn: "Levels", labelAr: "التصنيفات", href: `/${locale}/#levels` },
-    {
-      labelEn: "Rewards",
-      labelAr: "المكافآت",
-      href: `/${locale}/#rewards`,
-    },
-    {
-      labelEn: "Leaderboard",
-      labelAr: "الصدارة",
-      href: `/${locale}/#leaderboard`,
-    },
+    { labelEn: "Home",        labelAr: "الرئيسية", href: `/${locale}` },
+    { labelEn: "Overview",    labelAr: "نظرة عامة", href: `/${locale}/#overview` },
+    { labelEn: "Levels",      labelAr: "التصنيفات", href: `/${locale}/#levels` },
+    { labelEn: "Rewards",     labelAr: "المكافآت",  href: `/${locale}/#rewards` },
+    { labelEn: "Leaderboard", labelAr: "الصدارة",   href: `/${locale}/#leaderboard` },
   ];
 
-  const isActive = (href: string) => {
-    if (href === `/${locale}`)
-      return pathname === `/${locale}` || pathname === `/${locale}/`;
-    return pathname.startsWith(href.split("#")[0]);
-  };
-
+  // ─── Sidebar ALWAYS slides from the RIGHT ────────────────────────────────────
+  // The hamburger button sits on the right edge of the header in BOTH LTR and RTL
+  // layouts (ms-auto pushes it there). The drawer must match that origin so the
+  // interaction feels natural — open/close from the same corner the user tapped.
   const panelV = {
-    hidden: { x: isRTL ? "100%" : "-100%", opacity: 0 },
+    hidden:  { x: "100%", opacity: 0 },
     visible: {
       x: 0,
       opacity: 1,
       transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] as Easing },
     },
     exit: {
-      x: isRTL ? "100%" : "-100%",
+      x: "100%",
       opacity: 0,
       transition: { duration: 0.22, ease: [0.4, 0, 1, 1] as Easing },
     },
   };
 
   const mItemV = {
-    hidden: { opacity: 0, x: isRTL ? 20 : -20 },
+    hidden: { opacity: 0, x: 20 },
     visible: (i: number) => ({
       opacity: 1,
       x: 0,
@@ -94,6 +83,7 @@ export default function Header() {
     <AnimatePresence>
       {mobileOpen && (
         <>
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -102,6 +92,8 @@ export default function Header() {
             className="fixed inset-0 bg-black/80 z-9997 md:hidden"
             onClick={() => setMobileOpen(false)}
           />
+
+          {/* Drawer — always RIGHT edge */}
           <motion.aside
             variants={panelV}
             initial="hidden"
@@ -119,10 +111,14 @@ export default function Header() {
               />
               <button
                 onClick={() => setMobileOpen(false)}
-                className="p-2 text-[#ccccd0] hover:text-white transition-colors">
+                className="p-2 text-[#ccccd0] hover:text-white transition-colors"
+                aria-label="Close menu"
+              >
                 <IoClose className="size-5" />
               </button>
             </div>
+
+            {/* Nav links */}
             <nav className="flex-1 overflow-y-auto py-2">
               {NAV_ITEMS.map(({ labelEn, labelAr, href }, i) => (
                 <motion.div
@@ -130,42 +126,37 @@ export default function Header() {
                   custom={i}
                   variants={mItemV}
                   initial="hidden"
-                  animate="visible">
+                  animate="visible"
+                >
                   <Link
                     href={href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center h-12 px-6 font-display font-bold uppercase transition-colors ${isActive(href) ? "text-[#6bd41a] bg-[#0a0a0a]" : "text-white hover:text-[#6bd41a] hover:bg-[#0a0a0a]"}`}
-                    style={{
-                      fontSize: "13px",
-                      letterSpacing: "1.5px",
-                      borderBottom: "1px solid #111",
-                    }}>
+                    className={`flex items-center h-12 px-6 font-display font-bold uppercase transition-colors 
+                      text-[13px] tracking-[1.5px] border-b border-[#111] text-white hover:text-[#6bd41a] hover:bg-[#0a0a0a]`}
+                  >
                     {isRTL ? labelAr : labelEn}
                   </Link>
                 </motion.div>
               ))}
             </nav>
-            <div
-              className="p-5 space-y-4 shrink-0"
-              style={{ borderTop: "1px solid #171717" }}>
-              <LangToggle />
+
+            {/* Bottom CTA area */}
+            <div className="p-5 space-y-3 shrink-0 border-t border-[#171717]">
+              <LangToggle className="mb-8"/>
               {initializationComplete &&
                 (isAuthenticated ? (
                   <div className="flex flex-col gap-2">
                     <Link
                       href={`/${locale}/auth/profile`}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center h-11 bg-[#6bd41a] text-black font-display font-black uppercase tracking-[1.5px]"
-                      style={{ fontSize: "13px" }}>
+                      className="flex items-center justify-center h-11 bg-monster text-black font-display font-black uppercase tracking-[1.5px] text-[13px]"
+                    >
                       {isRTL ? "لوحتي" : "Dashboard"}
                     </Link>
                     <button
-                      onClick={() => {
-                        logout();
-                        setMobileOpen(false);
-                      }}
-                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] hover:border-white transition-colors"
-                      style={{ fontSize: "13px" }}>
+                      onClick={() => { logout(); setMobileOpen(false); }}
+                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] text-[13px] hover:border-white transition-colors"
+                    >
                       {isRTL ? "خروج" : "Logout"}
                     </button>
                   </div>
@@ -174,15 +165,15 @@ export default function Header() {
                     <Link
                       href={`/${locale}/auth/signin`}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] hover:border-white transition-colors"
-                      style={{ fontSize: "13px" }}>
+                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] text-[13px] hover:border-white transition-colors"
+                    >
                       {isRTL ? "دخول" : "Sign In"}
                     </Link>
                     <Link
                       href={`/${locale}/auth/signup`}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center h-11 bg-[#6bd41a] text-black font-display font-black uppercase tracking-[1.5px]"
-                      style={{ fontSize: "13px" }}>
+                      className="flex items-center justify-center h-11 bg-monster text-black font-display font-black uppercase tracking-[1.5px] text-[13px]"
+                    >
                       {isRTL ? "انضم الآن" : "Join Now"}
                     </Link>
                   </div>
@@ -196,8 +187,9 @@ export default function Header() {
 
   return (
     <>
-      <header
-        className="fixed top-0 inset-x-0 z-40 flex items-center h-16 bg-black border-b border-b-[#171717]">
+      <header className="fixed top-0 inset-x-0 z-40 flex items-center rtl:flex-row-reverse h-16 bg-black border-b border-[#171717]">
+
+        {/* Logo block — skewed accent tile */}
         <Link
           href={`/${locale}`}
           className="shrink-0 flex items-center justify-center px-9 h-20 bg-[#171717] pt-4 -ms-4 pe-4 -skew-x-12">
@@ -210,54 +202,59 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="hidden md:flex items-center flex-1 justify-center gap-10">
+        {/* Desktop nav — centred between logo and CTAs */}
+        <nav className="hidden md:flex items-center flex-1 justify-center gap-8 lg:gap-10">
           {NAV_ITEMS.map(({ labelEn, labelAr, href }) => (
             <Link
               key={href}
               href={href}
-              className={`relative font-display font-bold uppercase transition-colors group tracking-[1.5px] text-sm`}>
+              className={`relative font-display font-bold uppercase transition-colors group tracking-[1.5px] text-sm whitespace-nowrap text-white hover:text-[#6bd41a]`}
+            >
               {isRTL ? labelAr : labelEn}
               <span
-                className={`absolute -bottom-5 inset-s-0 inset-e-0 h-1 bg-monster -skew-x-12 transition-transform scale-x-0 group-hover:scale-x-100`}
+                className="absolute -bottom-5.25 inset-x-0 h-0.75 bg-monster -skew-x-12 transition-transform scale-x-0 group-hover:scale-x-100"
                 style={{ transformOrigin: isRTL ? "right" : "left" }}
               />
             </Link>
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-5 pe-9 shrink-0">
+        {/* Desktop CTAs */}
+        <div className="hidden md:flex items-center gap-3 pe-6 lg:pe-9 shrink-0">
+          {/* <LangToggle /> */}
           {initializationComplete ? (
             isAuthenticated ? (
-              <div className="flex items-center gap-3">
+              <>
                 <OutlinedParaBtn onClick={() => logout()}>
                   {isRTL ? "خروج" : "Logout"}
                 </OutlinedParaBtn>
                 <SolidParaBtn href={`/${locale}/auth/profile`}>
                   {isRTL ? "لوحتي" : "Dashboard"}
                 </SolidParaBtn>
-              </div>
+              </>
             ) : (
-              <div className="flex items-center gap-3">
+              <>
                 <OutlinedParaBtn href={`/${locale}/auth/signin`}>
                   {isRTL ? "دخول" : "Sign In"}
                 </OutlinedParaBtn>
                 <SolidParaBtn href={`/${locale}/auth/signup`}>
                   {isRTL ? "انضم الآن" : "Join Now"}
                 </SolidParaBtn>
-              </div>
+              </>
             )
           ) : (
-            <div style={{ width: "260px" }} />
+            <div style={{ width: "220px" }} />
           )}
         </div>
-
         <button
-          className="md:hidden ms-auto me-5 p-2 text-white hover:text-[#6bd41a] transition-colors"
+          className="md:hidden ltr:ms-auto rtl:me-auto me-4 p-2 text-white hover:text-[#6bd41a] transition-colors"
           onClick={() => setMobileOpen((v) => !v)}
-          aria-label="Toggle menu">
+          aria-label="Toggle menu"
+        >
           <motion.div
             animate={{ rotate: mobileOpen ? 90 : 0 }}
-            transition={{ duration: 0.18 }}>
+            transition={{ duration: 0.18 }}
+          >
             {mobileOpen ? (
               <IoClose className="size-6" />
             ) : (

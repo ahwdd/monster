@@ -1,6 +1,7 @@
 // src/components/landing/RequirementsSection.tsx
 "use client";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import {
   IoVideocamOutline,
@@ -25,16 +26,16 @@ export default function RequirementsSection() {
   const isAr = locale === "ar";
 
   return (
-    <section className="w-full bg-black py-25 px-35">
+    <section className="w-full bg-black py-16 md:py-25 px-4 md:px-35">
       <div className="container">
-        <FadeInView className="text-center mb-16">
+        <FadeInView className="text-center mb-10 md:mb-16">
           <h2
             className="header-larger tracking-wide font-display font-black text-white uppercase">
             {t("requirements")}
           </h2>
         </FadeInView>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
           {PROGRAM_REQUIREMENTS.map((item, i) => {
             const Icon = ICON_MAP[item.icon] ?? IoVideocamOutline;
             return (
@@ -53,7 +54,7 @@ export default function RequirementsSection() {
                 </div>
 
                 <h3
-                  className="font-display font-black text-white uppercase mb-4"
+                  className="font-display font-black text-white uppercase mb-3 md:mb-4"
                   style={{
                     fontSize: "clamp(1rem, 1.5vw, 1.3rem)",
                     letterSpacing: "0.05em",
