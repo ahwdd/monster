@@ -622,7 +622,7 @@ export default function ProgramPage() {
                 style={{ scrollbarWidth: "none" }}>
                 <div className="relative flex items-start min-w-max gap-0 px-2">
                   <div
-                    className="absolute top-[2.2rem] left-[3rem] right-[3rem] h-px"
+                    className="absolute top-[2.2rem] left-12 right-12 h-px"
                     style={{
                       background: "linear-gradient(90deg, #78be20, #38bdf8)",
                     }}
@@ -637,7 +637,7 @@ export default function ProgramPage() {
                       className="flex flex-col items-center shrink-0 px-3"
                       style={{ width: "200px" }}>
                       <div
-                        className="relative z-10 w-[68px] h-[68px] flex items-center justify-center mb-4"
+                        className="relative z-10 w-17 h-17 flex items-center justify-center mb-4"
                         style={{
                           border: "solid 2px #707070",
                           background: "rgba(0,0,0,0.6)",

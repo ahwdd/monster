@@ -1,45 +1,31 @@
 // src/components/landing/ProgramHero.tsx
 "use client";
 import Image from "next/image";
-import Link  from "next/link";
-import { useTranslations, useLocale } from "next-intl";
+import Link from "next/link";
+import { useLocale } from "next-intl";
 import { useState, useEffect, useCallback, useRef } from "react";
 
-const slides = [
-  { key: "slide1", img: "/assets/hero/1.webp", titleKey: "slide1Title" },
-  { key: "slide2", img: "/assets/hero/2.webp", titleKey: "slide2Title" },
-  { key: "slide3", img: "/assets/hero/3.webp", titleKey: "slide3Title" },
+const SLIDES = [
+  { key: "1", img: "/assets/hero/1.webp" },
+  { key: "2", img: "/assets/hero/2.webp" },
+  { key: "3", img: "/assets/hero/3.webp" },
 ];
 
 export default function ProgramHero() {
-  const t      = useTranslations("hero");
   const locale = useLocale();
-  const isRTL  = locale === "ar";
-
+  const isAr   = locale === "ar";
   const [current,   setCurrent]   = useState(0);
-  const [prev,      setPrev]      = useState<number | null>(null);
-  const [direction, setDirection] = useState<"next" | "prev">("next");
   const [animating, setAnimating] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const goTo = useCallback((index: number, dir: "next" | "prev") => {
-    if (animating || index === current) return;
-    setDirection(dir); setPrev(current); setCurrent(index); setAnimating(true);
+  const goTo = useCallback((i: number) => {
+    if (animating || i === current) return;
+    setAnimating(true);
+    setCurrent(i);
+    setTimeout(() => setAnimating(false), 600);
   }, [animating, current]);
 
-  const next = useCallback(() => {
-    goTo((current + 1) % slides.length, isRTL ? "prev" : "next");
-  }, [current, goTo, isRTL]);
-
-  const prevSlide = useCallback(() => {
-    goTo((current - 1 + slides.length) % slides.length, isRTL ? "next" : "prev");
-  }, [current, goTo, isRTL]);
-
-  useEffect(() => {
-    if (!animating) return;
-    const id = setTimeout(() => { setPrev(null); setAnimating(false); }, 650);
-    return () => clearTimeout(id);
-  }, [animating]);
+  const next = useCallback(() => goTo((current + 1) % SLIDES.length), [current, goTo]);
 
   const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -51,112 +37,112 @@ export default function ProgramHero() {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [next]);
 
-  const handleNext = () => { next(); resetTimer(); };
-  const handlePrev = () => { prevSlide(); resetTimer(); };
-  const handleDot  = (i: number) => {
-    if (i === current) return;
-    goTo(i, i > current ? (isRTL ? "prev" : "next") : (isRTL ? "next" : "prev"));
-    resetTimer();
-  };
-
-  const getSlideClass = (index: number) => {
-    const isActive = index === current;
-    const isPrev   = index === prev;
-    const base = "absolute inset-0 w-full float-left -mr-full [backface-visibility:hidden] transition-transform duration-[600ms] ease-in-out";
-    if (!animating) return `${base} ${isActive ? "block" : "hidden"}`;
-    if (isActive)   return `${base} block ${direction === "next" ? "animate-slide-in-right" : "animate-slide-in-left"}`;
-    if (isPrev)     return `${base} block ${direction === "next" ? "animate-slide-out-left"  : "animate-slide-out-right"}`;
-    return `${base} hidden`;
-  };
-
   return (
-    <section className="hero hero-bg relative w-full mt-16 md:mt-10 overflow-hidden">
-      {/* On mobile use min-h; on desktop use aspect-video */}
-      <div className="relative w-full overflow-hidden container min-h-[56vw] md:aspect-video">
-        {slides.map((slide, index) => (
-          <div key={slide.key} className={getSlideClass(index)}>
-            <Image src={slide.img} alt={t(slide.titleKey)} fill
-              className="object-cover object-center"
-              style={{ filter: "saturate(0.3) brightness(0.55)" }}
-              priority={index === 0} />
-          </div>
-        ))}
+    // XD: 1920×1080 Slider group, bg white then image on top
+    <section className="relative w-full mt-20 overflow-hidden bg-black"
+      style={{ height: "calc(100vw * 1080 / 1920)", minHeight: "480px", maxHeight: "1080px" }}>
 
-        <div className="absolute inset-0 bg-black/50 z-1" />
+      {/* Slides */}
+      {SLIDES.map((slide, i) => (
+        <div
+          key={slide.key}
+          className="absolute inset-0 transition-opacity duration-700"
+          style={{ opacity: i === current ? 1 : 0, zIndex: i === current ? 1 : 0 }}>
+          <Image
+            src={slide.img}
+            alt=""
+            fill
+            className="object-cover object-center"
+            style={{ filter: "brightness(0.45) saturate(0.4)" }}
+            priority={i === 0}
+          />
+        </div>
+      ))}
 
-        <div className="absolute inset-0 z-2 flex flex-col items-center justify-center text-center pointer-events-none px-4">
-          <p className="font-proxima font-semibold uppercase tracking-[0.3em] text-[#78be20] txt-small md:txt-larger mb-2 md:mb-3">
-            {locale === "ar" ? "برنامج السفراء" : "Monster Ambassadors Program"}
-          </p>
-          <h1 className="font-display font-black text-white uppercase leading-none mb-3 md:mb-5"
-            style={{ fontSize: "clamp(2rem, 6vw, 6rem)", textShadow: "0 2px 30px rgba(0,0,0,0.9)" }}>
-            {locale === "ar"
-              ? <>كن <span className="text-[#78be20]">مونستر</span></>
-              : <>BE A <span className="text-[#78be20]">MONSTER</span></>
-            }
-          </h1>
-          <p className="font-proxima text-zinc-300 max-w-lg txt-small md:txt-regular leading-relaxed hidden sm:block">
-            {locale === "ar"
-              ? "برنامج تطوير لصناع المحتوى لمدة 9 أشهر في منطقة MENA"
-              : "A 9-month content creator development program across MENA."}
-          </p>
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/40 z-10" />
 
+      {/* Content — XD positions: tag at top, "BE A MONSTER" center, subtitle below */}
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6">
+
+        {/* XD: "Monster Ambassadors Program" white small caps */}
+        <p className="font-proxima text-white uppercase tracking-[0.3em] mb-4"
+          style={{ fontSize: "clamp(11px, 1.2vw, 16px)" }}>
+          {isAr ? "برنامج السفراء" : "Monster Ambassadors Program"}
+        </p>
+
+        {/* XD: "BE A MONSTER" — color #6bd41a, very large */}
+        <h1
+          className="font-display font-black uppercase leading-none mb-4"
+          style={{
+            fontSize:   "clamp(3rem, 8vw, 9rem)",
+            color:      "#6bd41a",
+            textShadow: "0 0 40px rgba(107,212,26,0.3)",
+            letterSpacing: "-0.02em",
+          }}>
+          {isAr ? "كن مونستر" : "BE A MONSTER"}
+        </h1>
+
+        {/* XD: subtitle color #ccccd0 */}
+        <p className="font-proxima text-[#ccccd0] max-w-xl leading-relaxed mb-8 hidden sm:block"
+          style={{ fontSize: "clamp(13px, 1.2vw, 16px)" }}>
+          {isAr
+            ? "برنامج تطوير لصناع المحتوى لمدة 9 أشهر في منطقة MENA"
+            : "A 9-month development program designed to position Monster Energy as a leading brand among gamers and content creators across the MENA region."}
+        </p>
+
+        {/* XD: two buttons side by side — dark bg, white text */}
+        <div className="flex items-center gap-4">
+          {/* Learn More — dark outlined */}
+          <Link href={`/${locale}/program`}
+            className="h-12 px-8 flex items-center font-display font-bold uppercase tracking-[2px]
+              text-white border border-white/40 hover:border-white/80 hover:bg-white/10
+              transition-colors text-sm">
+            {isAr ? "تعرّف أكثر" : "Learn More"}
+          </Link>
+          {/* Join Now — XD: dark bg, white text */}
           <Link href={`/${locale}/submissions/register`}
-            className="mt-4 md:hidden inline-block -skew-x-6 bg-[#3a5e00] p-[0_3px_3px_0]">
-            <span className="bg-monster inline-block px-5 py-2 text-white font-display font-bold text-sm uppercase tracking-[2px] skew-x-6">
-              {locale === "ar" ? "سجّل الآن" : "Register Now"}
-            </span>
+            className="h-12 px-8 flex items-center font-display font-bold uppercase tracking-[2px]
+              bg-[#6bd41a] text-black hover:bg-[#7de020] transition-colors text-sm">
+            {isAr ? "انضم الآن" : "Join Now"}
           </Link>
         </div>
+      </div>
 
-        {/* Arrows */}
-        <button onClick={handlePrev} aria-label="Previous"
-          className={`absolute top-0 bottom-0 z-3 flex items-center px-2 md:px-4 opacity-50 hover:opacity-100 transition-opacity ${isRTL ? "right-0" : "left-0"}`}>
-          <svg width="36" height="36" className="md:w-12 md:h-12" viewBox="0 0 48 48">
-            <circle cx="24" cy="24" r="23" fill="black" fillOpacity="1" stroke="white" strokeOpacity="0.45" strokeWidth="1" />
-            {isRTL
-              ? <polyline points="20,16 28,24 20,32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              : <polyline points="28,16 20,24 28,32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
-          </svg>
-        </button>
-        <button onClick={handleNext} aria-label="Next"
-          className={`absolute top-0 bottom-0 z-3 flex items-center px-2 md:px-4 opacity-50 hover:opacity-100 transition-opacity ${isRTL ? "left-0" : "right-0"}`}>
-          <svg width="36" height="36" className="md:w-12 md:h-12" viewBox="0 0 48 48">
-            <circle cx="24" cy="24" r="23" fill="black" fillOpacity="1" stroke="white" strokeOpacity="0.45" strokeWidth="1" />
-            {isRTL
-              ? <polyline points="28,16 20,24 28,32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              : <polyline points="20,16 28,24 20,32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
-          </svg>
-        </button>
+      {/* Arrows */}
+      <button
+        onClick={() => { goTo((current - 1 + SLIDES.length) % SLIDES.length); resetTimer(); }}
+        className="absolute top-1/2 -translate-y-1/2 left-6 z-30 w-10 h-10 flex items-center
+          justify-center text-white/60 hover:text-white transition-colors">
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <circle cx="16" cy="16" r="15" fill="black" fillOpacity="0.5" stroke="white" strokeOpacity="0.3" strokeWidth="1" />
+          <polyline points="19,10 13,16 19,22" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <button
+        onClick={() => { next(); resetTimer(); }}
+        className="absolute top-1/2 -translate-y-1/2 right-6 z-30 w-10 h-10 flex items-center
+          justify-center text-white/60 hover:text-white transition-colors">
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <circle cx="16" cy="16" r="15" fill="black" fillOpacity="0.5" stroke="white" strokeOpacity="0.3" strokeWidth="1" />
+          <polyline points="13,10 19,16 13,22" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
 
-        {/* Bottom bar — hidden on mobile, visible md+ */}
-        <div className="absolute bottom-0 left-0 right-0 z-3 hidden md:flex items-end justify-between">
-          <div className="relative bg-black py-5 pl-7.5 pr-31.25 float-left">
-            <p className="font-proxima font-bold text-white txt-large m-0">
-              {locale === "ar" ? "انضم إلى أفضل صناع المحتوى في MENA" : "Join the top gaming content creators in MENA"}
-            </p>
-            <Link href={`/${locale}/submissions/register`}
-              className="cta-btn absolute top-1/2 -right-23 -translate-y-1/2 -skew-x-15 bg-[#3a5e00] p-[0_3px_3px_0] no-underline inline-block cursor-pointer z-10">
-              <span className="bg-monster relative z-1 inline-block px-6.25 pt-2.5 pb-1.25 text-white font-display font-bold text-[20px] uppercase tracking-[2px] whitespace-nowrap [text-shadow:0_0_5px_rgba(0,0,0,0.75)]">
-                {locale === "ar" ? "سجّل الآن" : "Register Now"}
-              </span>
-            </Link>
-          </div>
-          <div className="flex items-center gap-3.75 pb-7.5 pr-6">
-            {slides.map((_, i) => (
-              <button key={i} onClick={() => handleDot(i)}
-                className={`w-15 h-2 border-0 cursor-pointer p-0 -skew-x-15 transition-all duration-300 ${i === current ? "bg-monster" : "bg-black"}`} />
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile dots */}
-        <div className="absolute bottom-3 left-0 right-0 z-3 flex justify-center gap-2 md:hidden">
-          {slides.map((_, i) => (
-            <button key={i} onClick={() => handleDot(i)}
-              className={`w-6 h-1.5 border-0 cursor-pointer p-0 -skew-x-15 transition-all duration-300 ${i === current ? "bg-monster" : "bg-zinc-700"}`} />
-          ))}
-        </div>
+      {/* XD dots — bottom center, skewed rectangles */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3">
+        {SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { goTo(i); resetTimer(); }}
+            className="-skew-x-15 transition-all duration-300"
+            style={{
+              width:      i === current ? "48px" : "24px",
+              height:     "6px",
+              background: i === current ? "#6bd41a" : "rgba(255,255,255,0.3)",
+            }}
+          />
+        ))}
       </div>
     </section>
   );

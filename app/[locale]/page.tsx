@@ -1,20 +1,27 @@
 // src/app/[locale]/page.tsx
 "use client";
 import Header from "@/components/Header";
-import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import ProgramHero from "@/components/landing/ProgramHero";
-import RanksSection from "@/components/landing/RankSection";
-import Hero from "@/components/main/Hero";
-import NewsSection from "@/components/main/NewsSection";
- 
+import ProgramOverview from "@/components/landing/ProgramOverview";
+import RequirementsSection from "@/components/landing/RequirementsSection";
+import LevelingSection from "@/components/landing/LevelingSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import RewardsSection from "@/components/landing/RewardSection";
+import TopMonstersSection from "@/components/landing/TopMonstersSection";
+import CtaStrip from "@/components/landing/CtaStrip";
+
 export default function Home() {
   return (
-    <main>
+    <main className="bg-black">
       <Header />
       <ProgramHero />
-      <RanksSection />
+      <ProgramOverview />
+      <RequirementsSection />
+      <LevelingSection />
       <HowItWorksSection />
-      <NewsSection />
+      <RewardsSection />
+      <TopMonstersSection />
+      <CtaStrip />
     </main>
   );
 }

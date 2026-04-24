@@ -1,6 +1,5 @@
-"use client";
-
 // src/app/[locale]/auth/signin/page.tsx
+"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -19,6 +18,80 @@ import ResendTimer from "@/components/auth/ResendTimer";
 type Tab = "whatsapp" | "email";
 type Step = "contact" | "otp";
 
+// ── XD-faithful input component ──────────────────────────────────
+function XdInput({
+  label,
+  placeholder,
+  type = "text",
+  value,
+  onChange,
+  error,
+  right,
+}: {
+  label: string;
+  placeholder: string;
+  type?: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+  right?: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <label className="font-proxima text-white text-sm">{label}</label>
+        {right}
+      </div>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full h-12 px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima
+          placeholder:text-[#ccccd0]/50 outline-none border border-transparent
+          focus:border-[#6bd41a] transition-colors"
+      />
+      {error && <p className="font-proxima text-red-400 text-xs">{error}</p>}
+    </div>
+  );
+}
+
+// ── XD-faithful button ────────────────────────────────────────────
+function XdBtn({
+  children,
+  onClick,
+  loading,
+  variant = "white",
+  className = "",
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  loading?: boolean;
+  variant?: "white" | "green" | "dark";
+  className?: string;
+}) {
+  const bg =
+    variant === "white"
+      ? "bg-white text-black hover:bg-[#eee]"
+      : variant === "green"
+        ? "bg-[#6bd41a] text-black hover:bg-[#7de020]"
+        : "bg-[#171717] text-white hover:bg-[#222]";
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      className={`h-12 px-8 font-display font-bold text-sm uppercase tracking-[2px]
+        transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+        flex items-center justify-center gap-2 ${bg} ${className}`}>
+      {loading ? (
+        <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+      ) : (
+        children
+      )}
+    </button>
+  );
+}
+
 export default function SigninPage() {
   const t = useTranslations("auth");
   const locale = useLocale();
@@ -35,7 +108,6 @@ export default function SigninPage() {
     error,
     isAuthenticated,
     initializationComplete,
-    user,
     clearAuthError,
   } = useAuth();
 
@@ -62,7 +134,7 @@ export default function SigninPage() {
     clearAuthError();
   }
 
-  function validate(): boolean {
+  function validate() {
     const e: Record<string, string> = {};
     if (tab === "whatsapp") {
       if (!phone || !/^\d{7,15}$/.test(phone)) e.phone = t("errorPhone");
@@ -73,7 +145,7 @@ export default function SigninPage() {
     if (step === "otp" && otp.replace(/\s/g, "").length < 6)
       e.otp = t("errorOtp");
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return !Object.keys(e).length;
   }
 
   async function handleSend() {
@@ -115,209 +187,209 @@ export default function SigninPage() {
 
   if (!initializationComplete) {
     return (
-      <AuthShell>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="w-10 h-10 border-2 border-[#78be20] border-t-transparent rounded-full animate-spin" />
+      <AuthShell breadcrumbs={[{ label: "Sign in" }]}>
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="w-10 h-10 border-2 border-[#6bd41a] border-t-transparent rounded-full animate-spin" />
         </div>
       </AuthShell>
     );
   }
 
   return (
-    <AuthShell>
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-4 font-proxima">
+    <AuthShell breadcrumbs={[{ label: isRTL ? "تسجيل الدخول" : "Sign in" }]}>
+      {/* XD: form centered vertically/horizontally in remaining space */}
+      <div className="flex items-center justify-center py-20 px-4">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-          className="w-full max-w-sm">
-          {/* Banner for already-logged-in users */}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="w-full max-w-90">
           {isAuthenticated && <AlreadyLoggedInBanner />}
 
-          <div className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-6 sm:p-8">
-            {/* Title */}
-            <div className="mb-6 text-center">
-              <h1 className="header-small font-display font-semibold text-white uppercase mb-1">
-                {t("signinTitle")}
-              </h1>
-              <p className="txt-small text-zinc-500">
-                {step === "contact" ? t("signinSub") : t("otpSub")}
-              </p>
-            </div>
+          {/* ── Title — XD: white large, subtitle #ccccd0 small ── */}
+          <div className="text-center mb-8">
+            <h1
+              className="font-display font-black text-white uppercase mb-2"
+              style={{
+                fontSize: "clamp(1.8rem, 4vw, 2.4rem)",
+                letterSpacing: "0.04em",
+              }}>
+              {isRTL ? "تسجيل الدخول" : "Sign in"}
+            </h1>
+            <p className="font-proxima text-[#ccccd0] text-sm">
+              {step === "contact" ? t("signinSub") : t("otpSub")}
+            </p>
+          </div>
 
-            {/* Tab switcher */}
-            <AnimatePresence initial={false}>
+          {/* Tab toggle */}
+          <AnimatePresence initial={false}>
+            {step === "contact" && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex justify-between items-center mb-5 overflow-hidden">
+                <span className="font-proxima text-[#ccccd0] text-sm">
+                  {tab === "whatsapp" ? t("tabPhone") : t("tabEmail")}
+                </span>
+                <button
+                  onClick={() =>
+                    switchTab(tab === "whatsapp" ? "email" : "whatsapp")
+                  }
+                  className="flex items-center gap-1.5 font-proxima text-xs text-[#6bd41a] hover:opacity-80 transition-opacity">
+                  {tab === "whatsapp" ? (
+                    <>
+                      <CiMail className="size-3.5" />
+                      {t("useEmail")}
+                    </>
+                  ) : (
+                    <>
+                      <CiMobile1 className="size-3.5" />
+                      {t("usePhone")}
+                    </>
+                  )}
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="space-y-4">
+            <AnimatePresence mode="wait" initial={false}>
+              {/* Contact step */}
               {step === "contact" && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="flex justify-between items-center mb-5 overflow-hidden">
-                  <span className="txt-regular font-medium text-white">
-                    {tab === "whatsapp" ? t("tabPhone") : t("tabEmail")}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      switchTab(tab === "whatsapp" ? "email" : "whatsapp")
-                    }
-                    className="flex items-center gap-1.5 txt-small text-zinc-400 hover:text-[#78be20] transition-colors duration-200">
-                    {tab === "whatsapp" ? (
-                      <>
-                        <CiMail className="size-4" />
-                        {t("useEmail")}
-                      </>
-                    ) : (
-                      <>
-                        <CiMobile1 className="size-4" />
-                        {t("usePhone")}
-                      </>
-                    )}
-                  </button>
+                  key={`c-${tab}`}
+                  initial={{ opacity: 0, x: isRTL ? -16 : 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: isRTL ? 16 : -16 }}
+                  transition={{ duration: 0.18 }}
+                  className="space-y-4">
+                  {tab === "whatsapp" ? (
+                    <div>
+                      <label className="font-proxima text-white text-sm block mb-1.5">
+                        {t("tabPhone")}
+                      </label>
+                      <div className="flex gap-2 h-12">
+                        <CountrySelect
+                          value={phoneKey}
+                          onChange={(c) => setPhoneKey(c.callingCode)}
+                        />
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          value={phone}
+                          onChange={(e) => {
+                            setPhone(e.target.value.replace(/\D/g, ""));
+                            setErrors({});
+                          }}
+                          placeholder={t("phonePlaceholder")}
+                          className="flex-1 h-full px-4 bg-[#171717] text-[#ccccd0] text-sm
+                            font-proxima placeholder:text-[#ccccd0]/40 outline-none
+                            border border-transparent focus:border-[#6bd41a] transition-colors"
+                        />
+                      </div>
+                      {errors.phone && (
+                        <p className="font-proxima text-red-400 text-xs mt-1">
+                          {errors.phone}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <XdInput
+                      label={t("tabEmail")}
+                      type="email"
+                      placeholder={t("emailPlaceholder")}
+                      value={email}
+                      onChange={(v) => {
+                        setEmail(v);
+                        setErrors({});
+                      }}
+                      error={errors.email}
+                    />
+                  )}
+                </motion.div>
+              )}
+
+              {/* OTP step */}
+              {step === "otp" && (
+                <motion.div
+                  key="otp"
+                  initial={{ opacity: 0, x: isRTL ? -16 : 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: isRTL ? 16 : -16 }}
+                  transition={{ duration: 0.18 }}
+                  className="space-y-4">
+                  <p className="font-proxima text-sm text-center text-[#ccccd0]">
+                    {t("otpSentTo")}{" "}
+                    <span className="text-white font-medium">
+                      {tab === "whatsapp" ? `${phoneKey} ${phone}` : email}
+                    </span>
+                  </p>
+                  <OtpInput
+                    value={otp}
+                    onChange={(v) => {
+                      setOtp(v);
+                      setErrors({});
+                    }}
+                    disabled={loading}
+                  />
+                  {errors.otp && (
+                    <p className="font-proxima text-red-400 text-xs text-center">
+                      {errors.otp}
+                    </p>
+                  )}
+                  <div className="flex justify-center">
+                    <ResendTimer onResend={handleResend} disabled={loading} />
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="space-y-4 font-display">
-              <AnimatePresence mode="wait" initial={false}>
-                {step === "contact" && (
-                  <motion.div
-                    key={`c-${tab}`}
-                    initial={{ opacity: 0, x: isRTL ? -20 : 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: isRTL ? 20 : -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-3">
-                    {tab === "whatsapp" ? (
-                      <div>
-                        <div className="flex gap-2">
-                          <CountrySelect
-                            value={phoneKey}
-                            onChange={(c) => setPhoneKey(c.callingCode)}
-                          />
-                          <input
-                            type="tel"
-                            inputMode="numeric"
-                            value={phone}
-                            onChange={(e) => {
-                              setPhone(e.target.value.replace(/\D/g, ""));
-                              setErrors({});
-                            }}
-                            placeholder={t("phonePlaceholder")}
-                            className="flex-1 px-4 py-3.5 bg-black border border-zinc-700 rounded-lg text-white txt-regular placeholder:text-zinc-600 outline-none focus:border-[#78be20] transition-colors duration-200"
-                          />
-                        </div>
-                        {errors.phone && (
-                          <p className="txt-smaller text-red-400 mt-1">
-                            {errors.phone}
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => {
-                            setEmail(e.target.value);
-                            setErrors({});
-                          }}
-                          placeholder={t("emailPlaceholder")}
-                          className="w-full px-4 py-3.5 bg-black border border-zinc-700 rounded-lg text-white txt-regular placeholder:text-zinc-600 outline-none focus:border-[#78be20] transition-colors duration-200"
-                        />
-                        {errors.email && (
-                          <p className="txt-smaller text-red-400 mt-1">
-                            {errors.email}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-
-                {step === "otp" && (
-                  <motion.div
-                    key="otp"
-                    initial={{ opacity: 0, x: isRTL ? -20 : 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: isRTL ? 20 : -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-4">
-                    <p className="txt-small text-center text-zinc-400">
-                      {t("otpSentTo")}{" "}
-                      <span className="text-white font-medium">
-                        {tab === "whatsapp" ? `${phoneKey} ${phone}` : email}
-                      </span>
-                    </p>
-                    <OtpInput
-                      value={otp}
-                      onChange={(v) => {
-                        setOtp(v);
-                        setErrors({});
-                      }}
-                      disabled={loading}
-                    />
-                    {errors.otp && (
-                      <p className="txt-smaller text-red-400 text-center">
-                        {errors.otp}
-                      </p>
-                    )}
-                    <div className="flex justify-center">
-                      <ResendTimer onResend={handleResend} disabled={loading} />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <button
-                type="button"
-                onClick={step === "contact" ? handleSend : handleVerify}
-                disabled={loading}
-                className="w-full py-3.5 bg-[#78be20] hover:bg-[#8fd428] text-black font-display font-semibold uppercase tracking-wider txt-regular rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+            {/* ── Sign in button — XD: white bg, black text ── */}
+            <XdBtn
+              onClick={step === "contact" ? handleSend : handleVerify}
+              loading={loading}
+              variant="white"
+              className="w-full">
+              {step === "contact" ? t("sendOtp") : t("verifyAndSignin")}
+              {!loading &&
+                (isRTL ? (
+                  <IoArrowBack className="size-4" />
                 ) : (
-                  <>
-                    {step === "contact" ? t("sendOtp") : t("verifyAndSignin")}
-                    {isRTL ? (
-                      <IoArrowBack className="size-4" />
-                    ) : (
-                      <IoArrowForward className="size-4" />
-                    )}
-                  </>
+                  <IoArrowForward className="size-4" />
+                ))}
+            </XdBtn>
+
+            {step === "otp" && (
+              <button
+                onClick={() => {
+                  setStep("contact");
+                  setOtp("");
+                  setErrors({});
+                  clearAuthError();
+                }}
+                className="w-full h-10 font-proxima text-sm text-[#ccccd0] hover:text-white
+                  transition-colors flex items-center justify-center gap-2">
+                {isRTL ? (
+                  <IoArrowForward className="size-4" />
+                ) : (
+                  <IoArrowBack className="size-4" />
                 )}
+                {t("changeContact")}
               </button>
+            )}
+          </div>
 
-              {step === "otp" && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep("contact");
-                    setOtp("");
-                    setErrors({});
-                    clearAuthError();
-                  }}
-                  className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white txt-small font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
-                  {isRTL ? (
-                    <IoArrowForward className="size-4" />
-                  ) : (
-                    <IoArrowBack className="size-4" />
-                  )}
-                  {t("changeContact")}
-                </button>
-              )}
-            </div>
-
-            <div className="mt-6 text-center">
-              <p className="txt-small text-zinc-500">
-                {t("noAccount")}{" "}
-                <Link
-                  href="/auth/signup"
-                  className="text-[#78be20] hover:text-[#8fd428] font-medium transition-colors">
-                  {t("signupLink")}
-                </Link>
-              </p>
-            </div>
+          {/* ── "Don't have an account? Sign Up" — XD: #6bd41a ── */}
+          <div className="mt-8 text-center">
+            <p className="font-proxima text-[#6bd41a] text-sm">
+              {t("noAccount")}{" "}
+              <Link
+                href={`/${locale}/auth/signup`}
+                className="underline underline-offset-2 hover:opacity-80 transition-opacity font-semibold">
+                {t("signupLink")}
+              </Link>
+            </p>
           </div>
         </motion.div>
       </div>

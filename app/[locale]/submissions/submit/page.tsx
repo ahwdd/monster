@@ -1,32 +1,32 @@
-// src/app/[locale]/submissions/submit/page.tsx
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter }           from "next/navigation";
-import { useLocale }           from "next-intl";
-import Link                    from "next/link";
-import AuthShell          from "@/components/auth/AuthShell";
-import SubmissionForm     from "@/components/forms/SubmissionForm";
-import { useAuth }        from "@/hooks/useAuth";
-import { useToast }       from "@/contexts/ToastContext";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
+import Link from "next/link";
+import AuthShell from "@/components/auth/AuthShell";
+import SubmissionForm from "@/components/forms/SubmissionForm";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/contexts/ToastContext";
 
 const PENDING_CAP = 5;
 
 export default function SubmitPage() {
   const locale = useLocale();
-  const isAr   = locale === "ar";
+  const isAr = locale === "ar";
   const router = useRouter();
-  const toast  = useToast();
+  const toast = useToast();
   const { user, isAuthenticated, initializationComplete } = useAuth();
 
-  const [profile,       setProfile]       = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [profileLoaded, setProfileLoaded] = useState(false);
-  const [pendingCount,  setPendingCount]  = useState(0);
-  const [canSubmit,     setCanSubmit]     = useState(true);
-  const [subsLoaded,    setSubsLoaded]    = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [canSubmit, setCanSubmit] = useState(true);
+  const [subsLoaded, setSubsLoaded] = useState(false);
 
   useEffect(() => {
-    if (initializationComplete && !isAuthenticated) router.push("/auth/signin");
-  }, [initializationComplete, isAuthenticated, router]);
+    if (initializationComplete && !isAuthenticated)
+      router.push(`/${locale}/auth/signin`);
+  }, [initializationComplete, isAuthenticated, router, locale]);
 
   useEffect(() => {
     if (!user) return;
@@ -55,7 +55,7 @@ export default function SubmitPage() {
     return (
       <AuthShell>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="w-10 h-10 border-2 border-[#78be20] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[#6bd41a] border-t-transparent rounded-full animate-spin" />
         </div>
       </AuthShell>
     );
@@ -66,18 +66,27 @@ export default function SubmitPage() {
     return (
       <AuthShell>
         <div className="min-h-screen flex items-center justify-center px-4">
-          <div className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-8 max-w-sm w-full text-center space-y-4">
-            <p className="header-smaller font-display font-semibold text-white">
-              {isAr ? "يجب إكمال التسجيل أولاً" : "Registration Required"}
-            </p>
-            <p className="txt-small text-zinc-500">
-              {isAr
-                ? "أكمل استمارة التسجيل قبل رفع أي مشاركة."
-                : "Complete your registration form before submitting content."}
-            </p>
-            <Link href="/submissions/register"
-              className="block w-full py-3 bg-[#78be20] hover:bg-[#8fd428] text-black font-display
-                font-semibold uppercase txt-small rounded-xl transition-colors duration-200 text-center">
+          <div className="bg-[#0d0d0d] border border-[#272727] p-8 max-w-sm w-full text-center space-y-5">
+            <div className="w-12 h-12 bg-[#171717] border border-[#272727] flex items-center justify-center mx-auto text-2xl">
+              📋
+            </div>
+            <div>
+              <p className="text-base font-display font-bold text-white uppercase tracking-wide mb-2">
+                {isAr ? "يجب إكمال التسجيل أولاً" : "Registration Required"}
+              </p>
+              <p className="text-sm text-[#b6b6b6]">
+                {isAr
+                  ? "أكمل استمارة التسجيل قبل رفع أي مشاركة."
+                  : "Complete your registration form before submitting content."}
+              </p>
+            </div>
+            <Link
+              href={`/${locale}/submissions/register`}
+              className="w-full h-12 bg-[#6bd41a] hover:bg-[#7ee520] text-black font-display font-bold uppercase tracking-widest text-sm transition-colors duration-200 flex items-center justify-center"
+              style={{
+                clipPath:
+                  "polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)",
+              }}>
               {isAr ? "اذهب إلى التسجيل" : "Go to Registration"}
             </Link>
           </div>
@@ -91,28 +100,32 @@ export default function SubmitPage() {
     return (
       <AuthShell>
         <div className="min-h-screen flex items-center justify-center px-4">
-          <div className="bg-[#0d0d0d] border border-yellow-400/20 rounded-2xl p-8 max-w-sm w-full text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-yellow-400/10 border border-yellow-400/30
-              flex items-center justify-center mx-auto text-2xl">
+          <div className="bg-[#0d0d0d] border border-[#272727] border-t-2 border-t-yellow-400 p-8 max-w-sm w-full text-center space-y-5">
+            <div className="w-12 h-12 bg-yellow-400/10 border border-yellow-400/30 flex items-center justify-center mx-auto text-2xl">
               ⏳
             </div>
-            <p className="header-smaller font-display font-semibold text-yellow-400">
-              {isAr ? "الحد الأقصى من المشاركات المعلّقة" : "Pending Limit Reached"}
-            </p>
-            <p className="txt-small text-zinc-400">
-              {isAr
-                ? `لديك ${pendingCount} مشاركات قيد المراجعة (الحد الأقصى ${PENDING_CAP}). لا يمكنك إضافة المزيد حتى تتم مراجعة بعضها.`
-                : `You have ${pendingCount}/${PENDING_CAP} pending submissions. You can't add more until some are reviewed.`}
-            </p>
+            <div>
+              <p className="text-base font-display font-bold text-yellow-400 uppercase tracking-wide mb-2">
+                {isAr
+                  ? "الحد الأقصى من المشاركات المعلّقة"
+                  : "Pending Limit Reached"}
+              </p>
+              <p className="text-sm text-[#b6b6b6]">
+                {isAr
+                  ? `لديك ${pendingCount} مشاركات قيد المراجعة (الحد الأقصى ${PENDING_CAP}).`
+                  : `You have ${pendingCount}/${PENDING_CAP} pending submissions. Wait for some to be reviewed.`}
+              </p>
+            </div>
             <div className="flex flex-col gap-2">
-              <Link href="/submissions"
-                className="block w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium
-                  txt-small rounded-xl transition-colors duration-200 text-center">
+              <Link
+                href={`/${locale}/submissions`}
+                className="w-full h-12 bg-[#171717] border border-[#272727] hover:border-[#444] text-white font-display 
+                font-bold uppercase tracking-wider text-sm transition-colors duration-200 flex items-center justify-center">
                 {isAr ? "عرض مشاركاتي" : "View My Submissions"}
               </Link>
-              <Link href="/auth/profile"
-                className="block w-full py-3 text-zinc-500 hover:text-white txt-smaller
-                  transition-colors duration-200 text-center">
+              <Link
+                href={`/${locale}/auth/profile`}
+                className="block text-center text-sm text-[#555] hover:text-[#ccccd0] transition-colors duration-200 py-2">
                 {isAr ? "العودة للملف الشخصي" : "Back to Profile"}
               </Link>
             </div>
@@ -122,26 +135,59 @@ export default function SubmitPage() {
     );
   }
 
+  const remaining = PENDING_CAP - pendingCount;
+
   return (
-    <AuthShell>
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="text-center mb-6">
-          <h1 className="header-large font-display font-semibold text-white uppercase mb-2">
+    <AuthShell
+      breadcrumbs={[
+        {
+          label: isAr ? "المشاركات" : "Submissions",
+          href: `/${locale}/submissions`,
+        },
+        { label: isAr ? "مشاركة جديدة" : "New Submission" },
+      ]}>
+      <div className="max-w-2xl mx-auto px-4 py-10">
+        {/* Page header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-1 h-8 bg-[#6bd41a]" />
+            <span className="text-xs text-[#6bd41a] font-display font-bold uppercase tracking-[0.2em]">
+              {profile.nickname} · {profile.rank?.replace(/_/g, " ")}
+            </span>
+          </div>
+          <h1 className="text-3xl font-display font-black text-white uppercase tracking-tight mb-1">
             {isAr ? "مشاركة جديدة" : "New Submission"}
           </h1>
-          <p className="txt-small text-zinc-500">
+          <p className="text-sm text-[#b6b6b6]">
             {isAr
-              ? `يمكنك إضافة ${PENDING_CAP - pendingCount} مشاركة أخرى قبل الوصول للحد الأقصى`
-              : `You can add ${PENDING_CAP - pendingCount} more submission${PENDING_CAP - pendingCount !== 1 ? "s" : ""} before reaching the limit`}
+              ? `يمكنك إضافة ${remaining} مشاركة أخرى قبل الوصول للحد الأقصى`
+              : `You can add ${remaining} more submission${remaining !== 1 ? "s" : ""} before reaching the limit`}
           </p>
         </div>
-        <div className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-6">
+
+        {/* Pending count indicator */}
+        <div className="flex items-center gap-2 mb-6">
+          {Array.from({ length: PENDING_CAP }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-1 flex-1 transition-colors duration-300 ${
+                i < pendingCount ? "bg-[#6bd41a]" : "bg-[#272727]"
+              }`}
+            />
+          ))}
+          <span className="text-xs text-[#555] ms-2 shrink-0">
+            {pendingCount}/{PENDING_CAP}
+          </span>
+        </div>
+
+        {/* Form card */}
+        <div className="bg-[#0d0d0d] border border-[#272727] p-6">
           <SubmissionForm
             nickname={profile.nickname}
             rank={profile.rank}
             onSuccess={() => {
               toast.success(isAr ? "تم إرسال المشاركة!" : "Submission sent!");
-              router.push("/submissions");
+              router.push(`/${locale}/submissions`);
             }}
           />
         </div>

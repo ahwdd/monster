@@ -1,4 +1,3 @@
-// src/app/[locale]/submissions/edit/[id]/page.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
@@ -52,7 +51,6 @@ export default function EditSubmissionPage() {
 
   useEffect(() => {
     if (!user) return;
-
     Promise.all([
       fetch(`/api/submissions/${id}`, { credentials: "include" }).then((r) =>
         r.json(),
@@ -81,11 +79,14 @@ export default function EditSubmissionPage() {
       .finally(() => setLoading(false));
   }, [user, id, isAr]);
 
+  const Arrow = isAr ? IoArrowForward : IoArrowBack;
+  const backHref = `/${locale}/submissions`;
+
   if (!initializationComplete || !user || loading) {
     return (
       <AuthShell>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="w-10 h-10 border-2 border-[#78be20] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[#6bd41a] border-t-transparent rounded-full animate-spin" />
         </div>
       </AuthShell>
     );
@@ -95,15 +96,14 @@ export default function EditSubmissionPage() {
     return (
       <AuthShell>
         <div className="min-h-screen flex items-center justify-center px-4">
-          <div className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-8 max-w-sm w-full text-center space-y-4">
-            <IoWarningOutline className="size-10 text-zinc-500 mx-auto" />
-            <p className="header-smaller font-display font-semibold text-white">
+          <div className="bg-[#0d0d0d] border border-[#272727] p-8 max-w-sm w-full text-center space-y-4">
+            <IoWarningOutline className="size-10 text-[#555] mx-auto" />
+            <p className="text-base font-display font-semibold text-white uppercase">
               {error ?? (isAr ? "غير موجود" : "Not found")}
             </p>
             <Link
-              href={`/${locale}/submissions`}
-              className="block w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium
-                txt-small rounded-xl transition-colors text-center">
+              href={backHref}
+              className="w-full h-12 bg-[#171717] border border-[#272727] hover:border-[#444] text-white font-display font-bold uppercase tracking-wider text-sm transition-colors duration-200 flex items-center justify-center">
               {isAr ? "العودة للمشاركات" : "Back to Submissions"}
             </Link>
           </div>
@@ -116,24 +116,21 @@ export default function EditSubmissionPage() {
     return (
       <AuthShell>
         <div className="min-h-screen flex items-center justify-center px-4">
-          <div className="bg-[#0d0d0d] border border-[#78be20]/20 rounded-2xl p-8 max-w-sm w-full text-center space-y-4">
-            <div
-              className="w-12 h-12 rounded-full bg-[#78be20]/10 border border-[#78be20]/30
-              flex items-center justify-center mx-auto text-2xl">
+          <div className="bg-[#0d0d0d] border border-[#272727] border-t-2 border-t-[#6bd41a] p-8 max-w-sm w-full text-center space-y-4">
+            <div className="w-12 h-12 bg-[#6bd41a]/10 border border-[#6bd41a]/30 flex items-center justify-center mx-auto text-2xl">
               ✓
             </div>
-            <p className="header-smaller font-display font-semibold text-[#78be20]">
+            <p className="text-base font-display font-semibold text-[#6bd41a] uppercase">
               {isAr ? "المشاركة معتمدة" : "Submission Approved"}
             </p>
-            <p className="txt-small text-zinc-400">
+            <p className="text-sm text-[#b6b6b6]">
               {isAr
                 ? "لا يمكن تعديل المشاركات المعتمدة."
                 : "Approved submissions cannot be edited."}
             </p>
             <Link
-              href={`/${locale}/submissions`}
-              className="block w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium
-                txt-small rounded-xl transition-colors text-center">
+              href={backHref}
+              className="w-full h-12 bg-[#171717] border border-[#272727] hover:border-[#444] text-white font-display font-bold uppercase tracking-wider text-sm transition-colors duration-200 flex items-center justify-center">
               {isAr ? "العودة للمشاركات" : "Back to Submissions"}
             </Link>
           </div>
@@ -150,24 +147,21 @@ export default function EditSubmissionPage() {
     return (
       <AuthShell>
         <div className="min-h-screen flex items-center justify-center px-4">
-          <div className="bg-[#0d0d0d] border border-yellow-400/20 rounded-2xl p-8 max-w-sm w-full text-center space-y-4">
-            <div
-              className="w-12 h-12 rounded-full bg-yellow-400/10 border border-yellow-400/30
-              flex items-center justify-center mx-auto text-2xl">
+          <div className="bg-[#0d0d0d] border border-[#272727] border-t-2 border-t-yellow-400 p-8 max-w-sm w-full text-center space-y-4">
+            <div className="w-12 h-12 bg-yellow-400/10 border border-yellow-400/30 flex items-center justify-center mx-auto text-2xl">
               ⏳
             </div>
-            <p className="header-smaller font-display font-semibold text-yellow-400">
+            <p className="text-base font-display font-semibold text-yellow-400 uppercase">
               {isAr ? "في انتظار المراجعة" : "Pending Review"}
             </p>
-            <p className="txt-small text-zinc-400">
+            <p className="text-sm text-[#b6b6b6]">
               {isAr
                 ? "هذه المشاركة قيد المراجعة. لا يمكن تعديلها حتى يتم البت فيها."
-                : "This submission is currently under review. You can't edit it until a decision is made."}
+                : "This submission is under review. You can't edit it until a decision is made."}
             </p>
             <Link
-              href={`/${locale}/submissions`}
-              className="block w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium
-                txt-small rounded-xl transition-colors text-center">
+              href={backHref}
+              className="w-full h-12 bg-[#171717] border border-[#272727] hover:border-[#444] text-white font-display font-bold uppercase tracking-wider text-sm transition-colors duration-200 flex items-center justify-center">
               {isAr ? "العودة للمشاركات" : "Back to Submissions"}
             </Link>
           </div>
@@ -176,38 +170,46 @@ export default function EditSubmissionPage() {
     );
   }
 
-  const Arrow = isAr ? IoArrowForward : IoArrowBack;
   const nickname = profile?.nickname ?? submission.nickname;
 
   return (
-    <AuthShell>
-      <div className="max-w-2xl mx-auto px-4 py-8">
+    <AuthShell
+      breadcrumbs={[
+        { label: isAr ? "المشاركات" : "Submissions", href: backHref },
+        { label: isAr ? "تعديل المشاركة" : "Edit Submission" },
+      ]}>
+      <div className="max-w-2xl mx-auto px-4 py-10">
         {/* Back link */}
         <Link
-          href={`/${locale}/submissions`}
-          className="inline-flex items-center gap-2 txt-small text-zinc-500 hover:text-white
-            transition-colors mb-6 group">
+          href={backHref}
+          className="inline-flex items-center gap-2 text-sm text-[#555] hover:text-[#ccccd0] transition-colors mb-6 group">
           <Arrow className="size-4 transition-transform group-hover:-translate-x-0.5" />
           {isAr ? "العودة للمشاركات" : "Back to Submissions"}
         </Link>
 
-        {/* Page title */}
-        <div className="mb-6">
-          <h1 className="header-large font-display font-semibold text-white uppercase mb-1">
+        {/* Page header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-1 h-8 bg-[#6bd41a]" />
+            <span className="text-xs text-[#6bd41a] font-display font-bold uppercase tracking-[0.2em]">
+              {nickname} · {submission.rank?.replace(/_/g, " ")}
+            </span>
+          </div>
+          <h1 className="text-3xl font-display font-black text-white uppercase tracking-tight mb-1">
             {isAr ? "تعديل المشاركة" : "Edit Submission"}
           </h1>
-          <p className="txt-small text-zinc-500">
+          <p className="text-sm text-[#b6b6b6]">
             {isAr
               ? "تعديل بياناتك سيُعيد المشاركة إلى قائمة المراجعة."
               : "Editing your submission will send it back for admin review."}
           </p>
         </div>
 
-        {/* Status banner — show only for REJECTED so user knows why they're editing */}
+        {/* Rejected banner */}
         {submission.status === "REJECTED" && (
-          <div className="flex items-start gap-3 bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-6">
+          <div className="flex items-start gap-3 bg-red-500/5 border border-red-500/20 border-s-red-500 border-s-2 p-4 mb-6">
             <IoWarningOutline className="size-5 text-red-400 shrink-0 mt-0.5" />
-            <p className="txt-small text-red-300">
+            <p className="text-sm text-red-300">
               {isAr
                 ? "تم رفض هذه المشاركة. يمكنك تعديلها وإعادة إرسالها."
                 : "This submission was rejected. Update your details and resubmit."}
@@ -215,22 +217,20 @@ export default function EditSubmissionPage() {
           </div>
         )}
 
-        {/* Accepted reach info — useful context when editing reach */}
+        {/* Accepted reach info */}
         {submission.acceptedReach > 0 && (
-          <div
-            className="flex items-center gap-3 bg-[#78be20]/5 border border-[#78be20]/20
-            rounded-xl p-4 mb-6">
-            <span className="txt-smaller text-zinc-400">
-              {isAr ? "الوصول المعتمد الحالي:" : "Current accepted reach:"}
+          <div className="flex items-center gap-4 bg-[#171717] border border-[#272727] border-s-[#6bd41a] border-s-2 p-4 mb-6">
+            <span className="text-xs text-[#b6b6b6] uppercase tracking-wider">
+              {isAr ? "الوصول المعتمد الحالي" : "Current accepted reach"}
             </span>
-            <span className="txt-small font-semibold text-[#78be20]">
+            <span className="text-sm font-display font-bold text-[#6bd41a] ms-auto">
               {submission.acceptedReach.toLocaleString()}
             </span>
           </div>
         )}
 
-        {/* Form */}
-        <div className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl p-6">
+        {/* Form card */}
+        <div className="bg-[#0d0d0d] border border-[#272727] p-6">
           <SubmissionForm
             nickname={nickname}
             rank={submission.rank}
@@ -239,7 +239,7 @@ export default function EditSubmissionPage() {
               toast.success(
                 isAr ? "تم تحديث المشاركة!" : "Submission updated!",
               );
-              router.push(`/${locale}/submissions`);
+              router.push(backHref);
             }}
           />
         </div>

@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
-import PageTitle from "@/components/ui/PageTitle";
-import SkewBtn from "@/components/ui/SkewBtn";
 import { getRankConfig } from "@/lib/data/program";
 import { formatNumber } from "@/lib/utils/rank";
 
@@ -19,29 +18,19 @@ type Leader = {
   channelLogo: string | null;
 };
 
-const RANK_STARS: Record<string, number> = {
-  UNRANKED: 1,
-  ROOKIE: 2,
-  MEGA: 2,
-  RISING: 3,
-  ELITE: 3,
-  COLD: 4,
+// XD rank label map
+const RANK_LABEL_EN: Record<string, string> = {
+  UNRANKED: "Unranked",
+  ROOKIE: "Rookie Monster",
+  RISING: "Rising Monster",
+  COLD: "Cold Monster",
 };
-
-function Stars({ count, color }: { count: number; color: string }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <svg key={i} width="13" height="13" viewBox="0 0 14 14" fill="none">
-          <polygon
-            points="7,1 8.5,5.5 13,5.5 9.5,8.5 11,13 7,10 3,13 4.5,8.5 1,5.5 5.5,5.5"
-            fill={i < count ? color : "#374151"}
-          />
-        </svg>
-      ))}
-    </div>
-  );
-}
+const RANK_LABEL_AR: Record<string, string> = {
+  UNRANKED: "غير مصنّف",
+  ROOKIE: "مبتدئ مونستر",
+  RISING: "صاعد مونستر",
+  COLD: "كولد مونستر",
+};
 
 export default function LeaderboardPage() {
   const locale = useLocale();
@@ -63,120 +52,94 @@ export default function LeaderboardPage() {
   return (
     <div className="min-h-screen bg-black">
       <Header />
-      <PageTitle title={isAr ? "لوحة الصدارة" : "Leaderboard"} />
 
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 mt-10 mb-20">
+      {/* XD: breadcrumb bar same pattern as AuthShell */}
+      <div className="mt-20 border-b border-[#171717]">
+        <div
+          className="max-w-480 mx-auto px-35 h-14.5 flex items-center gap-3
+          font-proxima text-[#ccccd0] text-sm">
+          <Link
+            href={`/${locale}`}
+            className="hover:text-white transition-colors">
+            {isAr ? "الرئيسية" : "Home"}
+          </Link>
+          <span className="text-[#555]">›</span>
+          <span>{isAr ? "لوحة الصدارة" : "Leaderboard"}</span>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="max-w-480 mx-auto px-35 py-16">
+        {/* XD: heading + subtitle (same pattern as sec6 in Home) */}
+        <div className="text-center mb-14">
+          <h1
+            className="font-display font-black text-white uppercase mb-3"
+            style={{
+              fontSize: "clamp(2rem, 3.5vw, 4rem)",
+              letterSpacing: "0.03em",
+            }}>
+            {isAr ? "لوحة الصدارة" : "Leaderboard"}
+          </h1>
+          <p
+            className="font-proxima text-[#ccccd0]"
+            style={{ fontSize: "14px" }}>
+            {isAr ? "تنافس. احتل مكانك. سيطر." : "Compete. Rank. Dominate."}
+          </p>
+        </div>
+
         {loading ? (
           <div className="flex justify-center py-24">
-            <div className="w-10 h-10 border-2 border-[#78be20] border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-[#6bd41a] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : leaders.length === 0 ? (
           <div className="text-center py-24">
-            <p className="font-proxima txt-regular text-zinc-500">
+            <p className="font-proxima text-[#ccccd0] text-sm">
               {isAr ? "لا توجد بيانات بعد" : "No ambassadors ranked yet."}
             </p>
           </div>
         ) : (
-          <div className="space-y-2 sm:space-y-0">
+          <div className="max-w-275 mx-auto">
+            {/* XD table header — white text */}
+            <div
+              className="grid grid-cols-[80px_1fr_240px_160px] gap-6
+              pb-3 border-b border-[#272727]">
+              {["Rank", "Creator", "Level", "Views"].map((h, i) => (
+                <span
+                  key={i}
+                  className="font-display font-bold text-white uppercase"
+                  style={{ fontSize: "13px", letterSpacing: "0.08em" }}>
+                  {isAr
+                    ? ["المرتبة", "صانع المحتوى", "التصنيف", "المشاهدات"][i]
+                    : h}
+                </span>
+              ))}
+            </div>
+
+            {/* XD rows — #ccccd0 text, #272727 dividers */}
             {leaders.map((leader, i) => {
-              const rankCfg = getRankConfig(leader.rank);
-              const stars = RANK_STARS[leader.rank] ?? 1;
               const initial = leader.nickname?.charAt(0)?.toUpperCase() ?? "?";
-              const isFirst = i === 0;
+              const labelEn = RANK_LABEL_EN[leader.rank] ?? leader.rank;
+              const labelAr = RANK_LABEL_AR[leader.rank] ?? leader.rank;
 
               return (
                 <motion.div
                   key={leader.id}
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="relative overflow-hidden"
-                  style={{
-                    background: isFirst
-                      ? `linear-gradient(90deg, ${rankCfg.color}08 0%, transparent 60%)`
-                      : "transparent",
-                    borderBottom: `1px solid ${isFirst ? rankCfg.color + "50" : "#1f1f1f"}`,
-                  }}>
-                  <div
-                    className="absolute inset-y-0 inset-s-0 w-1"
-                    style={{ background: rankCfg.color }}
-                  />
+                  transition={{ duration: 0.3, delay: i * 0.06 }}
+                  className="grid grid-cols-[80px_1fr_240px_160px] gap-6 py-5
+                    border-b border-[#272727] items-center
+                    hover:bg-[#0a0a0a] transition-colors">
+                  {/* Rank number */}
+                  <span
+                    className="font-proxima text-[#ccccd0]"
+                    style={{ fontSize: "14px" }}>
+                    {i + 1}
+                  </span>
 
-                  {/* ── MOBILE: stacked card ─────────────────────── */}
-                  <div className="sm:hidden ps-4 pe-3 py-3 space-y-2.5">
-                    {/* Row 1: avatar + name + rank */}
-                    <div className="flex items-center gap-3">
-                      <div className="relative shrink-0 w-11 h-11">
-                        {leader.channelLogo ? (
-                          <Image
-                            src={leader.channelLogo}
-                            alt={leader.nickname}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div
-                            className="w-full h-full flex items-center justify-center
-                            font-display font-black text-lg"
-                            style={{
-                              background: `${rankCfg.color}20`,
-                              color: rankCfg.color,
-                            }}>
-                            {initial}
-                          </div>
-                        )}
-                        {/* Placement badge */}
-                        <div
-                          className="absolute -top-1 -inset-s-1 w-4 h-4 rounded-full
-                          flex items-center justify-center font-display font-black text-black"
-                          style={{
-                            background: rankCfg.color,
-                            fontSize: "0.45rem",
-                          }}>
-                          {i + 1}
-                        </div>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className="font-display font-black uppercase text-base leading-none mb-0.5 truncate"
-                          style={{ color: rankCfg.color }}>
-                          {leader.nickname}
-                        </p>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <Stars count={stars} color={rankCfg.color} />
-                          <span className="txt-smaller text-zinc-500 uppercase">
-                            {isAr ? rankCfg.labelAr : rankCfg.label}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Row 2: stats */}
-                    <div className="flex items-center gap-6 border-t border-zinc-800/50 pt-2">
-                      <div>
-                        <p
-                          className="font-display font-black text-lg leading-none"
-                          style={{ color: rankCfg.color }}>
-                          {formatNumber(leader.totalReachAllTime)}
-                        </p>
-                        <p className="txt-smaller text-zinc-500 uppercase tracking-widest">
-                          {isAr ? "الوصول" : "REACH"}
-                        </p>
-                      </div>
-                      <div className="ms-auto text-end">
-                        <p className="font-display font-black text-lg leading-none text-white">
-                          #{i + 1}
-                        </p>
-                        <p className="txt-smaller text-zinc-500 uppercase tracking-widest">
-                          {isAr ? "المرتبة" : "RANK"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* ── DESKTOP: roster row ──────────────────────── */}
-                  <div className="hidden sm:flex items-stretch">
-                    {/* Avatar */}
-                    <div className="relative shrink-0 self-center ms-1 -my-1 w-18 h-18">
+                  {/* Creator — avatar + nickname */}
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="relative w-10 h-10 shrink-0 overflow-hidden bg-[#171717]">
                       {leader.channelLogo ? (
                         <Image
                           src={leader.channelLogo}
@@ -187,93 +150,80 @@ export default function LeaderboardPage() {
                       ) : (
                         <div
                           className="w-full h-full flex items-center justify-center
-                          font-display font-black text-2xl"
-                          style={{
-                            background: `${rankCfg.color}20`,
-                            color: rankCfg.color,
-                          }}>
+                          font-display font-black text-[#ccccd0]"
+                          style={{ fontSize: "1rem" }}>
                           {initial}
                         </div>
                       )}
-                      <div
-                        className="absolute -top-1 -inset-s-1 w-5 h-5 rounded-full
-                        flex items-center justify-center font-display font-black text-black"
-                        style={{
-                          background: rankCfg.color,
-                          fontSize: "0.55rem",
-                        }}>
-                        {i + 1}
-                      </div>
                     </div>
-
-                    {/* Identity */}
-                    <div className="flex-1 min-w-0 px-4 py-3 flex flex-col justify-center">
-                      <div className="flex items-baseline gap-2 flex-wrap">
-                        <span
-                          className="font-display font-black uppercase text-xl leading-none"
-                          style={{ color: rankCfg.color }}>
-                          {leader.nickname}
-                        </span>
-                        <span className="font-proxima font-semibold uppercase txt-small text-zinc-500">
-                          / {isAr ? rankCfg.labelAr : rankCfg.label}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Stars count={stars} color={rankCfg.color} />
-                      </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="w-px self-stretch bg-zinc-800 my-3 shrink-0" />
-
-                    {/* Stats */}
-                    <div className="flex items-center shrink-0">
-                      <div
-                        className="px-4 md:px-6 py-3 text-center"
-                        style={{ minWidth: "90px" }}>
-                        <p
-                          className="font-display font-black text-xl md:text-2xl leading-none"
-                          style={{ color: rankCfg.color }}>
-                          {formatNumber(leader.totalReachAllTime)}
-                        </p>
-                        <p className="txt-smaller text-zinc-500 uppercase tracking-widest mt-1">
-                          {isAr ? "الوصول" : "REACH"}
-                        </p>
-                      </div>
-                      <div className="w-px self-stretch bg-zinc-800 my-3 shrink-0" />
-                      <div
-                        className="px-4 md:px-6 py-3 text-center"
-                        style={{ minWidth: "64px" }}>
-                        <p className="font-display font-black text-xl md:text-2xl leading-none text-white">
-                          #{i + 1}
-                        </p>
-                        <p className="txt-smaller text-zinc-500 uppercase tracking-widest mt-1">
-                          {isAr ? "المرتبة" : "RANK"}
-                        </p>
-                      </div>
-                    </div>
+                    <span
+                      className="font-proxima text-[#ccccd0] truncate"
+                      style={{ fontSize: "14px" }}>
+                      {leader.nickname}
+                    </span>
                   </div>
+
+                  {/* Level — plain text, no pill */}
+                  <span
+                    className="font-proxima text-[#ccccd0]"
+                    style={{ fontSize: "14px" }}>
+                    {isAr ? labelAr : labelEn}
+                  </span>
+
+                  {/* Views */}
+                  <span
+                    className="font-proxima text-[#ccccd0]"
+                    style={{ fontSize: "14px" }}>
+                    {formatNumber(leader.totalReachAllTime)}
+                  </span>
                 </motion.div>
               );
             })}
           </div>
         )}
-
-        {/* CTA */}
-        <div
-          className="mt-12 sm:mt-16 flex flex-col sm:flex-row items-center gap-4 sm:gap-6
-          border-t border-[#171717] pt-8 sm:pt-12">
-          <p className="font-proxima txt-regular text-zinc-500 sm:me-auto text-center sm:text-start">
-            {isAr
-              ? "هل أنت صانع محتوى؟ سجّل الآن وحقق مكانك."
-              : "Are you a creator? Register now and earn your spot."}
-          </p>
-          <SkewBtn
-            href={`/${locale}/submissions/register`}
-            text={isAr ? "سجّل الآن" : "REGISTER NOW"}
-          />
-        </div>
       </div>
+
+      {/* XD sec7 CTA strip — same green strip as landing */}
+      <div
+        className="w-full py-16 text-center"
+        style={{ background: "#6bd41a" }}>
+        <h2
+          className="font-display font-black text-white uppercase mb-4"
+          style={{
+            fontSize: "clamp(1.8rem, 3vw, 3rem)",
+            letterSpacing: "0.03em",
+          }}>
+          {isAr ? "مستعد لتصبح مونستر؟" : "READY TO BECOME A MONSTER?"}
+        </h2>
+        <p
+          className="font-proxima text-white mb-8"
+          style={{ fontSize: "15px" }}>
+          {isAr
+            ? "لن نطور أداءك فحسب."
+            : "Join the program and prove your performance."}
+        </p>
+        <Link
+          href={`/${locale}/submissions/register`}
+          className="inline-flex items-center justify-center h-12 px-12
+            bg-black text-white font-display font-black uppercase tracking-[2px] text-sm
+            hover:bg-[#111] transition-colors">
+          {isAr ? "انضم الآن" : "Join Now"}
+        </Link>
+      </div>
+
+      {/* Footer — reuse same pattern as AuthShell */}
+      <footer className="bg-black border-t border-[#272727]">
+        <div
+          className="max-w-480 mx-auto px-35 h-14.5 flex items-center justify-between
+          font-proxima text-[#ccccd0] text-[13px]">
+          <span>© 2026 Monster Energy Ambassadors Program.</span>
+          <Link
+            href={`/${locale}/program`}
+            className="hover:text-white transition-colors">
+            Terms & Conditions
+          </Link>
+        </div>
+      </footer>
     </div>
   );
 }
