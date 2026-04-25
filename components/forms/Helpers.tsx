@@ -1,8 +1,24 @@
 "use client";
 import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  IoCheckmarkCircle,
+  IoArrowForward,
+  IoArrowBack,
+  IoClose,
+} from "react-icons/io5";
 
 export const readonlyInput =
   "w-full px-4 h-12 bg-[#0d0d0d] border border-[#272727] text-[#555] text-sm flex items-center opacity-70 cursor-not-allowed";
+
+export function input(error?: string) {
+  return `w-full px-4 h-12 bg-[#171717] border text-white rounded-lg text-sm 
+  placeholder:text-[#ccccd0]/40 outline-none transition-colors duration-200 ${
+    error
+      ? "border-red-500 focus:border-red-400"
+      : "border-[#272727] focus:border-[#22bb39]"
+  }`;
+}
 
 export function Field({
   label,
@@ -16,8 +32,8 @@ export function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-1.5">
-      <label className="txt-larger font-medium text-white mb-4">
+    <div className="flex flex-col items-start gap-2">
+      <label className="txt-larger font-medium text-white">
         {label}
         {required && <span className="text-red-400 ms-1">*</span>}
       </label>
@@ -42,26 +58,13 @@ export function ToggleBtn({
       onClick={onClick}
       className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 ${
         active
-          ? "border-[#6bd41a] bg-[#6bd41a]/10 text-[#6bd41a]"
+          ? "border-[#22bb39] bg-[#22bb39]/10 text-[#22bb39]"
           : "border-[#272727] text-[#b6b6b6] hover:border-[#444] bg-[#171717]"
       }`}>
       {children}
     </button>
   );
 }
-
-export function input(error?: string) {
-  return `w-full px-4 h-12 bg-[#171717] border text-white rounded-lg text-sm 
-  placeholder:text-[#ccccd0]/40 outline-none transition-colors duration-200 ${
-    error
-      ? "border-red-500 focus:border-red-400"
-      : "border-[#272727] focus:border-[#6bd41a]"
-  }`;
-}
-
-// ── NumberInput ───────────────────────────────────────────────────────────────
-// Renders a text input that only accepts digits, hides browser spin arrows,
-// and shows a validation error on blur.
 
 export function NumberInput({
   value,
@@ -79,16 +82,14 @@ export function NumberInput({
   const [blurError, setBlurError] = useState<string | null>(null);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    // Strip any non-digit characters so only numbers get through
     const numeric = e.target.value.replace(/\D/g, "");
     onChange(numeric);
-    // Clear inline blur error while typing
     if (blurError) setBlurError(null);
   }
 
   function handleBlur() {
     if (value.trim() === "") {
-      setBlurError(null); // Let the parent's required validation handle empty
+      setBlurError(null);
       return;
     }
     const n = Number(value);
@@ -106,7 +107,6 @@ export function NumberInput({
   return (
     <div>
       <input
-        // Use "text" + inputMode so we keep full control and hide spin buttons
         type="text"
         inputMode="numeric"
         pattern="[0-9]*"
@@ -115,8 +115,6 @@ export function NumberInput({
         onBlur={handleBlur}
         className={input(combinedError)}
         placeholder={placeholder}
-        // Belt-and-suspenders: hide arrows via inline style for browsers that
-        // ignore the Tailwind [appearance:none] utility on number inputs
         style={{ MozAppearance: "textfield" } as React.CSSProperties}
       />
       {combinedError && (
@@ -125,10 +123,6 @@ export function NumberInput({
     </div>
   );
 }
-
-// ── UrlInput ──────────────────────────────────────────────────────────────────
-// Renders a URL input that validates the value on blur and shows an error if
-// the entered text is not a well-formed URL.
 
 export function UrlInput({
   value,
@@ -145,7 +139,7 @@ export function UrlInput({
 
   function handleBlur() {
     if (!value.trim()) {
-      setBlurError(null); // Let parent required validation handle empty
+      setBlurError(null);
       return;
     }
     try {
@@ -175,6 +169,107 @@ export function UrlInput({
       />
       {combinedError && (
         <p className="text-xs text-red-400 mt-1">{combinedError}</p>
+      )}
+    </div>
+  );
+}
+
+export function FormStepper({
+  currentStep,
+  steps,
+}: {
+  currentStep: number;
+  steps: readonly { num: number; label: string }[];
+}) {
+  return (
+    <div className="flex items-center mb-8">
+      {steps.map((s, i) => {
+        const done = currentStep > s.num;
+        const active = currentStep === s.num;
+        return (
+          <div key={s.num} className="flex items-center flex-1 last:flex-none">
+            <div className="flex items-center shrink-0 text-white">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 ${
+                  done || active
+                    ? "bg-[#22bb39]"
+                    : "bg-[#171717]"
+                }`}>
+                {s.num}
+              </div>
+              <span
+                className={`txt-smaller font-bold capitalize transition-colors duration-300 ${
+                  active || done ? "text-[#22bb39]" : ""
+                }`}>
+                {s.label}
+              </span>
+            </div>
+
+            {i < steps.length - 1 && (
+              <div className="flex-1 mx-3 h-px bg-[#272727] relative overflow-hidden">
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-[#22bb39]"
+                  animate={{ width: currentStep > s.num ? "100%" : "0%" }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export function NavButtons({
+  onBack, onNext, nextLabel, backLabel, isSubmit = false, loading = false, disabled = false,
+}: {
+  onBack?: () => void;
+  onNext?: () => void;
+  nextLabel: string;
+  backLabel?: string;
+  isSubmit?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
+}) {
+  const nextCls = `w-fit h-10 bg-monster text-white font-display font-bold uppercase tracking-widest txt-large 
+  transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center 
+  justify-center gap-2 px-4 rounded-lg`;
+
+  return (
+    <div className="flex items-center justify-between gap-3 pt-1">
+      {onBack && backLabel && (
+        <button type="button" onClick={onBack}
+          className="h-10 px-2 border border-[#ccc]/50 text-[#ccc] 
+          font-display font-bold uppercase tracking-wider rounded-lg txt-regular transition-colors duration-200 flex items-center gap-2">
+          <IoArrowBack className="size-4" />
+          {backLabel}
+        </button>
+      )}
+
+      {isSubmit ? (
+        <button
+          type="submit"
+          disabled={loading || disabled}
+          className={nextCls}>
+          {loading ? (
+            <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+          ) : (
+            <>
+              <IoCheckmarkCircle className="size-5" />
+              {nextLabel}
+            </>
+          )}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={disabled}
+          className={nextCls}>
+          {nextLabel}
+          <IoArrowForward className="size-4" />
+        </button>
       )}
     </div>
   );

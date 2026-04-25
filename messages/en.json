@@ -283,6 +283,7 @@
     "platforms": "Your Platforms",
     "platformLinkLabel": "Link",
     "primarySocialLink": "Primary Social Link",
+    "primarySocialLinkPlaceholder": "Select your main platform link",
     "selectOnePlus": "Select at least one",
     "channelLogo": "Channel Logo",
     "contentType": "Content Type",
@@ -318,13 +319,21 @@
     "discoveryCommunity": "Community Messages",
     "discoverySocial": "Social Media Posts",
     "discoveryEvents": "Attending Monster Events",
-    "stepYourInfo": "Your Info",
     "stepYourChannels": "Your Channels",
-    "next": "Next",
+    "next": "Next Step",
     "back": "Back",
     "successTitle": "Your application has been submitted",
     "successBody": "Your application has been submitted. We will review your profile and contact you soon.",
-    "successCta": "Go to Profile"
+    "successCta": "Go to Profile",
+    "stepYourInfo": "Personal Info",
+    "stepSocialMedia": "Social Media",
+    "stepContent": "Content",
+    "phonePlaceholder": "Phone Number",
+    "termsPrefix": "I have read and agreed to the",
+    "termsConditionsWord": "terms",
+    "termsWord": "conditions",
+    "termsAndWord": "and",
+    "termsLink": "terms and conditions"
   },
 
   "submitForm": {

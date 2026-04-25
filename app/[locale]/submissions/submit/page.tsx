@@ -15,6 +15,7 @@ export default function SubmitPage() {
   const isAr = locale === "ar";
   const router = useRouter();
   const toast = useToast();
+  
   const { user, isAuthenticated, initializationComplete } = useAuth();
 
   const [profile, setProfile] = useState<any>(null);
@@ -149,10 +150,10 @@ export default function SubmitPage() {
       <div className="max-w-2xl mx-auto px-4 py-10">
         {/* Page header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-display font-black text-white uppercase tracking-tight mb-1">
+          <h1 className="header-small font-display font-black text-white uppercase tracking-tight mb-1">
             {isAr ? "مشاركة جديدة" : "New Submission"}
           </h1>
-          <p className="text-sm text-[#b6b6b6]">
+          <p className="txt-regular text-[#b6b6b6]">
             {isAr
               ? `يمكنك إضافة ${remaining} مشاركة أخرى قبل الوصول للحد الأقصى`
               : `You can add ${remaining} more submission${remaining !== 1 ? "s" : ""} before reaching the limit`}

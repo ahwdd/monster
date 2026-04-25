@@ -9,6 +9,7 @@ const platformLinkSchema = z.object({
   url:      z.string().url("Invalid URL"),
 });
 
+
 const schema = z.object({
   realName:          z.string().min(2),
   nickname:          z.string().min(1),
