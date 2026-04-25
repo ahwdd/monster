@@ -287,8 +287,9 @@ export default function ProfilePage() {
                   <p className="txt-smaller font-bold text-white uppercase tracking-wider mb-3">
                     {isRTL ? "نقاط الأداء" : "Performance Score"}
                   </p>
-                  <p className="text-white leading-none mb-1" style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)" }}>
-                    40 / 50 pts
+                  <p className="text-white leading-none mb-1 header-small">
+                    <span>40 / </span> 
+                    <span className="header-regular text-[#22bb39]">50 pts</span>
                   </p>
                   <p className="txt-smaller text-[#555]">
                     {isRTL ? "نقاط التفاعل الإجمالية" : "Overall Engagement Score"}
@@ -327,7 +328,7 @@ export default function ProfilePage() {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="txt-smaller text-[#ccccd0]">{isRTL ? "مشاهدات KPI" : "Views KPI"}</span>
-                      <span className="txt-smaller font-semibold tabular-nums" style={{ color: "#22bb39" }}>
+                      <span className="txt-smaller font-semibold tabular-nums text-[#22bb39]">
                         {formatNumber(currentRankReach)} / {KPI_VIEWS[rank] ?? "50K"}
                       </span>
                     </div>

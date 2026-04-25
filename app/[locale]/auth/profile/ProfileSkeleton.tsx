@@ -79,24 +79,21 @@ export function StatCard({
 }) {
   return (
     <div className="bg-[#171717] rounded-lg px-5 py-4 flex flex-col gap-1.5">
-      <p className="txt-smaller font-bold text-white uppercase tracking-wider">{label}</p>
+      <p className="txt-smaller font-black text-white uppercase tracking-wider">{label}</p>
       {plain !== undefined ? (
         <p
-          className="font-black text-white leading-none"
-          style={{ fontSize: "clamp(1.4rem, 2.5vw, 2rem)" }}>
+          className="header-small text-white leading-none">
           {plain}
         </p>
       ) : (
-        <div className="flex items-baseline gap-1 leading-none">
+        <div className="flex items-baseline gap-1 leading-none header-small">
           <span
-            className="font-semibold tabular-nums"
-            style={{ fontSize: "clamp(1rem, 1.8vw, 1.4rem)", color: "#ccccd0" }}>
+            className="tabular-nums text-[#ccc]">
             {current}&nbsp;/
           </span>
           <span
-            className="font-black tabular-nums"
+            className="tabular-nums header-regular"
             style={{
-              fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
               color: targetColor ?? "#22bb39",
             }}>
             {target}
