@@ -1,6 +1,6 @@
 // src/app/[locale]/auth/signup/page.tsx
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
@@ -78,8 +78,10 @@ export default function SignupPage() {
   const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const lastToastedError = useRef<string | null>(null);
   useEffect(() => {
-    if (error) {
+    if (error && error !== lastToastedError.current) {
+      lastToastedError.current = error;
       toast.error(error);
       clearAuthError();
     }
@@ -190,9 +192,7 @@ export default function SignupPage() {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 className="flex justify-between items-center mb-5 overflow-hidden">
-                <span className="font-proxima text-[#ccccd0] text-sm">
-                  {tab === "whatsapp" ? t("tabPhone") : t("tabEmail")}
-                </span>
+                <span />
                 <button
                   onClick={() =>
                     switchTab(tab === "whatsapp" ? "email" : "whatsapp")

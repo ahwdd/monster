@@ -1,6 +1,7 @@
 // src/app/api/auth/login/email/verify-otp/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { setAuthCookie } from "@/lib/auth/server";
 import { findUserByContact, safeUserSelect } from "@/lib/utils/auth";
@@ -27,13 +28,10 @@ export async function POST(request: NextRequest) {
     const data = await response.json();
 
     if (data.success && data.data?.user && data.data?.access_token) {
-      const ext = data.data.user;
+      const ext        = data.data.user;
+      const cleanEmail = validatedData.email.toLowerCase().trim();
 
-      const nameParts = ext.name ? ext.name.trim().split(" ") : ["Unknown", "User"];
-      const firstName = nameParts[0];
-      const lastName  = nameParts.slice(1).join(" ") || firstName;
-
-      // Phone from Hub — only trust if it's a real phone number
+      // Phone from Hub — only trust if it looks like a real number
       let phoneKey: string | null = null;
       let cleanPhone: string | null = null;
       if (ext.phone && ext.phone.startsWith("+") && ext.phone.length >= 10) {
@@ -41,40 +39,17 @@ export async function POST(request: NextRequest) {
         phoneKey   = extractPhoneKey(ext.phone);
       }
 
-      // Email is always real here — user typed it
-      const cleanEmail = validatedData.email.toLowerCase().trim();
+      const localUser = await findUserByContact(cleanEmail, cleanPhone);
 
-      let localUser = await findUserByContact(cleanEmail, cleanPhone);
-
-      if (!localUser) {
-        localUser = await prisma.user.create({
-          data: {
-            firstName,
-            lastName,
-            username:   `${firstName.toLowerCase()}-${Date.now()}`,
-            email:      cleanEmail,
-            phone:      cleanPhone,
-            phoneKey,
-            isVerified: true,
-            isActive:   true,
-            role:       "USER",
-            externalId: ext.id?.toString(),
-            provider:   "email",
-            lastLogin:  new Date(),
-          },
-          select: safeUserSelect,
-        });
-      } else {
+      if (localUser) {
         const updateData: any = {
-          firstName,
-          lastName,
           isVerified: true,
           isActive:   true,
           externalId: ext.id?.toString(),
           provider:   "email",
           lastLogin:  new Date(),
         };
-        // Only update phone if Hub returned a real one and it won't conflict
+
         if (cleanPhone && cleanPhone !== localUser.phone) {
           const conflict = await prisma.user.findFirst({
             where: { phone: cleanPhone, id: { not: localUser.id } },
@@ -84,25 +59,47 @@ export async function POST(request: NextRequest) {
             updateData.phoneKey = phoneKey;
           }
         }
-        localUser = await prisma.user.update({
+
+        const updated = await prisma.user.update({
           where:  { id: localUser.id },
           data:   updateData,
           select: safeUserSelect,
         });
+
+        await setAuthCookie(data.data.access_token);
+        return NextResponse.json({
+          success: true,
+          message: data.message,
+          data: {
+            user:          updated,
+            access_token:  data.data.access_token,
+            refresh_token: data.data.refresh_token,
+            token_type:    data.data.token_type,
+          },
+        });
       }
 
-      await setAuthCookie(data.data.access_token);
+      const pending = {
+        access_token:  data.data.access_token,
+        refresh_token: data.data.refresh_token ?? null,
+        token_type:    data.data.token_type    ?? "Bearer",
+        email:         cleanEmail,
+        phone:         cleanPhone,
+        phoneKey,
+        externalId:    ext.id?.toString() ?? null,
+        provider:      "email",
+      };
 
-      return NextResponse.json({
-        success: true,
-        message: data.message,
-        data: {
-          user:          localUser,
-          access_token:  data.data.access_token,
-          refresh_token: data.data.refresh_token,
-          token_type:    data.data.token_type,
-        },
+      const store = await cookies();
+      store.set("pending_auth", JSON.stringify(pending), {
+        httpOnly: true,
+        secure:   process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge:   60 * 10, // 10 minutes — enough time to enter a name
+        path:     "/",
       });
+
+      return NextResponse.json({ success: true, requiresName: true });
     }
 
     return NextResponse.json(data, { status: response.status });

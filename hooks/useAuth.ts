@@ -43,7 +43,7 @@ export const useAuth = (): AuthContextType => {
   const sendWhatsAppRegisterOTPHandler = async (
     name: string,
     phone: string,
-    phoneKey: string
+    phoneKey: string,
   ): Promise<boolean> => {
     const result = await dispatch(
       sendWhatsAppRegisterOTP({ name, phone, phone_key: phoneKey })
@@ -53,7 +53,7 @@ export const useAuth = (): AuthContextType => {
 
   const verifyWhatsAppRegisterOTPHandler = async (
     phone: string,
-    otp: string
+    otp: string,
   ): Promise<boolean> => {
     const result = await dispatch(verifyWhatsAppRegisterOTP({ phone, otp }));
     return verifyWhatsAppRegisterOTP.fulfilled.match(result);
@@ -61,7 +61,7 @@ export const useAuth = (): AuthContextType => {
 
   const sendEmailRegisterOTPHandler = async (
     name: string,
-    email: string
+    email: string,
   ): Promise<boolean> => {
     const result = await dispatch(sendEmailRegisterOTP({ name, email }));
     return sendEmailRegisterOTP.fulfilled.match(result);
@@ -69,7 +69,7 @@ export const useAuth = (): AuthContextType => {
 
   const verifyEmailRegisterOTPHandler = async (
     email: string,
-    otp: string
+    otp: string,
   ): Promise<boolean> => {
     const result = await dispatch(verifyEmailRegisterOTP({ email, otp }));
     return verifyEmailRegisterOTP.fulfilled.match(result);
@@ -78,7 +78,7 @@ export const useAuth = (): AuthContextType => {
   // ── Login handlers ─────────────────────────────────────────
   const sendWhatsAppLoginOTPHandler = async (
     phone: string,
-    phoneKey: string
+    phoneKey: string,
   ): Promise<boolean> => {
     const result = await dispatch(
       sendWhatsAppLoginOTP({ phone, phone_key: phoneKey })
@@ -88,10 +88,13 @@ export const useAuth = (): AuthContextType => {
 
   const verifyWhatsAppLoginOTPHandler = async (
     phone: string,
-    otp: string
-  ): Promise<boolean> => {
+    otp: string,
+  ): Promise<boolean | "requiresName"> => {
     const result = await dispatch(verifyWhatsAppLoginOTP({ phone, otp }));
-    return verifyWhatsAppLoginOTP.fulfilled.match(result);
+    if (!verifyWhatsAppLoginOTP.fulfilled.match(result)) return false;
+    const payload = result.payload as any;
+    if (payload?.requiresName === true) return "requiresName";
+    return !!payload;
   };
 
   const sendEmailLoginOTPHandler = async (email: string): Promise<boolean> => {
@@ -101,10 +104,13 @@ export const useAuth = (): AuthContextType => {
 
   const verifyEmailLoginOTPHandler = async (
     email: string,
-    otp: string
-  ): Promise<boolean> => {
+    otp: string,
+  ): Promise<boolean | "requiresName"> => {
     const result = await dispatch(verifyEmailLoginOTP({ email, otp }));
-    return verifyEmailLoginOTP.fulfilled.match(result);
+    if (!verifyEmailLoginOTP.fulfilled.match(result)) return false;
+    const payload = result.payload as any;
+    if (payload?.requiresName === true) return "requiresName";
+    return !!payload;
   };
 
   // ── Auth management ────────────────────────────────────────
@@ -117,7 +123,7 @@ export const useAuth = (): AuthContextType => {
     await dispatch(fetchCurrentUser({ forceRefresh }));
   };
 
-  const clearAuthError     = () => dispatch(clearError());
+  const clearAuthError      = () => dispatch(clearError());
   const invalidateUserCache = () => dispatch(invalidateCache());
 
   return {

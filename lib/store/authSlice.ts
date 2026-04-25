@@ -157,6 +157,8 @@ export const verifyWhatsAppLoginOTP = createAsyncThunk(
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.message || "Failed to verify OTP");
+      // New user — no local account yet. Pass the flag through to the page.
+      if (data.requiresName) return { requiresName: true as const };
       return data.data?.user ?? null;
     } catch (err) {
       return rejectWithValue(err instanceof Error ? err.message : "Failed to verify OTP");
@@ -194,6 +196,8 @@ export const verifyEmailLoginOTP = createAsyncThunk(
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.message || "Failed to verify OTP");
+      // New user — no local account yet. Pass the flag through to the page.
+      if (data.requiresName) return { requiresName: true as const };
       return data.data?.user ?? null;
     } catch (err) {
       return rejectWithValue(err instanceof Error ? err.message : "Failed to verify OTP");
@@ -282,7 +286,12 @@ const authSlice = createSlice({
       .addCase(verifyWhatsAppLoginOTP.pending,   (state) => { state.loading = true; state.error = null; })
       .addCase(verifyWhatsAppLoginOTP.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload) { state.user = action.payload; state.isAuthenticated = true; state.lastFetchTime = Date.now(); }
+        const payload = action.payload;
+        // Guard: { requiresName: true } means no local user yet — don't touch auth state.
+        if (!payload || (typeof payload === "object" && "requiresName" in payload)) return;
+        state.user = payload as User;
+        state.isAuthenticated = true;
+        state.lastFetchTime = Date.now();
       })
       .addCase(verifyWhatsAppLoginOTP.rejected,  (state, action) => {
         state.loading = false; state.error = action.payload as string;
@@ -298,7 +307,13 @@ const authSlice = createSlice({
       .addCase(verifyEmailLoginOTP.pending,   (state) => { state.loading = true; state.error = null; })
       .addCase(verifyEmailLoginOTP.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload) { state.user = action.payload; state.isAuthenticated = true; state.lastFetchTime = Date.now(); }
+        const payload = action.payload;
+        // Guard: { requiresName: true } means no local user yet — don't touch auth state.
+        // The signin page handles the name step; auth completes via /api/auth/complete-profile.
+        if (!payload || (typeof payload === "object" && "requiresName" in payload)) return;
+        state.user = payload as User;
+        state.isAuthenticated = true;
+        state.lastFetchTime = Date.now();
       })
       .addCase(verifyEmailLoginOTP.rejected,  (state, action) => {
         state.loading = false; state.error = action.payload as string;

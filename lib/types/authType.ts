@@ -1,5 +1,4 @@
 // src/lib/types/authType.ts
-
 export type RegistrationStatus = "PENDING" | "APPROVED" | "REJECTED";
 export type SubmissionStatus   = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -13,14 +12,11 @@ export interface CreatorProfile {
   followers:         number;
   eventAttendance:   string;
   rank:              string;
-
   status:            RegistrationStatus;
   adminNotes?:       string | null;
   approvedAt?:       string | null;
-
   currentRankReach:  number;
   totalReachAllTime: number;
-
   pictureCount:      number;
   storyCount:        number;
   reelCount:         number;
@@ -65,11 +61,11 @@ export interface AuthContextType {
   sendEmailRegisterOTP:     (name: string, email: string) => Promise<boolean>;
   verifyEmailRegisterOTP:   (email: string, otp: string) => Promise<boolean>;
   sendWhatsAppLoginOTP:     (phone: string, phoneKey: string) => Promise<boolean>;
-  verifyWhatsAppLoginOTP:   (phone: string, otp: string) => Promise<boolean>;
+  verifyWhatsAppLoginOTP:   (phone: string, otp: string) => Promise<boolean | "requiresName">;
   sendEmailLoginOTP:        (email: string) => Promise<boolean>;
-  verifyEmailLoginOTP:      (email: string, otp: string) => Promise<boolean>;
+  verifyEmailLoginOTP:      (email: string, otp: string) => Promise<boolean | "requiresName">;
   logout:                   () => Promise<void>;
   refreshUser:              (forceRefresh?: boolean) => Promise<void>;
-  clearAuthError:            () => void;
+  clearAuthError:           () => void;
   invalidateUserCache:      () => void;
 }
