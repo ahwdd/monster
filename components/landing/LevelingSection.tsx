@@ -1,4 +1,3 @@
-// src/components/landing/LevelingSection.tsx
 "use client";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
@@ -6,6 +5,7 @@ import { motion } from "framer-motion";
 import { LANDING_RANKS } from "@/lib/data/program";
 import FadeInView from "../FadeInView";
 import { hexToRgba } from "@/lib/utils/colors";
+import { FaStar, FaEye, FaCalendar, FaVideo } from "react-icons/fa";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -42,6 +42,12 @@ export default function LevelingSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {LANDING_RANKS.map((rank, i) => {
             const color = XD_COLORS[rank.id] ?? rank.color;
+            const highlights = [
+              { icon: FaEye, text: isAr ? rank.reachAr : rank.reachEn },
+              { icon: FaCalendar, text: isAr ? rank.monthsAr : rank.monthsEn },
+              { icon: FaVideo, text: isAr ? rank.requirementsAr[0] : rank.requirementsEn[0] },
+            ];
+
             return (
               <motion.div
                 key={rank.id}
@@ -49,18 +55,23 @@ export default function LevelingSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}>
-                <Link
-                  href={`/${locale}/ranks#${rank.id}`}
-                  className="block p-6 md:p-8 h-full overflow-hidden relative"
+                <div className="block p-6 md:p-8 space-y-2 h-full overflow-hidden relative rounded-md"
                   style={{
+                    border: `1px solid ${color}`,
                     background: `linear-gradient(to top, ${hexToRgba(color, 0.3)} 0%, ${hexToRgba(color, 0.2)} 10%, ${hexToRgba(color, 0)} 100%)`,
                   }}>
-                  <span
-                    className="absolute top-0 -left-2 h-2 w-1/2 skew-x-[-45deg]"
-                    style={{ backgroundColor: color }}
-                  />
+                  <div
+                    className="rounded-full w-fit p-3"
+                    style={{
+                      color,
+                      border: `1px solid ${color}`,
+                      background: hexToRgba(color, 0.1),
+                    }}>
+                    <FaStar className="size-6" />
+                  </div>
+
                   <h3
-                    className="font-display font-black uppercase mb-3"
+                    className="font-display font-black uppercase mb-1"
                     style={{
                       fontSize: "clamp(1rem, 1.5vw, 1.3rem)",
                       color,
@@ -68,26 +79,23 @@ export default function LevelingSection() {
                     }}>
                     {isAr ? rank.nameAr : rank.nameEn}
                   </h3>
-                  <p className="font-proxima text-white font-semibold mb-2 txt-regular">
+
+                  <p className="font-proxima text-white font-semibold txt-regular">
                     {t("requirements")}:
                   </p>
-                  <div className="flex flex-col gap-1.5">
-                    {(isAr ? rank.requirementsAr : rank.requirementsEn)
-                      .slice(0, 3)
-                      .map((req) => (
-                        <div key={req} className="flex items-start gap-3">
-                          <div
-                            className="mt-1.5 shrink-0 size-2 relative"
-                            style={{ background: color }}>
-                            <span className="absolute size-1 bg-[#ccc] rounded-full -inset-e-0.5 -top-0.5 z-0" />
-                          </div>
-                          <span className="font-proxima text-[#ccccd0] txt-regular">
-                            {req}
-                          </span>
-                        </div>
-                      ))}
+
+                  <div className="flex flex-col gap-1.5 text-white">
+                    {highlights.map(({ icon: Icon, text }) => (
+                      <div key={text} className="flex items-center gap-2 px-2 bg-[#636363]/50 w-fit rounded-2xl">
+                        <Icon
+                          className="shrink-0 size-3.5"/>
+                        <span className="font-proxima txt-regular">
+                          {text}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                </Link>
+                </div>
               </motion.div>
             );
           })}

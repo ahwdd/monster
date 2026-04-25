@@ -16,11 +16,11 @@ export default function HowItWorksSection() {
   return (
     <section className="w-full bg-black py-16 md:py-25 px-4 md:px-35">
       <div className="container">
-        <FadeInView className="text-center mb-10 md:mb-16">
-          <h2 className="header-larger font-display font-black text-white uppercase mb-3 md:mb-4 tracking-wide">
+        <FadeInView className="text-center mb-5 md:mb-16">
+          <h2 className="header-larger font-display font-black text-white uppercase mb-0.5 md:mb-1 tracking-wide">
             {t("howItWorks")}
           </h2>
-          <p className="font-proxima text-[#ccccd0] txt-regular max-w-2xl mx-auto">
+          <p className="font-proxima text-[#ccccd0] header-small max-w-140 mx-auto">
             {t("howItWorksDesc")}
           </p>
         </FadeInView>
@@ -33,14 +33,12 @@ export default function HowItWorksSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
-              className="flex flex-col items-center text-center">
-              {/* XD: 86×86 #171717 square with #22bb39 number */}
+              className="">
               <div
-                className="flex items-center justify-center mb-4 md:mb-6"
+                className="flex items-center justify-center rounded mb-4 md:mb-6 bg-[#171717]"
                 style={{
                   width: "clamp(60px, 10vw, 86px)",
                   height: "clamp(60px, 10vw, 86px)",
-                  background: "#171717",
                 }}>
                 <span
                   className="font-display font-black"
@@ -62,7 +60,7 @@ export default function HowItWorksSection() {
               </h3>
 
               <p
-                className="font-proxima text-[#ccccd0] txt-regular"
+                className="font-proxima text-[#ccccd0] txt-regular max-w-56"
                 style={{ lineHeight: "1.6" }}>
                 {isAr ? step.descAr : step.descEn}
               </p>

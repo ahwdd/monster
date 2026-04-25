@@ -45,16 +45,16 @@ export default function RequirementsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
-                className={`p-8 ${i==1?'bg-[#171717] border border-[#636363]/50':''}`}>
+                className={`p-8`}>
                 {/* XD: 60×60 #171717 icon box */}
                 <div
-                  className={`-skew-x-12 flex items-center justify-center mb-6 size-15
-                  ${i==1?'bg-monster':'bg-[#171717] border border-[#636363]/50'}`}>
-                  <Icon className="size-7 skew-x-12 text-white" />
+                  className={`-skew-x-12 ms-2 flex items-center justify-center size-18 mb-6
+                  bg-[#171717]`}>
+                  <Icon className="size-10 skew-x-12 text-white" />
                 </div>
 
                 <h3
-                  className="font-display font-black text-white uppercase mb-3 md:mb-4"
+                  className="font-display font-black text-white uppercase mt-2"
                   style={{
                     fontSize: "clamp(1rem, 1.5vw, 1.3rem)",
                     letterSpacing: "0.05em",
@@ -62,7 +62,7 @@ export default function RequirementsSection() {
                   {isAr ? item.titleAr : item.titleEn}
                 </h3>
 
-                <p className="font-proxima text-[#ccccd0] leading-relaxed txt-regular">
+                <p className="font-proxima text-[#ccccd0] leading-relaxed txt-regular max-w-72">
                   {isAr ? item.descAr : item.descEn}
                 </p>
               </motion.div>

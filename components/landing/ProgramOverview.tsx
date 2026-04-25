@@ -12,34 +12,35 @@ export default function ProgramOverview() {
   const t = useTranslations("hero");
   const isAr = locale === "ar";
 
-  const DISPLAY_STATS = [
-    { val: "9", label: t("overviewMonths") },
-    { val: "30", label: t("overviewCreators") },
-    { val: "5", label: t("overviewNewPerMonth") },
-  ];
+  // const DISPLAY_STATS = [
+  //   { val: "9", label: t("overviewMonths") },
+  //   { val: "30", label: t("overviewCreators") },
+  //   { val: "5", label: t("overviewNewPerMonth") },
+  // ];
 
   return (
     <section id="overview" className="w-full bg-black">
-      <div className="container xl:px-8 px-4 py-16 md:py-25 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
+      <div className="container xl:px-8 px-4 py-16 md:py-25 
+      grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
         {/* Left: text + stats */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, ease: EASE }}
-          className="max-w-full md:max-w-120">
-          <h2 className="header-regular font-display font-black text-white uppercase mb-4 md:mb-6 tracking-wide">
+          className="max-w-full md:max-w-120 ">
+          <h2 className="header-regular font-display font-black text-white uppercase mb-2 md:mb-4 tracking-wide">
             {t("overviewTitle")}
           </h2>
-          <p className="font-proxima text-[#ccccd0] leading-relaxed mb-3 md:mb-4 txt-larger">
+          <p className="font-proxima text-[#ccccd0] leading-relaxed mb-1.5 md:mb-2 txt-larger">
             {t("overviewDesc1")}
           </p>
-          <p className="font-proxima text-[#ccccd0] leading-relaxed mb-8 md:mb-14 txt-larger">
+          <p className="font-proxima text-[#ccccd0] leading-relaxed mb-4 md:mb-8 txt-larger">
             {t("overviewDesc2")}
           </p>
 
           {/* Stats row — horizontal scroll on very small screens */}
-          <div className="flex items-start gap-3 md:gap-4 overflow-x-auto pb-1">
+          {/* <div className="flex items-start gap-3 md:gap-4 overflow-x-auto pb-1">
             {DISPLAY_STATS.map((s, i) => (
               <motion.div
                 key={s.val}
@@ -62,7 +63,7 @@ export default function ProgramOverview() {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </div> */}
         </motion.div>
 
         {/* Right: image — hidden on very small screens, shown md+ */}

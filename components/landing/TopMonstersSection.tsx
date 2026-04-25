@@ -66,7 +66,7 @@ export default function TopMonstersSection() {
           <h2 className="header-larger tracking-wide font-display font-black text-white uppercase mb-3">
             {isAr ? "أفضل المونسترز" : "Top Monsters"}
           </h2>
-          <p className="font-proxima text-[#ccccd0] txt-regular">
+          <p className="font-proxima text-[#ccc] txt-regular">
             {isAr ? "تنافس. احتل مكانك. سيطر." : "Compete. Rank. Dominate."}
           </p>
         </FadeInView>
@@ -75,10 +75,9 @@ export default function TopMonstersSection() {
         <FadeInView delay={0.1}>
           <div className="overflow-x-auto">
             <div
-              className="min-w-120 mx-auto border-s border-s-[#636363] px-4 md:px-8"
-              style={{ maxWidth: "900px" }}>
+              className="min-w-120 max-w-225 w-1/2 mx-auto border-2 border-[#22bb39] rounded-lg">
               {/* Header */}
-              <div className="grid grid-cols-[60px_1fr_1fr_1fr] border-b border-[#272727] pb-3">
+              <div className="grid grid-cols-[60px_1fr_1fr_1fr] py-3  px-4 md:px-8 text-[#22bb39]">
                 {HEADERS.map((h, i) => (
                   <span
                     key={i}
@@ -101,7 +100,7 @@ export default function TopMonstersSection() {
 
               {/* Empty */}
               {!loading && leaders.length === 0 && (
-                <div className="py-12 text-center font-proxima text-[#ccccd0] txt-regular">
+                <div className="py-12 px-4 md:px-8 text-center font-proxima text-[#ccccd0] txt-regular">
                   {isAr ? "لا توجد بيانات بعد" : "No ambassadors ranked yet."}
                 </div>
               )}
@@ -120,17 +119,17 @@ export default function TopMonstersSection() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.35, delay: i * 0.07 }}
-                      className="grid grid-cols-[60px_1fr_1fr_1fr] py-4 border-b border-[#272727] hover:bg-[#0a0a0a] transition-colors items-center">
-                      <span className="font-proxima text-[#ccccd0] txt-regular">
+                      className="text-[#ccc] grid grid-cols-[60px_1fr_1fr_1fr] px-4 md:px-8 py-2 border-b border-[#22bb39] hover:bg-[#0a0a0a] transition-colors items-center">
+                      <span className="txt-regular">
                         {i + 1}
                       </span>
-                      <span className="font-proxima text-[#ccccd0] txt-regular truncate">
+                      <span className="txt-regular truncate">
                         {leader.nickname}
                       </span>
-                      <span className="font-proxima text-[#ccccd0] txt-regular">
+                      <span className="txt-regular">
                         {levelLabel}
                       </span>
-                      <span className="font-proxima text-[#ccccd0] txt-regular tabular-nums">
+                      <span className="txt-regular tabular-nums">
                         {formatNumber(leader.totalReachAllTime)}
                       </span>
                     </motion.div>
@@ -140,12 +139,6 @@ export default function TopMonstersSection() {
           </div>
         </FadeInView>
 
-        <div className="flex justify-center mt-8 md:mt-10">
-          
-          <OutlinedParaBtn href={`/${locale}/leaderboard`} withBorder>
-            {isAr ? "لوحة الصدارة الكاملة" : "Full Leaderboard"}
-          </OutlinedParaBtn>
-        </div>
       </div>
     </section>
   );
