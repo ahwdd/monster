@@ -27,18 +27,29 @@ import {
   getMonthsInProgram,
   MONTH_RANGE,
   RANK_THRESHOLDS,
+  MIN_QUARTER_SCORE,
+  MIN_CONTENT,
+  MAX_SUBMISSIONS_PER_RANK,
+  MAX_REACH_PER_RANK,
 } from "@/lib/utils/rank";
 import ProfileSkeleton, {
-  KPI_ENG, KPI_VIEWS, RANK_COLORS, RANK_LABEL_AR, RANK_LABEL_EN,
+  KPI_ENG,
+  KPI_VIEWS,
+  RANK_COLORS,
+  RANK_LABEL_AR,
+  RANK_LABEL_EN,
   NEXT_RANK_COLOR,
-  RankBadge, ReqRow, StatCard, STATUS_BG,
+  RankBadge,
+  ReqRow,
+  StatCard,
+  STATUS_BG,
   REQ,
 } from "./ProfileSkeleton";
 
 const PENDING_CAP = 5;
 
 export default function ProfilePage() {
-  const t  = useTranslations("profile");
+  const t = useTranslations("profile");
   const ts = useTranslations("submissions");
   const locale = useLocale();
   const isRTL = locale === "ar";
@@ -47,15 +58,16 @@ export default function ProfilePage() {
   const Arrow = isRTL ? IoArrowBack : IoArrowForward;
 
   const { user, isAuthenticated, initializationComplete, logout } = useAuth();
-  const [profile, setProfile]         = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [submissions, setSubmissions] = useState<any[]>([]);
-  const [canSubmit, setCanSubmit]     = useState(true);
-  const [showEmail, setShowEmail]     = useState(false);
-  const [showPhone, setShowPhone]     = useState(false);
+  const [canSubmit, setCanSubmit] = useState(true);
+  const [showEmail, setShowEmail] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
 
   useEffect(() => {
-    if (initializationComplete && !isAuthenticated) router.push(`/${locale}/auth/signin`);
+    if (initializationComplete && !isAuthenticated)
+      router.push(`/${locale}/auth/signin`);
   }, [initializationComplete, isAuthenticated]);
 
   useEffect(() => {
@@ -88,34 +100,72 @@ export default function ProfilePage() {
     );
   }
 
-  const displayEmail  = user.email && !user.email.includes("@temp.monster") ? user.email : null;
-  const initials      = `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`.toUpperCase() || "AZ";
-  const isApproved    = profile?.status === "APPROVED";
-  const isPending     = profile?.status === "PENDING";
-  const isRejected    = profile?.status === "REJECTED";
-  const rank          = profile?.rank ?? "UNRANKED";
-  const rankColor     = RANK_COLORS[rank] ?? "#6b7280";
-  const rankLabel     = isRTL ? (RANK_LABEL_AR[rank] ?? rank) : (RANK_LABEL_EN[rank] ?? rank);
-  const currentRankReach  = profile?.currentRankReach ?? 0;
+  const displayEmail =
+    user.email && !user.email.includes("@temp.monster") ? user.email : null;
+  const initials =
+    `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`.toUpperCase() ||
+    "AZ";
+  const isApproved = profile?.status === "APPROVED";
+  const isPending = profile?.status === "PENDING";
+  const isRejected = profile?.status === "REJECTED";
+  const rank = profile?.rank ?? "UNRANKED";
+  const rankColor = RANK_COLORS[rank] ?? "#6b7280";
+  const rankLabel = isRTL
+    ? (RANK_LABEL_AR[rank] ?? rank)
+    : (RANK_LABEL_EN[rank] ?? rank);
+  const currentRankReach = profile?.currentRankReach ?? 0;
   const totalReachAllTime = profile?.totalReachAllTime ?? 0;
-  const threshold     = RANK_THRESHOLDS[rank] ?? 0;
-  const rankProgress  = getRankProgress(rank, currentRankReach);
-  const progressPct   = Math.min(Math.round(rankProgress * 100), 100);
-  const approvedAt    = profile?.approvedAt ? new Date(profile.approvedAt) : null;
-  const monthsIn      = getMonthsInProgram(approvedAt);
-  const [, maxMonth]  = MONTH_RANGE[rank] ?? [0, 3];
+  const threshold = RANK_THRESHOLDS[rank] ?? 0;
+  const rankProgress = getRankProgress(rank, currentRankReach);
+  const progressPct = Math.min(Math.round(rankProgress * 100), 100);
+  const approvedAt = profile?.approvedAt ? new Date(profile.approvedAt) : null;
+  const monthsIn = getMonthsInProgram(approvedAt);
+  const [, maxMonth] = MONTH_RANGE[rank] ?? [0, 3];
   const [reqStreams, reqReels, reqStories] = REQ[rank] ?? REQ.UNRANKED;
-  const recentSubs    = submissions.slice(0, 3);
+  const recentSubs = submissions.slice(0, 3);
+
+  // ── Performance score: derived from available API data ───────────────────
+  // Full score (commitment + admin grading) lives server-side only.
+  // We compute the two parts we have:
+  //   • Views component  (out of 10): proportional to currentRankReach / threshold
+  //   • Content component (out of 20): proportional to approvedSubs / MIN_CONTENT[rank]
+  const approvedSubs = submissions.filter(
+    (s) => s.status === "APPROVED",
+  ).length;
+  const minContent = MIN_CONTENT[rank] ?? 20;
+  const scoreMax = MIN_QUARTER_SCORE[rank] || 50; // 50 / 70 / 90 per rank; 0 for UNRANKED → show /50
+  const viewsPts = Math.min(
+    10,
+    Math.round((currentRankReach / (threshold || 1)) * 10),
+  );
+  const contentPts = Math.min(
+    20,
+    Math.round((approvedSubs / (minContent || 1)) * 20),
+  );
+  const estScore = viewsPts + contentPts;
+
+  // ── Stat card targets ────────────────────────────────────────────────────
+  const maxSubs = MAX_SUBMISSIONS_PER_RANK[rank] ?? 20;
+  const maxReach = MAX_REACH_PER_RANK[rank] ?? 50_000;
 
   // Next rank label
   const NEXT_RANK_LABEL_EN: Record<string, string> = {
-    UNRANKED: "Rookie Monster", ROOKIE: "Rising Monster", RISING: "Cold Monster", COLD: "Cold Monster",
+    UNRANKED: "Rookie Monster",
+    ROOKIE: "Rising Monster",
+    RISING: "Cold Monster",
+    COLD: "Cold Monster",
   };
   const NEXT_RANK_LABEL_AR: Record<string, string> = {
-    UNRANKED: "مبتدئ مونستر", ROOKIE: "صاعد مونستر", RISING: "كولد مونستر", COLD: "كولد مونستر",
+    UNRANKED: "مبتدئ مونستر",
+    ROOKIE: "صاعد مونستر",
+    RISING: "كولد مونستر",
+    COLD: "كولد مونستر",
   };
-  const NEXT_RANK_COLOR: Record<string, string> = {
-    UNRANKED: "#22bb39", ROOKIE: "#d4ff00", RISING: "#00cfff", COLD: "#00cfff",
+  const NEXT_RANK_COLOR_MAP: Record<string, string> = {
+    UNRANKED: "#22bb39",
+    ROOKIE: "#d4ff00",
+    RISING: "#00cfff",
+    COLD: "#00cfff",
   };
 
   return (
@@ -125,7 +175,6 @@ export default function ProfilePage() {
         <ProfileSkeleton />
       ) : (
         <div className="font-proxima max-w-340 mx-auto px-4 md:px-8 xl:px-35 py-8 md:py-10 space-y-5">
-
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -141,7 +190,9 @@ export default function ProfilePage() {
                 <h1
                   className=" font-black text-white leading-tight"
                   style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)" }}>
-                  {isRTL ? `مرحباً، ${user.firstName}` : `Hello, ${user.firstName}`}
+                  {isRTL
+                    ? `مرحباً، ${user.firstName}`
+                    : `Hello, ${user.firstName}`}
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                   {isApproved && <RankBadge rank={rank} label={rankLabel} />}
@@ -153,7 +204,9 @@ export default function ProfilePage() {
                     </span>
                   )}
                   {isPending && (
-                    <span className=" txt-smaller px-2 py-0.5 border" style={{ color: "#bfec1d", borderColor: "#bfec1d44" }}>
+                    <span
+                      className=" txt-smaller px-2 py-0.5 border"
+                      style={{ color: "#bfec1d", borderColor: "#bfec1d44" }}>
                       {isRTL ? "قيد المراجعة" : "Pending Approval"}
                     </span>
                   )}
@@ -166,7 +219,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Right actions: lang toggle + submit */}
+            {/* Right actions */}
             <div className="flex items-center gap-3 flex-wrap">
               {isApproved && canSubmit && (
                 <Link
@@ -183,15 +236,23 @@ export default function ProfilePage() {
           {/* ── Status banners ── */}
           {isPending && (
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               className="flex items-start justify-between gap-4 p-4 border border-[#bfec1d]/25 bg-[#bfec1d]/5">
               <div className="flex items-start gap-3">
-                <IoTimeOutline className="size-5 shrink-0 mt-0.5" style={{ color: "#bfec1d" }} />
+                <IoTimeOutline
+                  className="size-5 shrink-0 mt-0.5"
+                  style={{ color: "#bfec1d" }}
+                />
                 <div>
-                  <p className=" font-bold uppercase txt-small" style={{ color: "#bfec1d" }}>
+                  <p
+                    className=" font-bold uppercase txt-small"
+                    style={{ color: "#bfec1d" }}>
                     {t("applicationUnderReview")}
                   </p>
-                  <p className=" txt-smaller text-[#ccccd0] mt-1">{t("applicationUnderReviewDesc")}</p>
+                  <p className=" txt-smaller text-[#ccccd0] mt-1">
+                    {t("applicationUnderReviewDesc")}
+                  </p>
                 </div>
               </div>
               <Link
@@ -205,13 +266,18 @@ export default function ProfilePage() {
 
           {isRejected && (
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               className="flex items-start justify-between gap-4 p-4 border border-red-400/25 bg-red-400/5">
               <div className="flex items-start gap-3">
                 <IoWarningOutline className="size-5 text-red-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className=" font-bold text-red-400 uppercase txt-small">{t("applicationRejected")}</p>
-                  <p className=" txt-smaller text-[#ccccd0] mt-1">{t("applicationRejectedDesc")}</p>
+                  <p className=" font-bold text-red-400 uppercase txt-small">
+                    {t("applicationRejected")}
+                  </p>
+                  <p className=" txt-smaller text-[#ccccd0] mt-1">
+                    {t("applicationRejectedDesc")}
+                  </p>
                 </div>
               </div>
               <Link
@@ -229,21 +295,29 @@ export default function ProfilePage() {
               {/* Row 1: Level Progress + Performance Score */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-4">
                 <motion.div
-                  initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.06 }}
                   className="bg-[#171717] rounded-lg p-5 md:p-6">
                   <p className="txt-smaller font-bold text-white uppercase tracking-wider mb-4">
                     {isRTL ? "تقدم المستوى" : "Level Progress"}
                   </p>
                   <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-black uppercase txt-small" style={{ color: rankColor }}>
+                      <span
+                        className="font-black uppercase txt-small"
+                        style={{ color: rankColor }}>
                         {rankLabel}
                       </span>
                       {rank !== "COLD" && (
                         <>
                           <span className="text-[#444] txt-smaller">→</span>
-                          <span className="font-black uppercase txt-small" style={{ color: NEXT_RANK_COLOR[rank] }}>
-                            {isRTL ? NEXT_RANK_LABEL_AR[rank] : NEXT_RANK_LABEL_EN[rank]}
+                          <span
+                            className="font-black uppercase txt-small"
+                            style={{ color: NEXT_RANK_COLOR_MAP[rank] }}>
+                            {isRTL
+                              ? NEXT_RANK_LABEL_AR[rank]
+                              : NEXT_RANK_LABEL_EN[rank]}
                           </span>
                         </>
                       )}
@@ -252,23 +326,26 @@ export default function ProfilePage() {
                       {rank === "COLD" ? "MAX" : `${progressPct}%`}
                     </span>
                   </div>
-                  {/* Gradient bar: current rank color → next rank color, clipped to progressPct */}
-                  <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "10px" }}>
+                  <div
+                    className="w-full bg-[#272727] rounded-full overflow-hidden"
+                    style={{ height: "10px" }}>
                     <motion.div
                       className="h-full"
                       style={{
-                        background: rank === "COLD"
-                          ? rankColor
-                          : `linear-gradient(to right, ${rankColor}, ${NEXT_RANK_COLOR[rank]})`,
-                        // We want the gradient to represent 0–100% of the full range,
-                        // so we set the element width to 100% and clip via the parent's overflow.
-                        // To make mid-progress feel correct we use backgroundSize trick:
+                        background:
+                          rank === "COLD"
+                            ? rankColor
+                            : `linear-gradient(to right, ${rankColor}, ${NEXT_RANK_COLOR_MAP[rank]})`,
                         backgroundSize: `${(100 / (progressPct / 100)) * 1}% 100%`,
                         backgroundRepeat: "no-repeat",
                       }}
                       initial={{ width: 0 }}
                       animate={{ width: `${progressPct}%` }}
-                      transition={{ duration: 1, delay: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                      transition={{
+                        duration: 1,
+                        delay: 0.4,
+                        ease: [0.4, 0, 0.2, 1],
+                      }}
                     />
                   </div>
                   {rank !== "COLD" && (
@@ -280,26 +357,34 @@ export default function ProfilePage() {
                   )}
                 </motion.div>
 
-                {/* Performance Score card */}
+                {/* Performance Score card — estimated from API data */}
                 <motion.div
-                  initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.09 }}
                   className="bg-[#171717] rounded-lg p-5 md:p-6 flex flex-col justify-center">
                   <p className="txt-smaller font-bold text-white uppercase tracking-wider mb-3">
                     {isRTL ? "نقاط الأداء" : "Performance Score"}
                   </p>
                   <p className="text-white leading-none mb-1 header-small">
-                    <span>40 / </span> 
-                    <span className="header-regular text-[#22bb39]">50 pts</span>
+                    <span>{estScore} / </span>
+                    <span className="header-regular text-[#22bb39]">
+                      {scoreMax} pts
+                    </span>
                   </p>
                   <p className="txt-smaller text-[#555]">
-                    {isRTL ? "نقاط التفاعل الإجمالية" : "Overall Engagement Score"}
+                    {isRTL
+                      ? "نقاط التفاعل الإجمالية"
+                      : "Overall Engagement Score"}
                   </p>
                 </motion.div>
               </div>
 
               {/* Row 2: 3 stat cards */}
               <motion.div
-                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.11 }}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.11 }}
                 className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
                 <StatCard
                   label={isRTL ? "إجمالي المشاهدات" : "Total Views"}
@@ -309,61 +394,90 @@ export default function ProfilePage() {
                 />
                 <StatCard
                   label={isRTL ? "إجمالي الوصول" : "Total Reach"}
-                  plain={formatNumber(totalReachAllTime)}
+                  current={formatNumber(totalReachAllTime)}
+                  target={formatNumber(maxReach)}
+                  targetColor={NEXT_RANK_COLOR[rank]}
                 />
                 <StatCard
                   label={isRTL ? "المشاركات" : "Submissions"}
-                  plain={String(submissions.length)}
+                  current={String(submissions.length)}
+                  target={String(maxSubs)}
+                  targetColor={NEXT_RANK_COLOR[rank]}
                 />
               </motion.div>
 
-              {/* Row 3: Content Requirements + KPI Targets */}
+              {/* Row 3: KPI Metric Targets */}
               <motion.div
-                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
                 className="bg-[#171717] rounded-lg p-5 md:p-6">
                 <p className="txt-smaller font-bold text-white uppercase tracking-wider mb-4">
                   {isRTL ? "مستهدفات KPI" : "KPI Metric Targets"}
                 </p>
                 <div className="space-y-5">
+                  {/* Views KPI */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="txt-smaller text-[#ccccd0]">{isRTL ? "مشاهدات KPI" : "Views KPI"}</span>
+                      <span className="txt-smaller text-[#ccccd0]">
+                        {isRTL ? "مشاهدات KPI" : "Views KPI"}
+                      </span>
                       <span className="txt-smaller font-semibold tabular-nums text-[#22bb39]">
-                        {formatNumber(currentRankReach)} / {KPI_VIEWS[rank] ?? "50K"}
+                        {formatNumber(currentRankReach)} /{" "}
+                        {KPI_VIEWS[rank] ?? "50K"}
                       </span>
                     </div>
-                    <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "6px" }}>
+                    <div
+                      className="w-full bg-[#272727] rounded-full overflow-hidden"
+                      style={{ height: "6px" }}>
                       <motion.div
                         className="h-full bg-[#22bb39]"
                         initial={{ width: 0 }}
                         animate={{ width: `${progressPct}%` }}
-                        transition={{ duration: 0.9, delay: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                        transition={{
+                          duration: 0.9,
+                          delay: 0.45,
+                          ease: [0.4, 0, 0.2, 1],
+                        }}
                       />
                     </div>
                   </div>
-                  <div>
+                  {/* Engagement Rate — target */}
+                  {/* <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="txt-smaller text-[#ccccd0]">{isRTL ? "معدل التفاعل" : "Engagement Rate"}</span>
-                      <span className="txt-smaller font-semibold tabular-nums" style={{ color: "#bfec1d" }}>
+                      <span className="txt-smaller text-[#ccccd0]">
+                        {isRTL ? "معدل التفاعل" : "Engagement Rate"}
+                      </span>
+                      <span
+                        className="txt-smaller font-semibold tabular-nums"
+                        style={{ color: "#bfec1d" }}>
                         0.8% / {KPI_ENG[rank] ?? "0.5%"}
                       </span>
                     </div>
-                    <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "6px" }}>
+                    <div
+                      className="w-full bg-[#272727] rounded-full overflow-hidden"
+                      style={{ height: "6px" }}>
                       <motion.div
                         className="h-full bg-[#bfec1d]"
                         initial={{ width: 0 }}
                         animate={{ width: "80%" }}
-                        transition={{ duration: 0.9, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                        transition={{
+                          duration: 0.9,
+                          delay: 0.5,
+                          ease: [0.4, 0, 0.2, 1],
+                        }}
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </motion.div>
 
               {/* Row 4: Recent Submissions table */}
               {recentSubs.length > 0 && (
                 <motion.div
-                  initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.17 }}
                   className="bg-[#171717] rounded-lg p-5 md:p-6 overflow-x-auto">
                   <div className="flex items-center justify-between mb-4 min-w-100">
                     <p className=" txt-smaller text-[#b6b6b6] uppercase tracking-wider">
@@ -376,33 +490,36 @@ export default function ProfilePage() {
                       <Arrow className="size-3" />
                     </Link>
                   </div>
-                  {/* Table — scrollable on mobile */}
                   <div className="min-w-100">
-                    {/* Header */}
                     <div className="grid grid-cols-[1fr_100px_100px_90px] gap-3 pb-3 border-b border-[#272727]">
                       {(isRTL
                         ? ["عنوان المحتوى", "النوع", "المشاهدات", "الحالة"]
                         : ["Content", "Type", "Views", "Status"]
                       ).map((h, i) => (
-                        <span key={i} className={`font-bold text-white uppercase tracking-wider`} 
-                        style={{ fontSize: "11px" }}>
+                        <span
+                          key={i}
+                          className="font-bold text-white uppercase tracking-wider"
+                          style={{ fontSize: "11px" }}>
                           {h}
                         </span>
                       ))}
                     </div>
-                    {/* Rows */}
                     {recentSubs.map((sub) => (
-                      <div key={sub.id} className="grid grid-cols-[1fr_100px_100px_90px] gap-3 py-3 border-b border-[#272727] items-center">
+                      <div
+                        key={sub.id}
+                        className="grid grid-cols-[1fr_100px_100px_90px] gap-3 py-3 border-b border-[#272727] items-center">
                         <span className=" txt-smaller text-white truncate">
-                          {sub.contentLink?.split("/").pop()?.slice(0, 24) ?? "Content"}
+                          {sub.contentLink?.split("/").pop()?.slice(0, 24) ??
+                            "Content"}
                         </span>
                         <span className=" txt-smaller text-[#ccccd0] capitalize">
                           {sub.contentTypes?.[0]?.toLowerCase() ?? "-"}
                         </span>
                         <span className=" txt-smaller text-white tabular-nums">
-                          {formatNumber(sub.acceptedReach ?? sub.submittedReach ?? 0)}
+                          {formatNumber(
+                            sub.acceptedReach ?? sub.submittedReach ?? 0,
+                          )}
                         </span>
-                        {/* XD: solid colored pill, black text */}
                         <span
                           className="inline-flex items-center justify-center font-bold uppercase
                           h-5 px-1.5 text-xs text-[9px] tracking-wider w-fit rounded-lg"
@@ -423,12 +540,17 @@ export default function ProfilePage() {
           {/* Not registered */}
           {!profile && (
             <motion.div
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
               className="bg-[#171717] rounded-lg p-8 md:p-10 text-center border border-[#272727]">
-              <p className=" font-black text-white uppercase mb-2" style={{ fontSize: "clamp(1.1rem, 2vw, 1.5rem)" }}>
+              <p
+                className=" font-black text-white uppercase mb-2"
+                style={{ fontSize: "clamp(1.1rem, 2vw, 1.5rem)" }}>
                 {isRTL ? "أكمل تسجيلك" : "Complete Your Registration"}
               </p>
-              <p className=" text-[#ccccd0] mb-6 txt-small">{ts("registrationRequiredDesc")}</p>
+              <p className=" text-[#ccccd0] mb-6 txt-small">
+                {ts("registrationRequiredDesc")}
+              </p>
               <Link
                 href={`/${locale}/submissions/register`}
                 className="inline-flex items-center gap-2 h-12 px-10 bg-[#22bb39] text-white  font-black uppercase txt-small tracking-[2px] hover:opacity-90 transition-opacity">
@@ -440,19 +562,39 @@ export default function ProfilePage() {
 
           {/* Contact info card */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.19 }}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.19 }}
             className="bg-[#171717] rounded-lg p-5 md:p-6">
-            <p className=" txt-smaller text-[#b6b6b6] uppercase tracking-wider mb-4">{t("contactInfo")}</p>
+            <p className=" txt-smaller text-[#b6b6b6] uppercase tracking-wider mb-4">
+              {t("contactInfo")}
+            </p>
             {[
-              { Icon: IoMailOutline,          label: t("email"), value: displayEmail, onEdit: () => setShowEmail(true), cta: displayEmail ? t("change") : t("add") },
-              { Icon: IoPhonePortraitOutline, label: t("phone"), value: user.phone || null, onEdit: () => setShowPhone(true), cta: user.phone ? t("change") : t("add") },
+              {
+                Icon: IoMailOutline,
+                label: t("email"),
+                value: displayEmail,
+                onEdit: () => setShowEmail(true),
+                cta: displayEmail ? t("change") : t("add"),
+              },
+              {
+                Icon: IoPhonePortraitOutline,
+                label: t("phone"),
+                value: user.phone || null,
+                onEdit: () => setShowPhone(true),
+                cta: user.phone ? t("change") : t("add"),
+              },
             ].map(({ Icon, label, value, onEdit, cta }) => (
-              <div key={label} className="flex items-center justify-between py-3 border-b border-[#272727] last:border-0 gap-3">
+              <div
+                key={label}
+                className="flex items-center justify-between py-3 border-b border-[#272727] last:border-0 gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <Icon className="size-4 text-[#444] shrink-0" />
                   <div className="min-w-0">
                     <p className=" txt-smaller text-[#b6b6b6]">{label}</p>
-                    <p className=" txt-small text-white truncate">{value || t("notSet")}</p>
+                    <p className=" txt-small text-white truncate">
+                      {value || t("notSet")}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -466,7 +608,10 @@ export default function ProfilePage() {
 
           {/* Logout */}
           <button
-            onClick={() => { toast.info(t("loggingOut")); logout(); }}
+            onClick={() => {
+              toast.info(t("loggingOut"));
+              logout();
+            }}
             className="w-full flex items-center justify-center gap-3 h-12 border border-[#2a2a2a] text-[#ccccd0] hover:text-red-400 hover:border-red-400/30  font-bold uppercase transition-colors"
             style={{ fontSize: "13px", letterSpacing: "1.5px" }}>
             <IoLogOutOutline className="size-5" />
@@ -475,8 +620,19 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {showEmail && <ChangeEmailModal currentEmail={displayEmail} onClose={() => setShowEmail(false)} />}
-      {showPhone && <ChangePhoneModal currentPhone={user.phone} currentPhoneKey={user.phoneKey} onClose={() => setShowPhone(false)} />}
+      {showEmail && (
+        <ChangeEmailModal
+          currentEmail={displayEmail}
+          onClose={() => setShowEmail(false)}
+        />
+      )}
+      {showPhone && (
+        <ChangePhoneModal
+          currentPhone={user.phone}
+          currentPhoneKey={user.phoneKey}
+          onClose={() => setShowPhone(false)}
+        />
+      )}
     </AuthShell>
   );
 }

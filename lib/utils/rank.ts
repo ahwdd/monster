@@ -49,6 +49,26 @@ export const MIN_CONTENT: Record<string, number> = {
   COLD:     72,   // 20 stream + 16 reel + 36 story
 };
 
+// Equals MIN_CONTENT: every submission = 1 piece of content,
+export const MAX_SUBMISSIONS_PER_RANK: Record<string, number> = {
+  UNRANKED: 20,
+  ROOKIE:   32,
+  MEGA:     32,
+  RISING:   48,
+  ELITE:    48,
+  COLD:     72,
+};
+
+// reach (currentRankReach) before they can level up.
+export const MAX_REACH_PER_RANK: Record<string, number> = {
+  UNRANKED:  50_000,
+  ROOKIE:    75_000,
+  MEGA:      75_000,
+  RISING:   150_000,
+  ELITE:    150_000,
+  COLD:     650_000,
+};
+
 // ── Engagement rate targets per rank (quarterly) ──────────────
 export const MIN_ENGAGEMENT_RATE: Record<string, number> = {
   UNRANKED: 0.005, // 0.5%
