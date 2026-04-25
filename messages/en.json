@@ -317,7 +317,14 @@
     "discoveryFriend": "Friend Recommendation",
     "discoveryCommunity": "Community Messages",
     "discoverySocial": "Social Media Posts",
-    "discoveryEvents": "Attending Monster Events"
+    "discoveryEvents": "Attending Monster Events",
+    "stepYourInfo": "Your Info",
+    "stepYourChannels": "Your Channels",
+    "next": "Next",
+    "back": "Back",
+    "successTitle": "Your application has been submitted",
+    "successBody": "Your application has been submitted. We will review your profile and contact you soon.",
+    "successCta": "Go to Profile"
   },
 
   "submitForm": {
@@ -352,7 +359,10 @@
     "themeLabel": "Monster Theme",
     "layoutLabel": "Layout",
     "logoLabel": "Logo",
-    "productsLabel": "Monster Products"
+    "productsLabel": "Monster Products",
+    "successTitle": "Submission Received",
+    "successBody": "Your content has been submitted and is pending review. We'll update your profile once it's approved.",
+    "successCta": "Go to Profile"
   },
 
   "admin": {

@@ -59,7 +59,7 @@ export default function FileUpload({
       <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
 
       {value ? (
-        <div className="relative w-full h-40 rounded-xl overflow-hidden border border-zinc-700 group">
+        <div className="relative w-full h-40 rounded-lg overflow-hidden border border-zinc-700 group">
           <Image src={value} alt={label} fill className="object-contain bg-zinc-900 p-2" />
           <button
             type="button"
@@ -74,7 +74,7 @@ export default function FileUpload({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className={`w-full flex flex-col items-center justify-center gap-2 h-36 rounded-xl border-2 border-dashed transition-colors duration-200
+          className={`w-full flex flex-col items-center justify-center gap-2 h-36 rounded-lg border-2 border-dashed transition-colors duration-200
             ${displayError
               ? "border-red-500 bg-red-500/5"
               : "border-zinc-700 bg-zinc-900/50 hover:border-[#78be20] hover:bg-[#78be20]/5"

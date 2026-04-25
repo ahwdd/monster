@@ -148,13 +148,7 @@ export default function SubmitPage() {
       ]}>
       <div className="max-w-2xl mx-auto px-4 py-10">
         {/* Page header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-1 h-8 bg-[#6bd41a]" />
-            <span className="text-xs text-[#6bd41a] font-display font-bold uppercase tracking-[0.2em]">
-              {profile.nickname} · {profile.rank?.replace(/_/g, " ")}
-            </span>
-          </div>
+        <div className="mb-8 text-center">
           <h1 className="text-3xl font-display font-black text-white uppercase tracking-tight mb-1">
             {isAr ? "مشاركة جديدة" : "New Submission"}
           </h1>
@@ -164,24 +158,16 @@ export default function SubmitPage() {
               : `You can add ${remaining} more submission${remaining !== 1 ? "s" : ""} before reaching the limit`}
           </p>
         </div>
-
-        {/* Pending count indicator */}
-        <div className="flex items-center gap-2 mb-6">
-          {Array.from({ length: PENDING_CAP }).map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 flex-1 transition-colors duration-300 ${
-                i < pendingCount ? "bg-[#6bd41a]" : "bg-[#272727]"
-              }`}
-            />
-          ))}
-          <span className="text-xs text-[#555] ms-2 shrink-0">
-            {pendingCount}/{PENDING_CAP}
+        
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-1 h-8 bg-[#6bd41a]" />
+          <span className="text-xs font-bold uppercase">
+            <span className="text-[#6bd41a]">{profile.nickname}</span> · {profile.rank?.replace(/_/g, " ")}
           </span>
         </div>
 
         {/* Form card */}
-        <div className="bg-[#0d0d0d] border border-[#272727] p-6">
+        <div className="py-6">
           <SubmissionForm
             nickname={profile.nickname}
             rank={profile.rank}

@@ -11,6 +11,9 @@ import FileUpload from "@/components/ui/FileUpload";
 import { useToast } from "@/contexts/ToastContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
+import { Field, input, ToggleBtn } from "./Helpers";
+import OutlinedParaBtn from "@/components/ui/OutlinedParaBtn";
 
 type Platform =
   | "FACEBOOK"
@@ -38,7 +41,7 @@ export default function CreatorRegistrationForm({
   const t = useTranslations("registration");
   const toast = useToast();
   const locale = useLocale();
-  const isAr = locale === "ar";
+  const router = useRouter();
   const { user } = useAuth();
 
   const PLATFORMS: { value: Platform; label: string }[] = [
@@ -63,7 +66,6 @@ export default function CreatorRegistrationForm({
     { value: "MONSTER_EVENTS", label: t("discoveryEvents") },
   ];
 
-  // Build platform links map
   const initLinks: Record<Platform, string> = {
     FACEBOOK: "",
     INSTAGRAM: "",
@@ -90,10 +92,10 @@ export default function CreatorRegistrationForm({
 
   const [step, setStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [form, setForm] = useState({
-    // Step 1
     realName: initialData?.realName ?? "",
     nickname: initialData?.nickname ?? "",
     contactEmail: initialData?.contactEmail ?? userEmail,
@@ -101,7 +103,6 @@ export default function CreatorRegistrationForm({
     birthDate: initialData?.birthDate ?? "",
     nationality: initialData?.nationality ?? "",
     residency: initialData?.residency ?? "",
-    // Step 2
     platforms: (initialData?.platforms ?? []) as Platform[],
     platformLinks: initLinks,
     primarySocialLink: initialData?.primarySocialLink ?? "",
@@ -224,7 +225,7 @@ export default function CreatorRegistrationForm({
       const data = await res.json();
       if (data.success) {
         toast.success(t("successMsg"));
-        onSuccess();
+        setSubmitted(true);
       } else if (data.error === "ALREADY_APPROVED") {
         toast.info(t("alreadyApproved"));
       } else {
@@ -243,6 +244,39 @@ export default function CreatorRegistrationForm({
 
   const isEdit = !!initialData;
 
+  // ── Success screen ──────────────────────────────────────────────────────────
+  if (submitted) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col items-center justify-center py-16 text-center gap-6">
+        {/* Icon */}
+        <div className="w-20 h-20 rounded-full bg-[#6bd41a] flex items-center justify-center">
+          <IoCheckmarkCircle className="size-10 text-black" />
+        </div>
+
+        {/* Heading */}
+        <div className="space-y-2">
+          <h2 className="text-2xl font-display font-black text-white uppercase tracking-tight">
+            {t("successTitle")}
+          </h2>
+          <p className="text-sm text-[#b6b6b6] max-w-sm leading-relaxed">
+            {t("successBody")}
+          </p>
+        </div>
+
+        {/* CTA */}
+        <OutlinedParaBtn
+          onClick={() => router.push(`/${locale}/auth/profile`)}
+          withBorder>
+          {t("successCta")}
+        </OutlinedParaBtn>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -250,12 +284,9 @@ export default function CreatorRegistrationForm({
       transition={{ duration: 0.3 }}>
       {/* Step indicator */}
       <div className="flex items-center gap-0 mb-8">
-        {/* Step 1 */}
         <div className="flex items-center gap-3">
           <div
-            className={`w-8 h-8 flex items-center justify-center text-sm font-bold font-display ${
-              step === 1 ? "bg-[#6bd41a] text-black" : "bg-[#6bd41a] text-black"
-            }`}
+            className="w-8 h-8 flex items-center justify-center text-sm font-bold font-display bg-[#6bd41a] text-black"
             style={{
               clipPath:
                 "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)",
@@ -263,14 +294,11 @@ export default function CreatorRegistrationForm({
             {step > 1 ? <IoCheckmarkCircle className="size-4" /> : "1"}
           </div>
           <span
-            className={`text-sm font-display font-bold uppercase tracking-wider ${
-              step === 1 ? "text-white" : "text-[#6bd41a]"
-            }`}>
-            {isAr ? "معلوماتك" : "Your Info"}
+            className={`text-sm font-display font-bold uppercase tracking-wider ${step === 1 ? "text-white" : "text-[#6bd41a]"}`}>
+            {t("stepYourInfo")}
           </span>
         </div>
 
-        {/* Connector */}
         <div className="flex-1 mx-4 h-px bg-[#272727] relative">
           <div
             className="absolute inset-y-0 inset-s-0 bg-[#6bd41a] transition-all duration-500"
@@ -278,14 +306,9 @@ export default function CreatorRegistrationForm({
           />
         </div>
 
-        {/* Step 2 */}
         <div className="flex items-center gap-3">
           <div
-            className={`w-8 h-8 flex items-center justify-center text-sm font-bold font-display ${
-              step === 2
-                ? "bg-[#6bd41a] text-black"
-                : "bg-[#171717] text-[#555] border border-[#272727]"
-            }`}
+            className={`w-8 h-8 flex items-center justify-center text-sm font-bold font-display ${step === 2 ? "bg-[#6bd41a] text-black" : "bg-[#171717] text-[#555] border border-[#272727]"}`}
             style={{
               clipPath:
                 "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)",
@@ -293,10 +316,8 @@ export default function CreatorRegistrationForm({
             2
           </div>
           <span
-            className={`text-sm font-display font-bold uppercase tracking-wider ${
-              step === 2 ? "text-white" : "text-[#555]"
-            }`}>
-            {isAr ? "قنواتك" : "Your Channels"}
+            className={`text-sm font-display font-bold uppercase tracking-wider ${step === 2 ? "text-white" : "text-[#555]"}`}>
+            {t("stepYourChannels")}
           </span>
         </div>
       </div>
@@ -310,7 +331,6 @@ export default function CreatorRegistrationForm({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.25 }}>
-            {/* Info block */}
             {!isEdit && (
               <div className="bg-[#171717] border border-[#272727] p-5 mb-6">
                 <p className="text-sm font-display font-bold text-white uppercase tracking-wider mb-2">
@@ -354,10 +374,9 @@ export default function CreatorRegistrationForm({
                 />
               </Field>
 
-              {/* Contact block */}
               <div className="bg-[#171717] border border-[#272727] p-4 space-y-4">
                 <p className="text-xs text-[#b6b6b6] uppercase tracking-wider font-display font-bold">
-                  {isAr ? "بيانات التواصل" : "Contact Info"}
+                  {t("contactInfoNote")}
                 </p>
                 <Field
                   label={t("contactEmail")}
@@ -427,7 +446,7 @@ export default function CreatorRegistrationForm({
                   clipPath:
                     "polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%)",
                 }}>
-                {isAr ? "التالي" : "Next"}
+                {t("next")}
                 <IoArrowForward className="size-4" />
               </button>
             </div>
@@ -444,7 +463,6 @@ export default function CreatorRegistrationForm({
             transition={{ duration: 0.25 }}
             onSubmit={handleSubmit}
             className="space-y-5">
-            {/* Platforms + links */}
             <Field label={t("platforms")} error={errors.platforms} required>
               <div className="flex flex-wrap gap-2 mb-3">
                 {PLATFORMS.map((p) => (
@@ -482,7 +500,6 @@ export default function CreatorRegistrationForm({
               </AnimatePresence>
             </Field>
 
-            {/* Primary social link picker */}
             {availableLinks.length > 0 && (
               <Field
                 label={t("primarySocialLink")}
@@ -580,7 +597,6 @@ export default function CreatorRegistrationForm({
               />
             </Field>
 
-            {/* Actions row */}
             <div className="flex gap-3">
               <button
                 type="button"
@@ -590,7 +606,7 @@ export default function CreatorRegistrationForm({
                 }}
                 className="h-12 px-6 bg-[#171717] border border-[#272727] hover:border-[#444] text-[#ccccd0] font-display font-bold uppercase tracking-wider text-sm transition-colors duration-200 flex items-center gap-2">
                 <IoArrowBack className="size-4" />
-                {isAr ? "رجوع" : "Back"}
+                {t("back")}
               </button>
               <button
                 type="submit"
@@ -615,60 +631,4 @@ export default function CreatorRegistrationForm({
       </AnimatePresence>
     </motion.div>
   );
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-function Field({
-  label,
-  error,
-  required,
-  children,
-}: {
-  label: string;
-  error?: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <label className="text-sm font-medium text-white">
-        {label}
-        {required && <span className="text-red-400 ms-1">*</span>}
-      </label>
-      {children}
-      {error && <p className="text-xs text-red-400">{error}</p>}
-    </div>
-  );
-}
-
-function ToggleBtn({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`px-4 py-2 text-sm font-medium border transition-colors duration-200 ${
-        active
-          ? "border-[#6bd41a] bg-[#6bd41a]/10 text-[#6bd41a]"
-          : "border-[#272727] text-[#b6b6b6] hover:border-[#444] bg-[#171717]"
-      }`}>
-      {children}
-    </button>
-  );
-}
-
-function input(error?: string) {
-  return `w-full px-4 h-12 bg-[#171717] border text-white text-sm placeholder:text-[#ccccd0]/40 outline-none transition-colors duration-200 ${
-    error
-      ? "border-red-500 focus:border-red-400"
-      : "border-[#272727] focus:border-[#6bd41a]"
-  }`;
 }

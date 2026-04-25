@@ -317,7 +317,14 @@
     "discoveryFriend": "ترشيح صديق",
     "discoveryCommunity": "رسائل الكوميونتي",
     "discoverySocial": "منشورات سوشيال ميديا",
-    "discoveryEvents": "حضور ايفنتات مونستر"
+    "discoveryEvents": "حضور ايفنتات مونستر",
+    "stepYourInfo": "معلوماتك",
+    "stepYourChannels": "قنواتك",
+    "next": "التالي",
+    "back": "رجوع",
+    "successTitle": "تم إرسال طلبك",
+    "successBody": "تم إرسال طلبك بنجاح. سنقوم بمراجعة ملفك والتواصل معك قريباً.",
+    "successCta": "الذهاب إلى الملف الشخصي"
   },
 
   "submitForm": {
@@ -352,7 +359,10 @@
     "themeLabel": "نمط مونستر",
     "layoutLabel": "إطار البث",
     "logoLabel": "لوجو",
-    "productsLabel": "منتجات مونستر"
+    "productsLabel": "منتجات مونستر",
+    "successTitle": "تم استلام مشاركتك",
+    "successBody": "تم إرسال محتواك بنجاح وهو قيد المراجعة. سيتم تحديث ملفك الشخصي بعد الموافقة عليه.",
+    "successCta": "الذهاب إلى الملف الشخصي"
   },
 
   "admin": {
