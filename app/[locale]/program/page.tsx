@@ -182,7 +182,7 @@ export default function ProgramPage() {
                   ))}
                 </div>
                 <div className="mt-6">
-                  <OutlinedParaBtn href={`/${locale}/submissions/register`} withBorder>
+                  <OutlinedParaBtn href={`/submissions/register`} withBorder>
                     {isAr ? "سجّل الآن" : "REGISTER NOW"}
                   </OutlinedParaBtn>
                 </div>
@@ -746,7 +746,7 @@ export default function ProgramPage() {
               ? "لا مكافآت مضمونة — كل شيء يُكتسَب."
               : "No guaranteed rewards — everything is earned."}
           </p>
-          <OutlinedParaBtn href={`/${locale}/submissions/register`} withBorder>
+          <OutlinedParaBtn href={`/submissions/register`} withBorder>
             {isAr ? "سجّل الآن" : "REGISTER NOW"}
           </OutlinedParaBtn>
         </div>

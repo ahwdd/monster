@@ -38,7 +38,7 @@ export default function CtaStrip() {
           {isAr ? "مستعد لتصبح مونستر؟" : "READY TO BECOME A MONSTER?"}
         </h2>
         <p className="font-proxima text-white mb-1 txt-larger">
-          <Link href={`/${locale}/submissions/register`}>
+          <Link href={`/submissions/register`}>
             {isAr
               ? "انضم للبرنامج وأثبت نفسك."
               : "Join the program and prove your performance."}

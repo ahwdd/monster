@@ -67,7 +67,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (initializationComplete && !isAuthenticated)
-      router.push(`/${locale}/auth/signin`);
+      router.push(`/auth/signin`);
   }, [initializationComplete, isAuthenticated]);
 
   useEffect(() => {
@@ -223,7 +223,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3 flex-wrap">
               {isApproved && canSubmit && (
                 <Link
-                  href={`/${locale}/submissions/submit`}
+                  href={`/submissions/submit`}
                   className="h-11 px-5 bg-[#22bb39] txt-smaller flex items-center gap-2  
                   font-bold uppercase text-black tracking-[1.2px] hover:opacity-90 transition-opacity whitespace-nowrap">
                   <IoAddCircleOutline className="size-4" />
@@ -256,7 +256,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <Link
-                href={`/${locale}/submissions/register?editMode=true`}
+                href={`/submissions/register?editMode=true`}
                 className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#171717] text-white  txt-smaller hover:bg-[#222] transition-colors whitespace-nowrap">
                 <IoCreateOutline className="size-3.5" />
                 {t("editApplication")}
@@ -281,7 +281,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <Link
-                href={`/${locale}/submissions/register?editMode=true`}
+                href={`/submissions/register?editMode=true`}
                 className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#22bb39] text-white  txt-smaller font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
                 <IoCreateOutline className="size-3.5" />
                 {t("editApplication")}
@@ -484,7 +484,7 @@ export default function ProfilePage() {
                       {isRTL ? "آخر المشاركات" : "Recent Submissions"}
                     </p>
                     <Link
-                      href={`/${locale}/submissions`}
+                      href={`/submissions`}
                       className=" txt-smaller text-[#555] hover:text-[#ccccd0] transition-colors flex items-center gap-1">
                       {isRTL ? "عرض الكل" : "View All"}
                       <Arrow className="size-3" />
@@ -552,7 +552,7 @@ export default function ProfilePage() {
                 {ts("registrationRequiredDesc")}
               </p>
               <Link
-                href={`/${locale}/submissions/register`}
+                href={`/submissions/register`}
                 className="inline-flex items-center gap-2 h-12 px-10 bg-[#22bb39] text-white  font-black uppercase txt-small tracking-[2px] hover:opacity-90 transition-opacity">
                 {ts("registerStart")}
                 <Arrow className="size-4" />

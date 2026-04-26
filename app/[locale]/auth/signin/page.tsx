@@ -196,7 +196,7 @@ export default function SigninPage() {
     }
     if (ok) {
       toast.success(t("signinSuccess"));
-      router.push(`/${locale}`);
+      router.push(`/`);
     }
   }
 
@@ -217,7 +217,7 @@ export default function SigninPage() {
       const data = await res.json();
       if (data.success) {
         toast.success(t("signinSuccess"));
-        router.push(`/${locale}`);
+        router.push(`/`);
       } else {
         toast.error(data.message ?? t("errorGeneric"));
         // Session expired — send them back to start
@@ -435,7 +435,7 @@ export default function SigninPage() {
             <p className="font-proxima text-[#6bd41a] text-sm">
               {t("noAccount")}{" "}
               <Link
-                href={`/${locale}/auth/signup`}
+                href={`/auth/signup`}
                 className="underline underline-offset-2 hover:opacity-80 transition-opacity font-semibold">
                 {t("signupLink")}
               </Link>

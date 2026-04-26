@@ -38,19 +38,22 @@ export default function ProgramHero() {
   );
 
   return (
-    <section
-      className="relative w-full mt-16 overflow-hidden hero-bg h-[calc(50vh-80px)] lg:h-[calc(100vh-80px)] min-h-120 max-h-270">
+    <section className="relative w-full mt-16 overflow-hidden hero-bg h-[calc(50vh-80px)] lg:h-[calc(100vh-80px)] min-h-120 max-h-270">
       {/* Slides — images fade over the texture bg */}
       {SLIDES.map((slide, i) => (
-        <div key={slide.key}
+        <div
+          key={slide.key}
           className="absolute inset-0 transition-opacity duration-700 "
           style={{
             opacity: i === current ? 1 : 0,
             zIndex: i === current ? 1 : 0,
           }}>
           <Image
-            src={slide.img} loading="eager"
-            alt="" width={1900} height={960}
+            src={slide.img}
+            loading="eager"
+            alt=""
+            width={1900}
+            height={960}
             className="object-cover size-full"
             priority={i === 0}
           />
@@ -62,8 +65,7 @@ export default function ProgramHero() {
 
       {/* Content */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6">
-        <p
-          className="font-proxima text-white uppercase tracking-[0.3em] mb-4 txt-larger">
+        <p className="font-proxima text-white uppercase tracking-[0.3em] mb-4 txt-larger">
           {t("heroTagline")}
         </p>
 
@@ -72,21 +74,20 @@ export default function ProgramHero() {
           style={{
             letterSpacing: "-0.02em",
           }}>
-            <span>{t("heroTitle")}</span> <span className="text-accent">{t("heroMonster")}</span>
-          
+          <span>{t("heroTitle")}</span>{" "}
+          <span className="text-accent">{t("heroMonster")}</span>
         </h1>
 
-        <p
-          className="font-proxima text-[#ccccd0] max-w-100 leading-relaxed mb-8 hidden sm:block txt-large">
+        <p className="font-proxima text-[#ccccd0] max-w-100 leading-relaxed mb-8 hidden sm:block txt-large">
           {t("heroSub")}
         </p>
 
         <div className="flex items-center gap-4">
-          <OutlinedParaBtn href={`/${locale}/program`} withBorder>
+          <OutlinedParaBtn href={`/program`} withBorder>
             {t("learnMore")}
           </OutlinedParaBtn>
-          
-          <SolidParaBtn href={`/${locale}/submissions/register`}>
+
+          <SolidParaBtn href={`/submissions/register`}>
             {t("joinNow")}
           </SolidParaBtn>
         </div>
@@ -97,7 +98,9 @@ export default function ProgramHero() {
         {SLIDES.map((_, i) => (
           <button
             key={i}
-            onClick={() => { goTo(i); }}
+            onClick={() => {
+              goTo(i);
+            }}
             className="-skew-x-15 transition-all duration-300 h-1 w-6"
             style={{
               // width: i === current ? "48px" : "24px",

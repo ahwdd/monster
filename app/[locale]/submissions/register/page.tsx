@@ -24,7 +24,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (initializationComplete && !isAuthenticated) {
-      router.push(`/${locale}/auth/signin`);
+      router.push(`/auth/signin`);
     }
   }, [initializationComplete, isAuthenticated, locale, router]);
 
@@ -41,14 +41,14 @@ export default function RegisterPage() {
     if (!profileLoaded) return;
     if (profile?.status === "APPROVED" && !editMode) {
       toast.info(t("alreadyApproved"));
-      router.replace(`/${locale}/auth/profile`);
+      router.replace(`/auth/profile`);
     }
   }, [profileLoaded, profile, editMode, locale, router, toast, t]);
 
   useEffect(() => {
     if (!profileLoaded) return;
     if (profile && profile.status !== "APPROVED" && !editMode) {
-      router.replace(`/${locale}/submissions/register?editMode=true`);
+      router.replace(`/submissions/register?editMode=true`);
     }
   }, [profileLoaded, profile, editMode, locale, router]);
 
@@ -73,7 +73,6 @@ export default function RegisterPage() {
   return (
     <AuthShell breadcrumbs={[{ label: isAr ? "التسجيل" : "Register" }]}>
       <div className="max-w-2xl mx-auto px-4 py-10">
-
         {!formSubmitted && (
           <>
             <div className="mb-8 text-center">
@@ -108,7 +107,9 @@ export default function RegisterPage() {
 
         <CreatorRegistrationForm
           initialData={profile}
-          onSuccess={() => {setFormSubmitted(true);}}
+          onSuccess={() => {
+            setFormSubmitted(true);
+          }}
         />
       </div>
     </AuthShell>

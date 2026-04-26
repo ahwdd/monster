@@ -136,7 +136,7 @@ export default function SignupPage() {
         : await verifyEmailRegisterOTP(email, otp.replace(/\s/g, ""));
     if (ok) {
       toast.success(t("signupSuccess"));
-      router.push(`/${locale}`);
+      router.push(`/`);
     }
   }
 
@@ -360,7 +360,7 @@ export default function SignupPage() {
             <p className="font-proxima text-[#6bd41a] text-sm">
               {t("hasAccount")}{" "}
               <Link
-                href={`/${locale}/auth/signin`}
+                href={`/auth/signin`}
                 className="underline underline-offset-2 hover:opacity-80 font-semibold">
                 {t("signinLink")}
               </Link>

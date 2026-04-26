@@ -63,9 +63,7 @@ export default function LeaderboardPage() {
         <div
           className="container px-35 flex items-center gap-3 font-proxima text-[#ccccd0] txt-regular"
           style={{ height: "58px" }}>
-          <Link
-            href={`/${locale}`}
-            className="hover:text-white transition-colors">
+          <Link href={`/`} className="hover:text-white transition-colors">
             {isAr ? "الرئيسية" : "Home"}
           </Link>
           <span className="text-[#555]">›</span>
@@ -188,7 +186,7 @@ export default function LeaderboardPage() {
             : "Join the program and prove your performance."}
         </p>
         <Link
-          href={`/${locale}/submissions/register`}
+          href={`/submissions/register`}
           className="inline-flex items-center justify-center h-12 px-12 bg-black text-white font-display font-black uppercase tracking-[2px] txt-small hover:bg-[#111] transition-colors">
           {isAr ? "انضم الآن" : "Join Now"}
         </Link>
@@ -201,7 +199,7 @@ export default function LeaderboardPage() {
           style={{ height: "58px", fontSize: "13px" }}>
           <span>© 2026 Monster Energy Ambassadors Program.</span>
           <Link
-            href={`/${locale}/program`}
+            href={`/program`}
             className="hover:text-white transition-colors">
             Terms & Conditions
           </Link>

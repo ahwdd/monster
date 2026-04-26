@@ -2,8 +2,8 @@
 
 // src/components/landing/ProgramStatsStrip.tsx
 import { useLocale } from "next-intl";
-import Link          from "next/link";
-import { motion }    from "framer-motion";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import { PROGRAM_STATS } from "@/lib/data/program";
 
 export default function ProgramStatsStrip() {
@@ -27,8 +27,7 @@ export default function ProgramStatsStrip() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="flex-1 min-w-35 px-6 py-5 text-center"
-            >
+              className="flex-1 min-w-35 px-6 py-5 text-center">
               <p className="font-display font-black text-black text-2xl md:text-3xl leading-none">
                 {locale === "ar" ? s.valAr : s.valEn}
               </p>
@@ -40,9 +39,8 @@ export default function ProgramStatsStrip() {
           {/* Program link */}
           <div className="flex-1 min-w-35 flex items-center justify-center px-6 py-5">
             <Link
-              href={`/${locale}/program`}
-              className="txt-small font-display font-bold uppercase tracking-wider text-black hover:underline transition-all"
-            >
+              href={`/program`}
+              className="txt-small font-display font-bold uppercase tracking-wider text-black hover:underline transition-all">
               {locale === "ar" ? "عن البرنامج ←" : "About Program →"}
             </Link>
           </div>

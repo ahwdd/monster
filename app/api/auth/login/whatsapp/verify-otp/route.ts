@@ -1,4 +1,3 @@
-// src/app/api/auth/login/whatsapp/verify-otp/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { cookies } from "next/headers";
@@ -17,7 +16,7 @@ export async function POST(request: NextRequest) {
     const body          = await request.json();
     const validatedData = schema.parse(body);
 
-    const response = await fetch(
+    let response = await fetch(
       `${process.env.HUB_BASE_URL}/api/auth/login/whatsapp/verify-otp`,
       {
         method:  "POST",
@@ -25,22 +24,43 @@ export async function POST(request: NextRequest) {
         body:    JSON.stringify(validatedData),
       }
     );
-    const data = await response.json();
+    let data = await response.json();
+
+    if (response.status === 422 || !data.success) {
+      const registerRes = await fetch(
+        `${process.env.HUB_BASE_URL}/api/auth/register/whatsapp/verify-otp`,
+        {
+          method:  "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body:    JSON.stringify(validatedData),
+        }
+      );
+      const registerData = await registerRes.json();
+
+      if (!registerData.success || !registerData.data?.access_token) {
+        // Neither login nor register worked — return original error
+        return NextResponse.json(data, { status: response.status });
+      }
+
+      // Swap to the register response from here on
+      response = registerRes;
+      data     = registerData;
+    }
 
     if (data.success && data.data?.user && data.data?.access_token) {
       const ext      = data.data.user;
       const phoneKey = extractPhoneKey(validatedData.phone);
-
-      // Sanitize email — discard Hub auto-generated fake emails
       const cleanEmail = sanitizeEmail(ext.email, validatedData.phone);
 
       let localUser = await findUserByContact(cleanEmail, validatedData.phone);
 
       if (localUser) {
-        // ── Existing user: update + issue token as normal ─────────────────
+        // ── Existing local user: update + issue token ─────────────────────
         const nameParts = ext.name ? String(ext.name).trim().split(/\s+/) : null;
         const updateData: any = {
-          ...(nameParts ? { firstName: nameParts[0], lastName: nameParts.slice(1).join(" ") || nameParts[0] } : {}),
+          ...(nameParts
+            ? { firstName: nameParts[0], lastName: nameParts.slice(1).join(" ") || nameParts[0] }
+            : {}),
           phone:      validatedData.phone,
           phoneKey,
           isVerified: true,
@@ -50,7 +70,6 @@ export async function POST(request: NextRequest) {
           lastLogin:  new Date(),
         };
 
-        // Only update email if Hub returned a real one and it won't conflict
         if (cleanEmail && cleanEmail !== localUser.email) {
           const conflict = await prisma.user.findFirst({
             where: { email: cleanEmail, id: { not: localUser.id } },
@@ -77,15 +96,12 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // ── New user: cannot create yet — we don't have their name ───────────
-      // WhatsApp Hub responses sometimes include a name but it's often a phone
-      // number or empty string, so we always ask to be safe and consistent
-      // with the email flow.
+      // ── No local user: store pending cookie and ask for name ─────────────
       const pending = {
         access_token:  data.data.access_token,
         refresh_token: data.data.refresh_token ?? null,
         token_type:    data.data.token_type    ?? "Bearer",
-        email:         cleanEmail,   // null if fake/missing
+        email:         cleanEmail,
         phone:         validatedData.phone,
         phoneKey,
         externalId:    ext.id?.toString() ?? null,
@@ -97,7 +113,7 @@ export async function POST(request: NextRequest) {
         httpOnly: true,
         secure:   process.env.NODE_ENV === "production",
         sameSite: "lax",
-        maxAge:   60 * 10, // 10 minutes
+        maxAge:   60 * 10,
         path:     "/",
       });
 

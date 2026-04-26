@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       access_token:  string;
       refresh_token: string | null;
       token_type:    string;
-      email:         string;
+      email:         string | null;
       phone:         string | null;
       phoneKey:      string | null;
       externalId:    string | null;
@@ -77,8 +77,8 @@ export async function POST(request: NextRequest) {
           firstName,
           lastName,
           username:   `${firstName.toLowerCase()}-${Date.now()}`,
-          email:      pending.email,
-          ...(pending.phone ? { phone: pending.phone, phoneKey: pending.phoneKey } : {}),
+          ...(pending.email  ? { email:    pending.email }              : {}),  // omit if null
+          ...(pending.phone  ? { phone:    pending.phone, phoneKey: pending.phoneKey } : {}),
           isVerified: true,
           isActive:   true,
           role:       "USER",
@@ -89,6 +89,8 @@ export async function POST(request: NextRequest) {
         select: safeUserSelect,
       });
     }
+    console.log("complete-profile: pending =", { ...pending, access_token: "[redacted]" });
+    console.log("complete-profile: existing =", existing?.id ?? "not found");
 
     // Issue real auth cookies and clear pending
     await setAuthCookie(pending.access_token);

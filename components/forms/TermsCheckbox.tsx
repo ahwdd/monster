@@ -1,14 +1,35 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoCheckmarkCircle, IoClose } from "react-icons/io5";
 
 function TermsCheckbox({
-  checked, onChange, locale, prefix, conditionsWord, andWord, termsWord,
-  modalTitle, modalBody, modalRulesTitle, modalRules, modalFooter, modalClose,
+  checked,
+  onChange,
+  locale,
+  prefix,
+  conditionsWord,
+  andWord,
+  termsWord,
+  modalTitle,
+  modalBody,
+  modalRulesTitle,
+  modalRules,
+  modalFooter,
+  modalClose,
 }: {
-  checked: boolean; onChange: (v: boolean) => void; locale: string; prefix: string;
-  conditionsWord: string; andWord: string; termsWord: string; modalTitle: string; modalBody: string;
-  modalRulesTitle: string; modalRules: string[]; modalFooter: string; modalClose: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  locale: string;
+  prefix: string;
+  conditionsWord: string;
+  andWord: string;
+  termsWord: string;
+  modalTitle: string;
+  modalBody: string;
+  modalRulesTitle: string;
+  modalRules: string[];
+  modalFooter: string;
+  modalClose: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -46,7 +67,7 @@ function TermsCheckbox({
           </button>{" "}
           {andWord}{" "}
           <a
-            href={`/${locale}/terms`}
+            href={`/terms`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#6bd41a] hover:underline"
@@ -120,4 +141,4 @@ function TermsCheckbox({
   );
 }
 
-export default TermsCheckbox
+export default TermsCheckbox;

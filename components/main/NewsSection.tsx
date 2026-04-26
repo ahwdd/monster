@@ -58,8 +58,8 @@ export default function NewsSection() {
         </div>
 
         {/* ── View All CTA ── */}
-        <div className="relative z-10 flex justify-center mt-8 sm:mt-10">          
-          <OutlinedParaBtn href={`/${locale}`} withBorder>
+        <div className="relative z-10 flex justify-center mt-8 sm:mt-10">
+          <OutlinedParaBtn href={`/`} withBorder>
             {t("viewAll")}
           </OutlinedParaBtn>
         </div>

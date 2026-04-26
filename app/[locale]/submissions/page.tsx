@@ -236,7 +236,7 @@ export default function SubmissionsPage() {
           </h1>
           {canSubmit ? (
             <Link
-              href={`/${locale}/submissions/submit`}
+              href={`/submissions/submit`}
               className="flex items-center gap-2 px-4 py-2.5 bg-[#78be20] hover:bg-[#8fd428]
                 text-black font-display font-semibold txt-small uppercase rounded-xl transition-colors">
               <IoAddCircleOutline className="size-4" />
@@ -281,7 +281,7 @@ export default function SubmissionsPage() {
             <p className="txt-regular text-zinc-500">{t("noSubmissions")}</p>
             {canSubmit && (
               <Link
-                href={`/${locale}/submissions/submit`}
+                href={`/submissions/submit`}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#78be20] hover:bg-[#8fd428]
                   text-black font-display font-semibold txt-small uppercase rounded-xl transition-colors">
                 <IoAddCircleOutline className="size-4" />
@@ -361,7 +361,7 @@ export default function SubmissionsPage() {
                         {/* PENDING / REJECTED → Edit link */}
                         {s.status !== "APPROVED" && (
                           <Link
-                            href={`/${locale}/submissions/edit/${s.id}`}
+                            href={`/submissions/edit/${s.id}`}
                             className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800
                               hover:bg-zinc-700 text-white txt-smaller font-medium
                               rounded-lg transition-colors">

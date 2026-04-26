@@ -43,9 +43,7 @@ export default function EditSubmissionPage() {
 
   useEffect(() => {
     if (initializationComplete && !isAuthenticated) {
-      router.push(
-        `/${locale}/auth/signin?returnUrl=/${locale}/submissions/edit/${id}`,
-      );
+      router.push(`/auth/signin?returnUrl=/${locale}/submissions/edit/${id}`);
     }
   }, [initializationComplete, isAuthenticated, router, locale, id]);
 
@@ -80,7 +78,7 @@ export default function EditSubmissionPage() {
   }, [user, id, isAr]);
 
   const Arrow = isAr ? IoArrowForward : IoArrowBack;
-  const backHref = `/${locale}/submissions`;
+  const backHref = `/submissions`;
 
   if (!initializationComplete || !user || loading) {
     return (

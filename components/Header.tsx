@@ -41,11 +41,11 @@ export default function Header() {
   }, [mobileOpen]);
 
   const NAV_ITEMS = [
-    { labelEn: "Home",        labelAr: "الرئيسية", href: `/${locale}` },
-    { labelEn: "Overview",    labelAr: "نظرة عامة", href: `/${locale}/#overview` },
-    { labelEn: "Levels",      labelAr: "التصنيفات", href: `/${locale}/#levels` },
-    { labelEn: "Rewards",     labelAr: "المكافآت",  href: `/${locale}/#rewards` },
-    { labelEn: "Leaderboard", labelAr: "الصدارة",   href: `/${locale}/#leaderboard` },
+    { labelEn: "Home", labelAr: "الرئيسية", href: `/` },
+    { labelEn: "Overview", labelAr: "نظرة عامة", href: `/#overview` },
+    { labelEn: "Levels", labelAr: "التصنيفات", href: `/#levels` },
+    { labelEn: "Rewards", labelAr: "المكافآت", href: `/#rewards` },
+    { labelEn: "Leaderboard", labelAr: "الصدارة", href: `/#leaderboard` },
   ];
 
   // ─── Sidebar ALWAYS slides from the RIGHT ────────────────────────────────────
@@ -53,7 +53,7 @@ export default function Header() {
   // layouts (ms-auto pushes it there). The drawer must match that origin so the
   // interaction feels natural — open/close from the same corner the user tapped.
   const panelV = {
-    hidden:  { x: "100%", opacity: 0 },
+    hidden: { x: "100%", opacity: 0 },
     visible: {
       x: 0,
       opacity: 1,
@@ -100,8 +100,7 @@ export default function Header() {
             animate="visible"
             exit="exit"
             className={`fixed top-0 bottom-0 z-9999 w-72 bg-black flex flex-col md:hidden ${isRTL ? "right-0 border-s border-[#171717]" : "left-0 border-e border-[#171717]"}`}>
-            <div
-              className="flex items-center justify-between px-5 shrink-0 h-20 border-b border-b-[#171717]">
+            <div className="flex items-center justify-between px-5 shrink-0 h-20 border-b border-b-[#171717]">
               <Image
                 src="/assets/logo.png"
                 alt="Monster"
@@ -112,8 +111,7 @@ export default function Header() {
               <button
                 onClick={() => setMobileOpen(false)}
                 className="p-2 text-[#ccccd0] hover:text-white transition-colors"
-                aria-label="Close menu"
-              >
+                aria-label="Close menu">
                 <IoClose className="size-5" />
               </button>
             </div>
@@ -126,14 +124,12 @@ export default function Header() {
                   custom={i}
                   variants={mItemV}
                   initial="hidden"
-                  animate="visible"
-                >
+                  animate="visible">
                   <Link
                     href={href}
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center h-12 px-6 font-display font-bold uppercase transition-colors 
-                      text-[13px] tracking-[1.5px] border-b border-[#111] text-white hover:text-[#6bd41a] hover:bg-[#0a0a0a]`}
-                  >
+                      text-[13px] tracking-[1.5px] border-b border-[#111] text-white hover:text-[#6bd41a] hover:bg-[#0a0a0a]`}>
                     {isRTL ? labelAr : labelEn}
                   </Link>
                 </motion.div>
@@ -142,38 +138,37 @@ export default function Header() {
 
             {/* Bottom CTA area */}
             <div className="p-5 space-y-3 shrink-0 border-t border-[#171717]">
-              <LangToggle className="mb-8"/>
+              <LangToggle className="mb-8" />
               {initializationComplete &&
                 (isAuthenticated ? (
                   <div className="flex flex-col gap-2">
                     <Link
-                      href={`/${locale}/auth/profile`}
+                      href={`/auth/profile`}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center h-11 bg-monster text-black font-display font-black uppercase tracking-[1.5px] text-[13px]"
-                    >
+                      className="flex items-center justify-center h-11 bg-monster text-black font-display font-black uppercase tracking-[1.5px] text-[13px]">
                       {isRTL ? "لوحتي" : "Dashboard"}
                     </Link>
                     <button
-                      onClick={() => { logout(); setMobileOpen(false); }}
-                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] text-[13px] hover:border-white transition-colors"
-                    >
+                      onClick={() => {
+                        logout();
+                        setMobileOpen(false);
+                      }}
+                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] text-[13px] hover:border-white transition-colors">
                       {isRTL ? "خروج" : "Logout"}
                     </button>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
                     <Link
-                      href={`/${locale}/auth/signin`}
+                      href={`/auth/signin`}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] text-[13px] hover:border-white transition-colors"
-                    >
+                      className="flex items-center justify-center h-11 border border-[#636363] text-white font-display font-black uppercase tracking-[1.5px] text-[13px] hover:border-white transition-colors">
                       {isRTL ? "دخول" : "Sign In"}
                     </Link>
                     <Link
-                      href={`/${locale}/auth/signup`}
+                      href={`/auth/signup`}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center h-11 bg-monster text-black font-display font-black uppercase tracking-[1.5px] text-[13px]"
-                    >
+                      className="flex items-center justify-center h-11 bg-monster text-black font-display font-black uppercase tracking-[1.5px] text-[13px]">
                       {isRTL ? "انضم الآن" : "Join Now"}
                     </Link>
                   </div>
@@ -188,10 +183,9 @@ export default function Header() {
   return (
     <>
       <header className="fixed top-0 inset-x-0 z-40 flex items-center rtl:flex-row-reverse h-16 bg-black border-b border-[#171717]">
-
         {/* Logo block — skewed accent tile */}
         <Link
-          href={`/${locale}`}
+          href={`/`}
           className="shrink-0 flex items-center justify-center xl:ps-12 px-9 h-20 bg-[#171717] pt-4 -ms-4 pe-4 -skew-x-12">
           <Image
             src="/assets/logo.png"
@@ -208,8 +202,7 @@ export default function Header() {
             <Link
               key={href}
               href={href}
-              className={`relative font-display font-bold uppercase transition-colors group tracking-[1.5px] text-sm whitespace-nowrap text-white hover:text-[#6bd41a]`}
-            >
+              className={`relative font-display font-bold uppercase transition-colors group tracking-[1.5px] text-sm whitespace-nowrap text-white hover:text-[#6bd41a]`}>
               {isRTL ? labelAr : labelEn}
               <span
                 className="absolute -bottom-5.25 inset-x-0 h-0.75 bg-monster -skew-x-12 transition-transform scale-x-0 group-hover:scale-x-100"
@@ -228,16 +221,16 @@ export default function Header() {
                 <OutlinedParaBtn onClick={() => logout()} withBorder>
                   {isRTL ? "خروج" : "Logout"}
                 </OutlinedParaBtn>
-                <SolidParaBtn href={`/${locale}/auth/profile`}>
+                <SolidParaBtn href={`/auth/profile`}>
                   {isRTL ? "لوحتي" : "Dashboard"}
                 </SolidParaBtn>
               </>
             ) : (
               <>
-                <OutlinedParaBtn href={`/${locale}/auth/signin`} withBorder>
+                <OutlinedParaBtn href={`/auth/signin`} withBorder>
                   {isRTL ? "دخول" : "Sign In"}
                 </OutlinedParaBtn>
-                <SolidParaBtn href={`/${locale}/auth/signup`}>
+                <SolidParaBtn href={`/auth/signup`}>
                   {isRTL ? "انضم الآن" : "Join Now"}
                 </SolidParaBtn>
               </>
@@ -249,12 +242,10 @@ export default function Header() {
         <button
           className="md:hidden ltr:ms-auto rtl:me-auto me-4 p-2 text-white hover:text-[#6bd41a] transition-colors"
           onClick={() => setMobileOpen((v) => !v)}
-          aria-label="Toggle menu"
-        >
+          aria-label="Toggle menu">
           <motion.div
             animate={{ rotate: mobileOpen ? 90 : 0 }}
-            transition={{ duration: 0.18 }}
-          >
+            transition={{ duration: 0.18 }}>
             {mobileOpen ? (
               <IoClose className="size-6" />
             ) : (

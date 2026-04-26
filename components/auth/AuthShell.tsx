@@ -21,7 +21,7 @@ export default function AuthShell({ children, breadcrumbs }: Props) {
         className="container mt-14 px-35 flex items-center justify-center gap-3 
         font-proxima text-[#ccccd0] txt-regular h-14.5 relative">
         <Link
-          href={`/${locale}`}
+          href={`/`}
           className="hover:text-white transition-colors">
           {isAr ? "الرئيسية" : "Home"}
         </Link>

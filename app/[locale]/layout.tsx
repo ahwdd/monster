@@ -69,7 +69,7 @@ type Props = {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as "en" | "ar")) {
+  if (!routing.locales.includes(locale as "en")) {// | "ar"
     notFound();
   }
 
@@ -80,7 +80,6 @@ export default async function LocaleLayout({ children, params }: Props) {
     <div
       lang={locale}
       dir={isRTL ? "rtl" : "ltr"}
-      data-scroll-behavior="smooth"
       className={`${teko.variable} ${cairo.variable} ${proximaNova.variable} ${lemonada.variable}`}
     >
       <Providers locale={locale} messages={messages}>

@@ -15,7 +15,7 @@ export default function SubmitPage() {
   const isAr = locale === "ar";
   const router = useRouter();
   const toast = useToast();
-  
+
   const { user, isAuthenticated, initializationComplete } = useAuth();
 
   const [profile, setProfile] = useState<any>(null);
@@ -25,8 +25,7 @@ export default function SubmitPage() {
   const [subsLoaded, setSubsLoaded] = useState(false);
 
   useEffect(() => {
-    if (initializationComplete && !isAuthenticated)
-      router.push(`/${locale}/auth/signin`);
+    if (initializationComplete && !isAuthenticated) router.push(`/auth/signin`);
   }, [initializationComplete, isAuthenticated, router, locale]);
 
   useEffect(() => {
@@ -82,7 +81,7 @@ export default function SubmitPage() {
               </p>
             </div>
             <Link
-              href={`/${locale}/submissions/register`}
+              href={`/submissions/register`}
               className="w-full h-12 bg-[#6bd41a] hover:bg-[#7ee520] text-black font-display font-bold uppercase tracking-widest text-sm transition-colors duration-200 flex items-center justify-center"
               style={{
                 clipPath:
@@ -119,13 +118,13 @@ export default function SubmitPage() {
             </div>
             <div className="flex flex-col gap-2">
               <Link
-                href={`/${locale}/submissions`}
+                href={`/submissions`}
                 className="w-full h-12 bg-[#171717] border border-[#272727] hover:border-[#444] text-white font-display 
                 font-bold uppercase tracking-wider text-sm transition-colors duration-200 flex items-center justify-center">
                 {isAr ? "عرض مشاركاتي" : "View My Submissions"}
               </Link>
               <Link
-                href={`/${locale}/auth/profile`}
+                href={`/auth/profile`}
                 className="block text-center text-sm text-[#555] hover:text-[#ccccd0] transition-colors duration-200 py-2">
                 {isAr ? "العودة للملف الشخصي" : "Back to Profile"}
               </Link>
@@ -143,7 +142,7 @@ export default function SubmitPage() {
       breadcrumbs={[
         {
           label: isAr ? "المشاركات" : "Submissions",
-          href: `/${locale}/submissions`,
+          href: `/submissions`,
         },
         { label: isAr ? "مشاركة جديدة" : "New Submission" },
       ]}>
@@ -159,11 +158,12 @@ export default function SubmitPage() {
               : `You can add ${remaining} more submission${remaining !== 1 ? "s" : ""} before reaching the limit`}
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3 mb-3">
           <div className="w-1 h-8 bg-[#6bd41a]" />
           <span className="text-xs font-bold uppercase">
-            <span className="text-[#6bd41a]">{profile.nickname}</span> · {profile.rank?.replace(/_/g, " ")}
+            <span className="text-[#6bd41a]">{profile.nickname}</span> ·{" "}
+            {profile.rank?.replace(/_/g, " ")}
           </span>
         </div>
 
@@ -174,7 +174,7 @@ export default function SubmitPage() {
             rank={profile.rank}
             onSuccess={() => {
               toast.success(isAr ? "تم إرسال المشاركة!" : "Submission sent!");
-              router.push(`/${locale}/submissions`);
+              router.push(`/submissions`);
             }}
           />
         </div>

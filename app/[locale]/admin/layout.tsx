@@ -25,13 +25,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (!initializationComplete) return;
-    if (!isAuthenticated || user?.role !== "ADMIN") router.replace(`/${locale}`);
+    if (!isAuthenticated || user?.role !== "ADMIN") router.replace(`/`);
   }, [initializationComplete, isAuthenticated, user, router, locale]);
 
   const NAV = [
-    { href: `/${locale}/admin/submissions`,   icon: IoDocumentTextOutline, labelEn: "Submissions",   labelAr: "المشاركات" },
-    { href: `/${locale}/admin/registrations`, icon: IoPeopleOutline,        labelEn: "Registrations", labelAr: "التسجيلات" },
-    { href: `/${locale}/admin/rank-ups`,      icon: IoArrowUpCircleOutline, labelEn: "Rank Ups",      labelAr: "الترقيات" },
+    { href: `/admin/submissions`,   icon: IoDocumentTextOutline, labelEn: "Submissions",   labelAr: "المشاركات" },
+    { href: `/admin/registrations`, icon: IoPeopleOutline,        labelEn: "Registrations", labelAr: "التسجيلات" },
+    { href: `/admin/rank-ups`,      icon: IoArrowUpCircleOutline, labelEn: "Rank Ups",      labelAr: "الترقيات" },
   ];
 
   return (
@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div
           className="flex items-center px-6 shrink-0"
           style={{ height: "80px", borderBottom: "1px solid #272727" }}>
-          <Link href={`/${locale}/admin/submissions`}>
+          <Link href={`/admin/submissions`}>
             <Image src="/assets/logo.png" alt="Monster" width={120} height={52} className="object-contain h-8 w-auto" />
           </Link>
         </div>
@@ -103,7 +103,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {t("dashboardTitle")}
           </h1>
           <Link
-            href={`/${locale}`}
+            href={`/`}
             className="font-proxima txt-smaller text-[#ccccd0] hover:text-white transition-colors">
             {isRTL ? "← الموقع الرئيسي" : "← Main Site"}
           </Link>

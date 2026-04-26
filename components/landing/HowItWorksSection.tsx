@@ -84,13 +84,13 @@ export default function HowItWorksSection() {
                 {/* Vertical dots — under the number box only */}
                 {!isLast && (
                   <div
-                    className="flex flex-col items-center gap-[5px] py-2"
+                    className="flex flex-col items-center gap-1.25 py-2"
                     style={{ width: BOX_SIZE_MOBILE }}
                   >
                     {Array.from({ length: DOT_COUNT }).map((_, d) => (
                       <span
                         key={d}
-                        className="size-1 rounded-full transition-colors duration-[250ms]"
+                        className="size-1 rounded-full transition-colors duration-250"
                         style={{
                           background:      connectorLit ? "#22bb39" : "#444444",
                           transitionDelay: connectorLit
@@ -193,7 +193,7 @@ export default function HowItWorksSection() {
                       {Array.from({ length: DOT_COUNT_XL }).map((_, d) => (
                         <span
                           key={d}
-                          className="size-1 rounded-full shrink-0 transition-colors duration-[250ms]"
+                          className="size-1 rounded-full shrink-0 transition-colors duration-250"
                           style={{
                             background:      connectorLit ? "#22bb39" : "#444444",
                             transitionDelay: connectorLit

@@ -162,12 +162,11 @@ export default function RanksPage() {
             {t("readyTitle")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            
-            <OutlinedParaBtn href={`/${locale}/submissions/register`} withBorder>
+            <OutlinedParaBtn href={`/submissions/register`} withBorder>
               {t("registerCta")}
             </OutlinedParaBtn>
-            
-            <SolidParaBtn href={`/${locale}/leaderboard`}>
+
+            <SolidParaBtn href={`/leaderboard`}>
               {t("leaderboardCta")}
             </SolidParaBtn>
           </div>
