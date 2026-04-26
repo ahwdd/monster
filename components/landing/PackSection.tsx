@@ -1,0 +1,201 @@
+import { motion, AnimatePresence, Easing } from "framer-motion";
+import { useState, useRef } from "react";
+import Image from "next/image";
+import { REWARD_PACKS } from "@/lib/data/program";
+import { hexToRgba } from "@/lib/utils/colors";
+import { FaBoltLightning } from "react-icons/fa6";
+import { useTranslations } from "next-intl";
+import { FaTrophy } from "react-icons/fa";
+
+const EASE = [0.22, 1, 0.36, 1] as Easing;
+
+interface PackSectionProps {
+  pack: (typeof REWARD_PACKS)[number];
+  color: string;
+  images: string[];
+  index: number;
+  isAr: boolean;
+  t: ReturnType<typeof useTranslations>;
+}
+
+function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const items = isAr ? pack.itemsAr : pack.itemsEn;
+  const activeImage = images[activeIdx] ?? images[0];
+
+  // Refs to each row so we can measure their offsetTop + height
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Compute the pixel top for the floating image:
+  // center of the active row, clamped so the image never overflows the list
+  const getImageTop = (): string => {
+    const list = listRef.current;
+    const row = rowRefs.current[activeIdx];
+    if (!list || !row) return "0px";
+
+    const listHeight = list.offsetHeight;
+    const rowTop = row.offsetTop;
+    const rowCenter = rowTop + row.offsetHeight / 2;
+
+    // Image is 240px wide, aspect-video = 135px tall (w-60 = 240px)
+    const imgHeight = 135;
+
+    // Ideal: center image on the active row's center
+    const ideal = rowCenter - imgHeight / 2;
+
+    // Clamp: never above 0, never below listHeight - imgHeight
+    const clamped = Math.max(0, Math.min(ideal, listHeight - imgHeight));
+
+    return `${clamped}px`;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 32 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.55, ease: EASE }}
+      className="w-full"
+    >
+      {/* ── Section header ──────────────────────────────────────── */}
+      <div className="flex items-center gap-3 mb-4">
+        <FaTrophy className="size-5" style={{ color }} />
+        <h3
+          className="font-display font-black uppercase tracking-widest header-small"
+          style={{ color }}
+        >
+          {isAr ? pack.titleAr : pack.titleEn}
+        </h3>
+      </div>
+
+      {/* ── Rewards list ────────────────────────────────────────── */}
+      <div ref={listRef} className="relative flex flex-col lg:w-full max-w-180">
+        {items.map((item, i) => {
+          const isActive = i === activeIdx;
+
+          return (
+            <div
+              key={item}
+              ref={(el) => { rowRefs.current[i] = el; }}
+              className="relative"
+              onMouseEnter={() => setActiveIdx(i)}
+              onClick={() => setActiveIdx(i)}
+            >
+              {/* ── Mobile inline image ── */}
+              <div className="lg:hidden">
+                <AnimatePresence initial={false}>
+                  {isActive && (
+                    <motion.div
+                      key={`mob-img-${i}`}
+                      initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
+                      animate={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
+                      exit={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
+                      transition={{ duration: 0.38, ease: EASE }}
+                      className="relative w-full aspect-video"
+                    >
+                      <Image
+                        src={activeImage}
+                        alt={item}
+                        fill
+                        className="object-cover"
+                      />
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(135deg, ${hexToRgba(color, 0.18)} 0%, transparent 60%)`,
+                        }}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* ── Row ── */}
+              <div
+                className={`flex items-center gap-3 py-3 px-4 cursor-pointer transition-all duration-300
+                  relative bg-black lg:border-0
+                  ${isActive ? "border-b lg:border-b-0 z-2" : "border-b border-b-white/10"}`}
+                style={isActive ? { borderBottomColor: color } : undefined}
+              >
+                <span
+                  className={`hidden lg:block absolute inset-y-0 inset-s-0 w-0.5 transition-all duration-300
+                    ${isActive ? "opacity-100" : "opacity-0"}`}
+                  style={{ background: color }}
+                />
+                <span
+                  className={`hidden lg:block absolute top-0 inset-s-0 inset-e-0 h-px transition-all duration-300
+                    ${isActive ? "opacity-100" : "opacity-0"}`}
+                  style={{ background: color }}
+                />
+                <span
+                  className={`hidden lg:block absolute bottom-0 inset-s-0 inset-e-0 h-px transition-all duration-300
+                    ${isActive ? "opacity-100" : "opacity-0"}`}
+                  style={{ background: color }}
+                />
+
+                <FaBoltLightning
+                  className="shrink-0 size-3.5 transition-colors duration-300"
+                  style={{ color: isActive ? color : "rgba(255,255,255,0.4)" }}
+                />
+
+                <span
+                  className="font-proxima txt-large transition-colors duration-300"
+                  style={{ color: isActive ? color : "rgba(255,255,255,0.75)" }}
+                >
+                  {item}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* ── Desktop floating image — lives on the list container, not a row ── */}
+        <div className="hidden lg:block">
+            <AnimatePresence mode="wait">
+                <motion.div
+                key={activeIdx}
+                initial={{ opacity: 0, x: isAr ? 12 : -12, scale: 0.97 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: isAr ? 8 : -8, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: EASE }}
+                className="absolute z-1" 
+                style={{
+                    insetInlineStart: "100%", 
+                    marginInlineStart: "-1px", 
+                    top: getImageTop(),
+                    transition: "top 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+                >
+                <div
+                    className="overflow-hidden rounded-sm"
+                    style={{
+                    border: `1px solid ${color}`,
+                    padding: "4px",
+                    background: hexToRgba(color, 0.05),
+                    }}
+                >
+                    <div className="relative w-60 aspect-video">
+                    <Image
+                        src={activeImage}
+                        alt={items[activeIdx]}
+                        fill
+                        className="object-cover rounded-xs"
+                    />
+                    <div
+                        className="absolute inset-0 rounded-xs"
+                        style={{
+                        background: `linear-gradient(160deg, ${hexToRgba(color, 0.22)} 0%, transparent 55%)`,
+                        }}
+                    />
+                    </div>
+                </div>
+            </motion.div>
+        </AnimatePresence>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default PackSection;

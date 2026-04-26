@@ -1,19 +1,116 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { motion } from "framer-motion";
+import { motion, rgba } from "framer-motion";
 import { LANDING_RANKS } from "@/lib/data/program";
 import FadeInView from "../FadeInView";
 import { hexToRgba } from "@/lib/utils/colors";
-import { FaStar, FaEye, FaCalendar, FaVideo } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const XD_COLORS: Record<string, string> = {
   rookie: "#22bb39",
   rising: "#d4ff00",
-  cold: "#00cfff",
+  cold:   "#00cfff",
 };
+
+// Shorten a requirement string to a compact label + value pair
+function parseReq(text: string): { value: string; label: string } {
+
+  if (/stream|reel|stor/i.test(text)) {
+    const nums = (text.match(/\d+/g) ?? []).map(Number);
+    const total = nums.reduce((a, b) => a + b, 0);
+    return { value: String(total), label: "Content" };
+  }
+  if (/view/i.test(text)) {
+    const val = text.match(/[\d]+[KkMm+]+/)?.[0] ?? text.split(" ")[0];
+    return { value: val, label: "Views" };
+  }
+  if (/engagement/i.test(text)) {
+    const val = text.match(/[\d.]+%/)?.[0] ?? "";
+    return { value: val, label: "Engagement" };
+  }
+  if (/score/i.test(text)) {
+    const val = text.match(/[+\d]+/)?.[0] ?? "";
+    return { value: val, label: "Score" };
+  }
+  if (/collab/i.test(text)) {
+    const val = text.match(/\d+/)?.[0] ?? "";
+    return { value: val, label: "Collabs" };
+  }
+  if (/loyalty|quarter/i.test(text)) {
+    const val = text.match(/\d+/)?.[0] ?? "1";
+    return { value: val + "Q", label: "Loyalty" };
+  }
+  // fallback
+  const words = text.split(" ");
+  return { value: words[0], label: words.slice(1, 3).join(" ") };
+}
+
+function ReqCircle({ value, label, fullText, color }: {
+  value: string;
+  label: string;
+  fullText: string;
+  color: string;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      className="flex flex-col items-center gap-1.5 relative cursor-default"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Tooltip */}
+      <div
+        className="absolute bottom-full left-1/2 mb-2 z-10 pointer-events-none
+                   font-proxima text-white text-center rounded px-2 py-1 whitespace-nowrap
+                   transition-all duration-200"
+        style={{
+          fontSize: "clamp(0.6rem, 0.8vw, 0.72rem)",
+          background: "rgba(30,30,30,0.95)",
+          border: `1px solid ${color}40`,
+          opacity: hovered ? 1 : 0,
+          transform: `translateX(-50%) translateY(${hovered ? "0px" : "4px"})`,
+          width: "80px",
+          whiteSpace: "normal",
+          lineHeight: "1.4",
+        }}
+      >
+        {fullText}
+      </div>
+
+      {/* Circle */}
+      <div
+        className={`flex items-center justify-center rounded-full transition-colors duration-200 
+          ${hovered? "bg-white text-black": "bg-white/20 text-white/80"}`}
+        style={{
+          width:      "clamp(24px, 6vw, 44px)",
+          height:     "clamp(24px, 6vw, 44px)",
+        }}
+      >
+        <span
+          className="font-display font-black leading-none txt-large">
+          {value}
+        </span>
+      </div>
+
+      {/* Label */}
+      <span
+        className="font-proxima text-center leading-tight"
+        style={{
+          fontSize: "clamp(0.55rem, 0.75vw, 0.65rem)",
+          color:    "#9ca3af",
+          maxWidth: "clamp(44px, 6vw, 60px)",
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
 
 export default function LevelingSection() {
   const locale = useLocale();
@@ -23,30 +120,32 @@ export default function LevelingSection() {
   return (
     <section
       id="levels"
-      className="w-screen py-16 md:py-25 px-4 md:px-35 relative">
-      <img
-        src="/assets/textures/skew-texture.png"
-        alt=""
-        className="absolute size-full inset-x-0 top-8 z-1 object-cover"
-      />
-      <div className="container relative z-2">
-        <FadeInView className="text-center mb-10 md:mb-16">
-          <h2 className="header-larger font-display font-black text-white tracking-wide uppercase mb-3 md:mb-4">
+      className="w-screen py-16 lg:py-25 px-4 lg:px-35 relative"
+    >
+      <div className="container">
+        
+        <div className="absolute w-screen inset-x-0 top-10 z-1 lg:-mt-14 -mt-10 overflow-hidden">
+          <div className="clip-skew w-full h-full">
+            <img
+              src="/assets/textures/texture.webp"
+              alt=""
+              className="w-full h-full object-cover object-top grayscale saturate-50"
+            />
+          </div>
+        </div>
+        <FadeInView className="text-center mb-10 lg:mb-16 relative z-2">
+          <h2 className="header-larger font-display font-black text-white tracking-wide uppercase mb-3 lg:mb-4">
             {t("levelingSystem")}
           </h2>
-          <p className="font-proxima text-[#ccccd0] txt-regular max-w-xl mx-auto">
+          <p className="font-proxima text-[#ccccd0] txt-larger max-w-xl mx-auto">
             {t("levelingDesc")}
           </p>
         </FadeInView>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6 relative z-2">
           {LANDING_RANKS.map((rank, i) => {
             const color = XD_COLORS[rank.id] ?? rank.color;
-            const highlights = [
-              { icon: FaEye, text: isAr ? rank.reachAr : rank.reachEn },
-              { icon: FaCalendar, text: isAr ? rank.monthsAr : rank.monthsEn },
-              { icon: FaVideo, text: isAr ? rank.requirementsAr[0] : rank.requirementsEn[0] },
-            ];
+            const reqs = isAr ? rank.requirementsAr : rank.requirementsEn;
 
             return (
               <motion.div
@@ -54,46 +153,58 @@ export default function LevelingSection() {
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}>
-                <div className="block p-6 md:p-8 space-y-2 h-full overflow-hidden relative rounded-md"
+                transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
+              >
+                <div
+                  className="block p-6 lg:p-8 h-full overflow-hidden relative rounded-md"
                   style={{
-                    border: `1px solid ${color}`,
+                    border:     `3px solid ${color}`,
                     background: `linear-gradient(to top, ${hexToRgba(color, 0.3)} 0%, ${hexToRgba(color, 0.2)} 10%, ${hexToRgba(color, 0)} 100%)`,
-                  }}>
+                  }}
+                >
+                  {/* Icon badge */}
                   <div
-                    className="rounded-full w-fit p-3"
+                    className="rounded-full w-fit p-3 mb-3"
                     style={{
                       color,
-                      border: `1px solid ${color}`,
+                      border:     `1px solid ${color}`,
                       background: hexToRgba(color, 0.1),
-                    }}>
+                    }}
+                  >
                     <FaStar className="size-6" />
                   </div>
 
+                  {/* Rank name */}
                   <h3
-                    className="font-display font-black uppercase mb-1"
+                    className="font-display font-black uppercase "
                     style={{
-                      fontSize: "clamp(1rem, 1.5vw, 1.3rem)",
+                      fontSize:      "clamp(1rem, 1.5vw, 1.3rem)",
                       color,
                       letterSpacing: "0.05em",
-                    }}>
+                    }}
+                  >
                     {isAr ? rank.nameAr : rank.nameEn}
                   </h3>
 
-                  <p className="font-proxima text-white font-semibold txt-regular">
+                  {/* Requirements label */}
+                  <p className="font-proxima text-white font-semibold txt-regular mb-3 -ms-3">
                     {t("requirements")}:
                   </p>
 
-                  <div className="flex flex-col gap-1.5 text-white">
-                    {highlights.map(({ icon: Icon, text }) => (
-                      <div key={text} className="flex items-center gap-2 px-2 bg-[#636363]/50 w-fit rounded-2xl">
-                        <Icon
-                          className="shrink-0 size-3.5"/>
-                        <span className="font-proxima txt-regular">
-                          {text}
-                        </span>
-                      </div>
-                    ))}
+                  {/* Requirement circles — all of them */}
+                  <div className="flex flex-wrap gap-x-3 gap-y-5 min-h-15">
+                    {reqs.slice(0, 5).map((req) => {
+                      const { value, label } = parseReq(req);
+                      return (
+                        <ReqCircle
+                          key={req}
+                          value={value}
+                          label={label}
+                          fullText={req}
+                          color={color}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               </motion.div>

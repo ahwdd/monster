@@ -617,3 +617,29 @@ export const TRACKING_RULES: { en: string; ar: string }[] = [
   { en: "Performance tracked: Monthly Views, Engagement Rate, Deliverables",       ar: "يُتتبَّع الأداء: المشاهدات الشهرية، معدل التفاعل، المتطلبات المُنجزة" },
   { en: "Collabs count, Quarter scoring, and Program loyalty also tracked",        ar: "يُتتبَّع أيضاً: عدد التعاونات، نقاط الربع، والولاء للبرنامج" },
 ];
+
+export const PACK_IMAGES: Record<string, string[]> = {
+  "Rookie Pack": [
+    "/assets/flavors/original.webp",
+    "/assets/flavors/coffee.webp",
+    "/assets/flavors/zero.webp",
+    "/assets/flavors/original.webp",
+    "/assets/flavors/juice.webp",
+  ],
+  "Rising Pack": [
+    "/assets/flavors/tea.webp",
+    "/assets/flavors/zero.webp",
+    "/assets/flavors/original.webp",
+    "/assets/flavors/coffee.webp",
+    "/assets/flavors/zero.webp",
+    "/assets/flavors/original.webp",
+  ],
+  "Cold Pack": [
+    "/assets/flavors/juice.webp",
+    "/assets/flavors/original.webp",
+    "/assets/flavors/tea.webp",
+    "/assets/flavors/zero.webp",
+    "/assets/flavors/original.webp",
+    "/assets/flavors/coffee.webp",
+  ],
+};

@@ -10,8 +10,8 @@ export default function SolidParaBtn({
 }) {
   const content = (
     <span
-      className={`relative inline-flex items-center justify-center font-display font-bold uppercase text-black cursor-pointer 
-      py-2 px-5.5 tracking-[1.5px] -skew-x-12 bg-monster select-none transition-opacity hover:opacity-90 text-sm`}>
+      className={`relative inline-flex items-center justify-center font-display font-bold uppercase text-white cursor-pointer 
+      py-2 px-5.5 tracking-[1.5px] -skew-x-12 bg-monster select-none transition-opacity hover:opacity-90 txt-large`}>
       <span className="relative z-10 skew-x-12">
         {children}
       </span>

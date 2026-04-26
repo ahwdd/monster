@@ -24,6 +24,7 @@
   --color-pending:     #bfec1d;
 
   --linear-monster:    linear-gradient(to top, #22bb39 0%, #bfec1d 100%);
+  --linear-btn-monster: linear-gradient(90deg, #d4ff00 0%, #22bb39 100%);
 
   /* Header */
   --header-height:     80px;
@@ -152,6 +153,7 @@ input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
 .animate-slide-out-left  { animation: slideOutToLeft    .6s ease-in-out forwards; }
 .animate-slide-out-right { animation: slideOutToRight   .6s ease-in-out forwards; }
 
+.clip-skew {clip-path: polygon(0% 16%, 100% 0%, 100% 100%, 0% 100%);}
 /* ─── Typography Scale ───────────────────────────────────────── */
 /* Display — Teko (EN) / Lemonada (AR) via .font-display override above */
 .header-huge    { font-size: clamp(2.5rem, 5vw, 6rem);    line-height: 1.0; }
@@ -198,7 +200,7 @@ header .logo::after {
 }
 
 /* Monster green bg */
-.bg-monster { background: var(--linear-monster); }
+.bg-monster { background: var(--linear-btn-monster); }
 
 /* XD: Hero bg — screen-width texture */
 .hero-bg {

@@ -107,7 +107,7 @@ export default function Header() {
                 alt="Monster"
                 width={100}
                 height={43}
-                className="object-contain h-8 w-auto"
+                className="object-contain h-4 w-auto skew-x-12"
               />
               <button
                 onClick={() => setMobileOpen(false)}
@@ -192,13 +192,13 @@ export default function Header() {
         {/* Logo block — skewed accent tile */}
         <Link
           href={`/${locale}`}
-          className="shrink-0 flex items-center justify-center px-9 h-20 bg-[#171717] pt-4 -ms-4 pe-4 -skew-x-12">
+          className="shrink-0 flex items-center justify-center xl:ps-12 px-9 h-20 bg-[#171717] pt-4 -ms-4 pe-4 -skew-x-12">
           <Image
             src="/assets/logo.png"
             alt="Monster Energy"
             width={140}
             height={60}
-            className="object-contain"
+            className="object-contain xl:h-17 -mt-2 h-14 w-auto skew-x-12"
           />
         </Link>
 
@@ -225,7 +225,7 @@ export default function Header() {
           {initializationComplete ? (
             isAuthenticated ? (
               <>
-                <OutlinedParaBtn onClick={() => logout()}>
+                <OutlinedParaBtn onClick={() => logout()} withBorder>
                   {isRTL ? "خروج" : "Logout"}
                 </OutlinedParaBtn>
                 <SolidParaBtn href={`/${locale}/auth/profile`}>
@@ -234,7 +234,7 @@ export default function Header() {
               </>
             ) : (
               <>
-                <OutlinedParaBtn href={`/${locale}/auth/signin`}>
+                <OutlinedParaBtn href={`/${locale}/auth/signin`} withBorder>
                   {isRTL ? "دخول" : "Sign In"}
                 </OutlinedParaBtn>
                 <SolidParaBtn href={`/${locale}/auth/signup`}>
