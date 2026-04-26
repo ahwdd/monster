@@ -4,71 +4,57 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  IoLogOutOutline,
-  IoMailOutline,
-  IoPhonePortraitOutline,
-  IoCreateOutline,
-  IoWarningOutline,
-  IoTimeOutline,
-  IoAddCircleOutline,
-  IoArrowForward,
-  IoArrowBack,
+  IoLogOutOutline, IoMailOutline, IoPhonePortraitOutline, IoCreateOutline, IoWarningOutline, IoTimeOutline,
+  IoArrowForward, IoArrowBack, IoVideocamOutline, IoFilmOutline, IoCameraOutline,
 } from "react-icons/io5";
+import { MdAdd } from "react-icons/md";
 import AuthShell from "@/components/auth/AuthShell";
 import ChangeEmailModal from "@/components/profile/ChangeEmailModal";
 import ChangePhoneModal from "@/components/profile/ChangePhoneModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
 import {
-  getRankProgress,
-  formatNumber,
-  getMonthsInProgram,
-  MONTH_RANGE,
-  RANK_THRESHOLDS,
-  MIN_QUARTER_SCORE,
-  MIN_CONTENT,
-  MAX_SUBMISSIONS_PER_RANK,
-  MAX_REACH_PER_RANK,
+  getRankProgress, formatNumber, getMonthsInProgram, MONTH_RANGE, RANK_THRESHOLDS, MIN_QUARTER_SCORE,
+  MIN_CONTENT, MAX_SUBMISSIONS_PER_RANK, MAX_REACH_PER_RANK, MIN_ENGAGEMENT_RATE,
 } from "@/lib/utils/rank";
 import ProfileSkeleton, {
-  KPI_ENG,
-  KPI_VIEWS,
-  RANK_COLORS,
-  RANK_LABEL_AR,
-  RANK_LABEL_EN,
-  NEXT_RANK_COLOR,
-  RankBadge,
-  ReqRow,
-  StatCard,
-  STATUS_BG,
-  REQ,
+  KPI_VIEWS, KPI_ENG, RANK_COLORS, RANK_LABEL_AR, RANK_LABEL_EN, NEXT_RANK_COLOR,
+  RankBadge, StatCard, CircularProgress, STATUS_BG, REQ,
 } from "./ProfileSkeleton";
-import { MdAdd } from "react-icons/md";
 
-const PENDING_CAP = 5;
+const CONTENT_REQ_EN = [
+  { key: "longVideo", Icon: IoVideocamOutline, label: "Stream / Long Video" },
+  { key: "reels",    Icon: IoFilmOutline,      label: "Reels / Short Videos" },
+  { key: "stories",  Icon: IoCameraOutline,    label: "Stories / Posts / Pictures" },
+];
+const CONTENT_REQ_AR = [
+  { key: "longVideo", Icon: IoVideocamOutline, label: "بث / فيديو طويل" },
+  { key: "reels",    Icon: IoFilmOutline,      label: "ريلز / فيديوهات قصيرة" },
+  { key: "stories",  Icon: IoCameraOutline,    label: "ستوريات / بوستات / صور" },
+];
 
 export default function ProfilePage() {
-  const t = useTranslations("profile");
-  const ts = useTranslations("submissions");
+  const t      = useTranslations("profile");
+  const ts     = useTranslations("submissions");
   const locale = useLocale();
-  const isRTL = locale === "ar";
+  const isRTL  = locale === "ar";
   const router = useRouter();
-  const toast = useToast();
-  const Arrow = isRTL ? IoArrowBack : IoArrowForward;
+  const toast  = useToast();
+  const Arrow  = isRTL ? IoArrowBack : IoArrowForward;
 
   const { user, isAuthenticated, initializationComplete, logout } = useAuth();
-  const [profile, setProfile] = useState<any>(null);
-  const [profileLoaded, setProfileLoaded] = useState(false);
-  const [submissions, setSubmissions] = useState<any[]>([]);
-  const [canSubmit, setCanSubmit] = useState(true);
-  const [showEmail, setShowEmail] = useState(false);
-  const [showPhone, setShowPhone] = useState(false);
+  const [profile,         setProfile]         = useState<any>(null);
+  const [profileLoaded,   setProfileLoaded]   = useState(false);
+  const [submissions,     setSubmissions]     = useState<any[]>([]);
+  const [canSubmit,       setCanSubmit]       = useState(true);
+  const [showEmail,       setShowEmail]       = useState(false);
+  const [showPhone,       setShowPhone]       = useState(false);
+  const [scoreExpanded,   setScoreExpanded]   = useState(false);
 
   useEffect(() => {
-    if (initializationComplete && !isAuthenticated)
-      router.push(`/auth/signin`);
+    if (initializationComplete && !isAuthenticated) router.push(`/auth/signin`);
   }, [initializationComplete, isAuthenticated]);
 
   useEffect(() => {
@@ -101,118 +87,120 @@ export default function ProfilePage() {
     );
   }
 
+  // ── Derived values ────────────────────────────────────────────────────────
   const displayEmail =
     user.email && !user.email.includes("@temp.monster") ? user.email : null;
   const initials =
-    `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`.toUpperCase() ||
-    "AZ";
+    `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`.toUpperCase() || "AZ";
+
   const isApproved = profile?.status === "APPROVED";
-  const isPending = profile?.status === "PENDING";
+  const isPending  = profile?.status === "PENDING";
   const isRejected = profile?.status === "REJECTED";
-  const rank = profile?.rank ?? "UNRANKED";
-  const rankColor = RANK_COLORS[rank] ?? "#6b7280";
-  const rankLabel = isRTL
-    ? (RANK_LABEL_AR[rank] ?? rank)
-    : (RANK_LABEL_EN[rank] ?? rank);
-  const currentRankReach = profile?.currentRankReach ?? 0;
-  const totalReachAllTime = profile?.totalReachAllTime ?? 0;
-  const threshold = RANK_THRESHOLDS[rank] ?? 0;
-  const rankProgress = getRankProgress(rank, currentRankReach);
-  const progressPct = Math.min(Math.round(rankProgress * 100), 100);
-  const approvedAt = profile?.approvedAt ? new Date(profile.approvedAt) : null;
-  const monthsIn = getMonthsInProgram(approvedAt);
+  const rank       = profile?.rank ?? "UNRANKED";
+  const rankColor  = RANK_COLORS[rank] ?? "#6b7280";
+  const rankLabel  = isRTL ? (RANK_LABEL_AR[rank] ?? rank) : (RANK_LABEL_EN[rank] ?? rank);
+
+  const currentRankReach  = profile?.currentRankReach  ?? 0;
+  const totalReachAllTime = profile?.totalReachAllTime  ?? 0;
+  const threshold         = RANK_THRESHOLDS[rank]       ?? 0;
+  const rankProgress      = getRankProgress(rank, currentRankReach);
+  const progressPct       = Math.min(Math.round(rankProgress * 100), 100);
+
+  const approvedAt   = profile?.approvedAt ? new Date(profile.approvedAt) : null;
+  const monthsIn     = getMonthsInProgram(approvedAt);
   const [, maxMonth] = MONTH_RANGE[rank] ?? [0, 3];
-  const [reqStreams, reqReels, reqStories] = REQ[rank] ?? REQ.UNRANKED;
-  const recentSubs = submissions.slice(0, 3);
 
-  // ── Performance score: derived from available API data ───────────────────
-  // Full score (commitment + admin grading) lives server-side only.
-  // We compute the two parts we have:
-  //   • Views component  (out of 10): proportional to currentRankReach / threshold
-  //   • Content component (out of 20): proportional to approvedSubs / MIN_CONTENT[rank]
-  const approvedSubs = submissions.filter(
-    (s) => s.status === "APPROVED",
-  ).length;
+  const [reqLongVideo, reqReels, reqStories] = REQ[rank] ?? REQ.UNRANKED;
+
+  const recentSubs   = submissions.slice(0, 3);
+  // ── Only approved submissions count toward the submissions stat ───────────
+  const approvedSubs = submissions.filter((s) => s.status === "APPROVED").length;
+
+  // ── Real performance score ────────────────────────────────────────────────
   const minContent = MIN_CONTENT[rank] ?? 20;
-  const scoreMax = MIN_QUARTER_SCORE[rank] || 50; // 50 / 70 / 90 per rank; 0 for UNRANKED → show /50
-  const viewsPts = Math.min(
-    10,
-    Math.round((currentRankReach / (threshold || 1)) * 10),
-  );
-  const contentPts = Math.min(
-    20,
-    Math.round((approvedSubs / (minContent || 1)) * 20),
-  );
-  const estScore = viewsPts + contentPts;
+  const scoreMax   = MIN_QUARTER_SCORE[rank] || 50;
 
-  // ── Stat card targets ────────────────────────────────────────────────────
-  const maxSubs = MAX_SUBMISSIONS_PER_RANK[rank] ?? 20;
-  const maxReach = MAX_REACH_PER_RANK[rank] ?? 50_000;
+  const viewsPts   = Math.min(10, Math.round((currentRankReach / (threshold || 1)) * 10));
+  const contentPts = Math.min(20, Math.round((approvedSubs / (minContent || 1)) * 20));
 
-  // Next rank label
+  const engagementRate  = profile?.engagementRate  ?? 0;
+  const commitmentScore = profile?.commitmentScore ?? 0;
+  const adminGradeScore = profile?.adminGradeScore ?? 0;
+
+  const targetEngRate = (MIN_ENGAGEMENT_RATE[rank] ?? 0.005) * 100;
+  const engPts        = Math.min(15, Math.round((engagementRate / (targetEngRate || 0.5)) * 15));
+
+  const totalScore = viewsPts + contentPts + engPts + commitmentScore + adminGradeScore;
+
+  // ── Stat card raw values ──────────────────────────────────────────────────
+  const maxSubs  = MAX_SUBMISSIONS_PER_RANK[rank] ?? 20;
+  const maxReach = MAX_REACH_PER_RANK[rank]       ?? 50_000;
+
+  // ── Next rank labels ──────────────────────────────────────────────────────
   const NEXT_RANK_LABEL_EN: Record<string, string> = {
-    UNRANKED: "Rookie Monster",
-    ROOKIE: "Rising Monster",
-    RISING: "Cold Monster",
-    COLD: "Cold Monster",
+    UNRANKED: "Rookie Monster", ROOKIE: "Rising Monster", RISING: "Cold Monster", COLD: "Cold Monster",
   };
   const NEXT_RANK_LABEL_AR: Record<string, string> = {
-    UNRANKED: "مبتدئ مونستر",
-    ROOKIE: "صاعد مونستر",
-    RISING: "كولد مونستر",
-    COLD: "كولد مونستر",
+    UNRANKED: "مبتدئ مونستر", ROOKIE: "صاعد مونستر", RISING: "كولد مونستر", COLD: "كولد مونستر",
   };
   const NEXT_RANK_COLOR_MAP: Record<string, string> = {
-    UNRANKED: "#22bb39",
-    ROOKIE: "#d4ff00",
-    RISING: "#00cfff",
-    COLD: "#00cfff",
+    UNRANKED: "#22bb39", ROOKIE: "#d4ff00", RISING: "#00cfff", COLD: "#00cfff",
+  };
+
+  const contentReqs = isRTL ? CONTENT_REQ_AR : CONTENT_REQ_EN;
+  const currentCounts: Record<string, number> = {
+    longVideo: profile?.longVideoCount ?? 0,
+    reels:     profile?.reelCount      ?? 0,
+    stories:   (profile?.storyCount   ?? 0)
+             + (profile?.postCount    ?? 0)
+             + (profile?.pictureCount ?? 0),
+  };
+  const reqCounts: Record<string, number> = {
+    longVideo: reqLongVideo,
+    reels:     reqReels,
+    stories:   reqStories,
   };
 
   return (
     <AuthShell breadcrumbs={[{ label: isRTL ? "لوحة التحكم" : "Dashboard" }]}>
-      {/* Show skeleton while profile loads */}
       {!profileLoaded ? (
         <ProfileSkeleton />
       ) : (
         <div className="font-proxima max-w-340 mx-auto px-4 md:px-8 xl:px-35 py-8 md:py-10 space-y-5">
+
+          {/* ── Header ─────────────────────────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-start sm:items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
-              {/* Avatar circle with rank color */}
               <div
-                className="p-2 md:p-4 aspect-square rounded-full flex items-center justify-center 
-                 font-black text-white bg-[#22bb39] header-regular">
+                className="p-2 md:p-4 aspect-square rounded-full flex items-center justify-center
+                           font-black text-white bg-[#22bb39] header-regular">
                 {initials}
               </div>
               <div>
                 <h1
-                  className=" font-black text-white leading-tight"
+                  className="font-black text-white leading-tight"
                   style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)" }}>
-                  {isRTL
-                    ? `مرحباً، ${user.firstName}`
-                    : `Hello, ${user.firstName}`}
+                  {isRTL ? `مرحباً، ${user.firstName}` : `Hello, ${user.firstName}`}
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                   {isApproved && <RankBadge rank={rank} label={rankLabel} />}
                   {isApproved && (
-                    <span className=" text-[#555] txt-larger">
+                    <span className="txt-larger text-[#555]">
                       {isRTL
                         ? `• الربع 1 | الشهر ${Math.min(monthsIn, maxMonth)}`
                         : `• Quarter 1 | Month ${Math.min(monthsIn, maxMonth)}`}
                     </span>
                   )}
                   {isPending && (
-                    <span
-                      className=" txt-larger px-2 py-0.5 border"
-                      style={{ color: "#bfec1d", borderColor: "#bfec1d44" }}>
+                    <span className="txt-larger px-2 py-0.5 border" style={{ color: "#bfec1d", borderColor: "#bfec1d44" }}>
                       {isRTL ? "قيد المراجعة" : "Pending Approval"}
                     </span>
                   )}
                   {isRejected && (
-                    <span className=" txt-larger px-2 py-0.5 border border-red-400/30 text-red-400">
+                    <span className="txt-larger px-2 py-0.5 border border-red-400/30 text-red-400">
                       {isRTL ? "مرفوض" : "Rejected"}
                     </span>
                   )}
@@ -220,13 +208,13 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Right actions */}
             <div className="flex items-center gap-3 flex-wrap">
               {isApproved && canSubmit && (
                 <Link
                   href={`/submissions/submit`}
-                  className="py-1 px-2 bg-monster txt-larger flex items-center gap-0.5  rounded-xl
-                  font-bold capitalize text-white tracking-[1.2px] hover:opacity-90 transition-opacity whitespace-nowrap">
+                  className="py-1 px-2 bg-monster txt-larger flex items-center gap-0.5
+                             rounded-xl font-bold capitalize text-white tracking-[1.2px]
+                             hover:opacity-90 transition-opacity whitespace-nowrap">
                   <MdAdd className="size-5" />
                   <span>{isRTL ? "رفع محتوى" : "Submit Content"}</span>
                 </Link>
@@ -234,31 +222,24 @@ export default function ProfilePage() {
             </div>
           </motion.div>
 
-          {/* ── Status banners ── */}
+          {/* ── Status banners ─────────────────────────────────────────── */}
           {isPending && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="flex items-start justify-between gap-4 p-4 border border-[#bfec1d]/25 bg-[#bfec1d]/5">
               <div className="flex items-start gap-3">
-                <IoTimeOutline
-                  className="size-5 shrink-0 mt-0.5"
-                  style={{ color: "#bfec1d" }}
-                />
+                <IoTimeOutline className="size-5 shrink-0 mt-0.5" style={{ color: "#bfec1d" }} />
                 <div>
-                  <p
-                    className=" font-bold capitalize txt-small"
-                    style={{ color: "#bfec1d" }}>
+                  <p className="font-bold capitalize txt-small" style={{ color: "#bfec1d" }}>
                     {t("applicationUnderReview")}
                   </p>
-                  <p className=" txt-larger text-[#ccccd0] mt-1">
-                    {t("applicationUnderReviewDesc")}
-                  </p>
+                  <p className="txt-larger text-[#ccccd0] mt-1">{t("applicationUnderReviewDesc")}</p>
                 </div>
               </div>
               <Link
                 href={`/submissions/register?editMode=true`}
-                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#171717] text-white  txt-larger hover:bg-[#222] transition-colors whitespace-nowrap">
+                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#171717] text-white txt-larger hover:bg-[#222] transition-colors whitespace-nowrap">
                 <IoCreateOutline className="size-3.5" />
                 {t("editApplication")}
               </Link>
@@ -273,52 +254,44 @@ export default function ProfilePage() {
               <div className="flex items-start gap-3">
                 <IoWarningOutline className="size-5 text-red-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className=" font-bold text-red-400 capitalize txt-small">
-                    {t("applicationRejected")}
-                  </p>
-                  <p className=" txt-larger text-[#ccccd0] mt-1">
-                    {t("applicationRejectedDesc")}
-                  </p>
+                  <p className="font-bold text-red-400 capitalize txt-small">{t("applicationRejected")}</p>
+                  <p className="txt-larger text-[#ccccd0] mt-1">{t("applicationRejectedDesc")}</p>
                 </div>
               </div>
               <Link
                 href={`/submissions/register?editMode=true`}
-                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#22bb39] text-white  txt-larger font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
+                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#22bb39] text-white txt-larger font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
                 <IoCreateOutline className="size-3.5" />
                 {t("editApplication")}
               </Link>
             </motion.div>
           )}
 
-          {/* ── Dashboard (approved only) ── */}
+          {/* ── Dashboard (approved only) ──────────────────────────────── */}
           {isApproved && (
             <>
               {/* Row 1: Level Progress + Performance Score */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                {/* Level progress — col-span-2 */}
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.06 }}
-                  className="col-span-2 bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 ">
+                  className="col-span-2 bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
                   <p className="txt-larger font-bold text-[#ccc] capitalize tracking-wider">
                     {isRTL ? "تقدم المستوى" : "Level Progress"}
                   </p>
                   <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        className="font-black capitalize txt-small"
-                        style={{ color: rankColor }}>
+                      <span className="font-black capitalize txt-small" style={{ color: rankColor }}>
                         {rankLabel}
                       </span>
                       {rank !== "COLD" && (
                         <>
                           <span className="text-white txt-larger">→</span>
-                          <span
-                            className="font-black capitalize txt-small"
-                            style={{ color: NEXT_RANK_COLOR_MAP[rank] }}>
-                            {isRTL
-                              ? NEXT_RANK_LABEL_AR[rank]
-                              : NEXT_RANK_LABEL_EN[rank]}
+                          <span className="font-black capitalize txt-small" style={{ color: NEXT_RANK_COLOR_MAP[rank] }}>
+                            {isRTL ? NEXT_RANK_LABEL_AR[rank] : NEXT_RANK_LABEL_EN[rank]}
                           </span>
                         </>
                       )}
@@ -327,26 +300,17 @@ export default function ProfilePage() {
                       {rank === "COLD" ? "MAX" : `${progressPct}%`}
                     </span>
                   </div>
-                  <div
-                    className="w-full bg-[#272727] rounded-full overflow-hidden"
-                    style={{ height: "10px" }}>
+                  <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "10px" }}>
                     <motion.div
                       className="h-full"
                       style={{
-                        background:
-                          rank === "COLD"
-                            ? rankColor
-                            : `linear-gradient(to right, ${rankColor}, ${NEXT_RANK_COLOR_MAP[rank]})`,
-                        backgroundSize: `${(100 / (progressPct / 100)) * 1}% 100%`,
-                        backgroundRepeat: "no-repeat",
+                        background: rank === "COLD"
+                          ? rankColor
+                          : `linear-gradient(to right, ${rankColor}, ${NEXT_RANK_COLOR_MAP[rank]})`,
                       }}
                       initial={{ width: 0 }}
                       animate={{ width: `${progressPct}%` }}
-                      transition={{
-                        duration: 1,
-                        delay: 0.4,
-                        ease: [0.4, 0, 0.2, 1],
-                      }}
+                      transition={{ duration: 1, delay: 0.4, ease: [0.4, 0, 0.2, 1] }}
                     />
                   </div>
                   {rank !== "COLD" && (
@@ -358,30 +322,63 @@ export default function ProfilePage() {
                   )}
                 </motion.div>
 
-                {/* Performance Score card — estimated from API data */}
+                {/* ── Performance Score — collapsible breakdown ── */}
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.09 }}
-                  className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6  flex flex-col justify-center">
-                  <p className="txt-larger font-bold text-white capitalize tracking-wider mb-3">
-                    {isRTL ? "نقاط الأداء" : "Performance Score"}
-                  </p>
-                  <p className="text-white leading-none mb-1 header-small">
-                    <span>{estScore} / </span>
-                    <span className="header-regular text-[#22bb39]">
-                      {scoreMax} pts
-                    </span>
-                  </p>
-                  <p className="txt-larger text-[#555]">
-                    {isRTL
-                      ? "نقاط التفاعل الإجمالية"
-                      : "Overall Engagement Score"}
-                  </p>
+                  className="bg-[#171717] border border-[#272727] rounded-lg overflow-hidden">
+
+                  {/* Always-visible header — clickable */}
+                  <button
+                    onClick={() => setScoreExpanded((v) => !v)}
+                    className="w-full text-start p-5 md:p-6 cursor-pointer">
+                    <p className="txt-larger font-bold text-white capitalize tracking-wider mb-3">
+                      {isRTL ? "نقاط الأداء" : "Performance Score"}
+                    </p>
+                    <p className="text-white leading-none mb-1 header-small">
+                      <span>{Math.round(totalScore)} / </span>
+                      <span className="header-regular text-[#22bb39]">{scoreMax} pts</span>
+                    </p>
+                    <p className="txt-larger text-[#555]">
+                      {isRTL ? "نقاط التفاعل الإجمالية" : "Overall Engagement Score"}
+                    </p>
+                  </button>
+
+                  {/* Collapsible breakdown */}
+                  <AnimatePresence initial={false}>
+                    {scoreExpanded && (
+                      <motion.div
+                        key="score-breakdown"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        className="overflow-hidden">
+                        <div className="space-y-1.5 border-t border-[#272727] px-5 md:px-6 pt-3 pb-5">
+                          {[
+                            { label: isRTL ? "مشاهدات" : "Views",      pts: viewsPts,                    max: 10 },
+                            { label: isRTL ? "محتوى"   : "Content",    pts: contentPts,                  max: 20 },
+                            { label: isRTL ? "تفاعل"   : "Engagement", pts: engPts,                      max: 15 },
+                            { label: isRTL ? "التزام"  : "Commitment", pts: Math.round(commitmentScore), max: 15 },
+                            { label: isRTL ? "تقييم"   : "Grading",    pts: Math.round(adminGradeScore), max: 30 },
+                          ].map(({ label, pts, max }) => (
+                            <div key={label} className="flex items-center justify-between">
+                              <span className="txt-smaller text-[#555]">{label}</span>
+                              <span className="tabular-nums flex items-baseline gap-0.5">
+                                <span className="txt-smaller text-[#888]">{pts}&nbsp;/</span>
+                                <span className="txt-smaller font-bold text-[#22bb39]">{max}</span>
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               </div>
 
-              {/* Row 2: 3 stat cards */}
+              {/* Row 2: 3 stat cards — approved submissions count only */}
               <motion.div
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -392,115 +389,139 @@ export default function ProfilePage() {
                   current={formatNumber(currentRankReach)}
                   target={KPI_VIEWS[rank] ?? "50K"}
                   targetColor={NEXT_RANK_COLOR[rank]}
+                  currentRaw={currentRankReach}
+                  targetRaw={maxReach}
                 />
                 <StatCard
                   label={isRTL ? "إجمالي الوصول" : "Total Reach"}
                   current={formatNumber(totalReachAllTime)}
                   target={formatNumber(maxReach)}
                   targetColor={NEXT_RANK_COLOR[rank]}
+                  currentRaw={totalReachAllTime}
+                  targetRaw={maxReach}
                 />
+                {/* Approved submissions only, not total */}
                 <StatCard
-                  label={isRTL ? "المشاركات" : "Submissions"}
-                  current={String(submissions.length)}
+                  label={isRTL ? "المشاركات المقبولة" : "Approved Submissions"}
+                  current={String(approvedSubs)}
                   target={String(maxSubs)}
                   targetColor={NEXT_RANK_COLOR[rank]}
+                  currentRaw={approvedSubs}
+                  targetRaw={maxSubs}
                 />
               </motion.div>
 
-              {/* Row 3: KPI Metric Targets */}
+              {/* Row 3: Content Requirements + KPI & Engagement (2-col on lg) */}
               <motion.div
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 ">
-                <p className="txt-larger font-bold text-white capitalize tracking-wider">
-                  {isRTL ? "مستهدفات KPI" : "KPI Metric Targets"}
-                </p>
-                <div className="space-y-5">
-                  {/* Views KPI */}
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="txt-larger text-[#ccccd0]">
-                        {isRTL ? "مشاهدات KPI" : "Views KPI"}
-                      </span>
-                      <span className="txt-larger font-semibold tabular-nums text-[#22bb39]">
-                        {formatNumber(currentRankReach)} /{" "}
-                        {KPI_VIEWS[rank] ?? "50K"}
-                      </span>
+                transition={{ delay: 0.13 }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                {/* Content Requirements */}
+                <div className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
+                  <p className="txt-larger font-bold text-white capitalize tracking-wider mb-4">
+                    {isRTL ? "متطلبات المحتوى" : "Content Requirements"}
+                  </p>
+                  <div className="space-y-4">
+                    {contentReqs.map(({ key, Icon, label }) => {
+                      const cur = currentCounts[key] ?? 0;
+                      const req = reqCounts[key]     ?? 0;
+                      const pct = req > 0 ? Math.min(Math.round((cur / req) * 100), 100) : 100;
+                      return (
+                        <div key={key} className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Icon className="size-4 text-[#555] shrink-0" />
+                            <span className="txt-larger text-[#ccccd0] truncate">{label}</span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <div className="flex items-baseline gap-0.5 tabular-nums">
+                              <span className="txt-small text-white font-semibold">{cur}</span>
+                              <span className="txt-larger text-[#22bb39] font-bold">/{req}</span>
+                            </div>
+                            <CircularProgress pct={pct} size={32} stroke={3} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* KPI Metrics + Engagement Rate */}
+                <div className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
+                  <p className="txt-larger font-bold text-white capitalize tracking-wider mb-4">
+                    {isRTL ? "مستهدفات KPI والتفاعل" : "KPI & Engagement Targets"}
+                  </p>
+                  <div className="space-y-5">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="txt-larger text-[#ccccd0]">
+                          {isRTL ? "مشاهدات KPI" : "Views KPI"}
+                        </span>
+                        <span className="txt-larger font-semibold tabular-nums text-[#22bb39]">
+                          {formatNumber(currentRankReach)} / {KPI_VIEWS[rank] ?? "50K"}
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "6px" }}>
+                        <motion.div
+                          className="h-full bg-[#22bb39]"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${progressPct}%` }}
+                          transition={{ duration: 0.9, delay: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                        />
+                      </div>
                     </div>
-                    <div
-                      className="w-full bg-[#272727] rounded-full overflow-hidden"
-                      style={{ height: "6px" }}>
-                      <motion.div
-                        className="h-full bg-[#22bb39]"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progressPct}%` }}
-                        transition={{
-                          duration: 0.9,
-                          delay: 0.45,
-                          ease: [0.4, 0, 0.2, 1],
-                        }}
-                      />
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="txt-larger text-[#ccccd0]">
+                          {isRTL ? "معدل التفاعل" : "Engagement Rate"}
+                        </span>
+                        <span className="txt-larger font-semibold tabular-nums" style={{ color: "#bfec1d" }}>
+                          {engagementRate.toFixed(2)}% / {KPI_ENG[rank] ?? "0.5%"}
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "6px" }}>
+                        <motion.div
+                          className="h-full"
+                          style={{ background: "#bfec1d" }}
+                          initial={{ width: 0 }}
+                          animate={{
+                            width: `${Math.min(Math.round((engagementRate / (targetEngRate || 0.5)) * 100), 100)}%`,
+                          }}
+                          transition={{ duration: 0.9, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                        />
+                      </div>
                     </div>
                   </div>
-                  {/* Engagement Rate — target */}
-                  {/* <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="txt-larger text-[#ccccd0]">
-                        {isRTL ? "معدل التفاعل" : "Engagement Rate"}
-                      </span>
-                      <span
-                        className="txt-larger font-semibold tabular-nums"
-                        style={{ color: "#bfec1d" }}>
-                        0.8% / {KPI_ENG[rank] ?? "0.5%"}
-                      </span>
-                    </div>
-                    <div
-                      className="w-full bg-[#272727] rounded-full overflow-hidden"
-                      style={{ height: "6px" }}>
-                      <motion.div
-                        className="h-full bg-[#bfec1d]"
-                        initial={{ width: 0 }}
-                        animate={{ width: "80%" }}
-                        transition={{
-                          duration: 0.9,
-                          delay: 0.5,
-                          ease: [0.4, 0, 0.2, 1],
-                        }}
-                      />
-                    </div>
-                  </div> */}
                 </div>
               </motion.div>
 
-              {/* Row 4: Recent Submissions table */}
+              {/* Row 4: Recent Submissions */}
               {recentSubs.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.17 }}
-                  className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6  overflow-x-auto">
-                  <div className="flex items-center justify-between min-w-100">
-                    <p className=" txt-larger text-[#b6b6b6] capitalize tracking-wider">
+                  className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 overflow-x-auto">
+                  <div className="flex items-center justify-between mb-4 min-w-100">
+                    <p className="txt-small font-bold text-[#b6b6b6] capitalize tracking-wider">
                       {isRTL ? "آخر المشاركات" : "Recent Submissions"}
                     </p>
                     <Link
                       href={`/submissions`}
-                      className=" txt-larger text-[#555] hover:text-[#ccccd0] transition-colors flex items-center gap-1">
+                      className="txt-larger text-[#555] hover:text-[#ccccd0] transition-colors flex items-center gap-1">
                       {isRTL ? "عرض الكل" : "View All"}
                       <Arrow className="size-3" />
                     </Link>
                   </div>
                   <div className="min-w-100">
-                    <div className="grid grid-cols-[1fr_100px_100px_90px] gap-3 pb-3 border-b border-[#272727]">
+                    <div className="grid grid-cols-[1fr_100px_100px_90px] gap-3 pb-2 border-b border-[#272727]">
                       {(isRTL
                         ? ["عنوان المحتوى", "النوع", "المشاهدات", "الحالة"]
                         : ["Content", "Type", "Views", "Status"]
                       ).map((h, i) => (
-                        <span
-                          key={i}
-                          className="font-bold text-white capitalize tracking-wider"
-                          style={{ fontSize: "11px" }}>
+                        <span key={i} className="font-bold text-white capitalize tracking-wider" style={{ fontSize: "11px" }}>
                           {h}
                         </span>
                       ))}
@@ -508,22 +529,19 @@ export default function ProfilePage() {
                     {recentSubs.map((sub) => (
                       <div
                         key={sub.id}
-                        className="grid grid-cols-[1fr_100px_100px_90px] gap-3 py-3 border-b border-[#272727] items-center">
-                        <span className=" txt-larger text-white truncate">
-                          {sub.contentLink?.split("/").pop()?.slice(0, 24) ??
-                            "Content"}
+                        className="grid grid-cols-[1fr_100px_100px_90px] gap-3 py-2 border-b border-[#272727] items-center">
+                        <span className="txt-larger text-white truncate">
+                          {sub.contentLink?.split("/").pop()?.slice(0, 24) ?? "Content"}
                         </span>
-                        <span className=" txt-larger text-[#ccccd0] capitalize">
+                        <span className="txt-larger text-[#ccccd0] capitalize">
                           {sub.contentTypes?.[0]?.toLowerCase() ?? "-"}
                         </span>
-                        <span className=" txt-larger text-white tabular-nums">
-                          {formatNumber(
-                            sub.acceptedReach ?? sub.submittedReach ?? 0,
-                          )}
+                        <span className="txt-larger text-white tabular-nums">
+                          {formatNumber(sub.acceptedReach ?? sub.submittedReach ?? 0)}
                         </span>
                         <span
                           className="inline-flex items-center justify-center font-bold capitalize
-                          h-5 px-1.5 text-xs text-[9px] tracking-wider w-fit rounded-lg"
+                                     h-5 px-1.5 text-[9px] tracking-wider w-fit rounded-lg"
                           style={{
                             background: STATUS_BG[sub.status] ?? "#555",
                             color: sub.status === "REJECTED" ? "#fff" : "#000",
@@ -538,36 +556,35 @@ export default function ProfilePage() {
             </>
           )}
 
-          {/* Not registered */}
+          {/* ── Not registered ─────────────────────────────────────────── */}
           {!profile && (
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-[#171717] rounded-lg p-8 md:p-10 text-center border border-[#272727]">
               <p
-                className=" font-black text-white capitalize mb-2"
+                className="font-black text-white capitalize mb-2"
                 style={{ fontSize: "clamp(1.1rem, 2vw, 1.5rem)" }}>
                 {isRTL ? "أكمل تسجيلك" : "Complete Your Registration"}
               </p>
-              <p className=" text-[#ccccd0] mb-6 txt-small">
-                {ts("registrationRequiredDesc")}
-              </p>
+              <p className="text-[#ccccd0] mb-6 txt-small">{ts("registrationRequiredDesc")}</p>
               <Link
                 href={`/submissions/register`}
-                className="inline-flex items-center gap-2 h-12 px-10 bg-[#22bb39] text-white  font-black capitalize txt-small tracking-[2px] hover:opacity-90 transition-opacity">
+                className="inline-flex items-center gap-2 h-12 px-10 bg-[#22bb39] text-white
+                           font-black capitalize txt-small tracking-[2px] hover:opacity-90 transition-opacity">
                 {ts("registerStart")}
                 <Arrow className="size-4" />
               </Link>
             </motion.div>
           )}
 
-          {/* Contact info card */}
+          {/* ── Contact info ───────────────────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.19 }}
-            className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 ">
-            <p className=" txt-larger text-[#b6b6b6] capitalize tracking-wider">
+            className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
+            <p className="txt-larger text-[#b6b6b6] capitalize tracking-wider">
               {t("contactInfo")}
             </p>
             {[
@@ -592,28 +609,26 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-3 min-w-0">
                   <Icon className="size-4 text-[#444] shrink-0" />
                   <div className="min-w-0">
-                    <p className=" txt-larger text-[#b6b6b6]">{label}</p>
-                    <p className=" txt-small text-white truncate">
-                      {value || t("notSet")}
-                    </p>
+                    <p className="txt-larger text-[#b6b6b6]">{label}</p>
+                    <p className="txt-small text-white truncate">{value || t("notSet")}</p>
                   </div>
                 </div>
                 <button
                   onClick={onEdit}
-                  className="shrink-0 px-3 h-8 bg-black border border-[#333] text-[#ccccd0]  hover:text-white hover:border-[#555] transition-colors txt-larger whitespace-nowrap">
+                  className="shrink-0 px-3 h-8 bg-black border border-[#333] text-[#ccccd0]
+                             hover:text-white hover:border-[#555] transition-colors txt-larger whitespace-nowrap">
                   {cta}
                 </button>
               </div>
             ))}
           </motion.div>
 
-          {/* Logout */}
+          {/* ── Logout ─────────────────────────────────────────────────── */}
           <button
-            onClick={() => {
-              toast.info(t("loggingOut"));
-              logout();
-            }}
-            className="w-full flex items-center justify-center gap-3 h-12 border border-[#2a2a2a] text-[#ccccd0] hover:text-red-400 hover:border-red-400/30  font-bold capitalize transition-colors"
+            onClick={() => { toast.info(t("loggingOut")); logout(); }}
+            className="w-full flex items-center justify-center gap-3 h-12 border border-[#2a2a2a]
+                       text-[#ccccd0] hover:text-red-400 hover:border-red-400/30 font-bold
+                       capitalize transition-colors"
             style={{ fontSize: "13px", letterSpacing: "1.5px" }}>
             <IoLogOutOutline className="size-5" />
             {t("logout")}
@@ -622,10 +637,7 @@ export default function ProfilePage() {
       )}
 
       {showEmail && (
-        <ChangeEmailModal
-          currentEmail={displayEmail}
-          onClose={() => setShowEmail(false)}
-        />
+        <ChangeEmailModal currentEmail={displayEmail} onClose={() => setShowEmail(false)} />
       )}
       {showPhone && (
         <ChangePhoneModal

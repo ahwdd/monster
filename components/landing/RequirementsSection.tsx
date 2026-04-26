@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { IoVideocamOutline } from "react-icons/io5";
 import { PROGRAM_REQUIREMENTS } from "@/lib/data/program";
-import FadeInView from "../FadeInView";
+import FadeInView from "../animation/FadeInView";
 import { MdOutlineHandshake } from "react-icons/md";
 import { TbHandStop } from "react-icons/tb";
 import { FiVideo } from "react-icons/fi";
@@ -46,13 +46,11 @@ export default function RequirementsSection() {
                 className="p-8 rounded transition-colors duration-300 cursor-default"
                 style={{ background: isHovered ? "#171717" : "transparent" }}
                 onMouseEnter={() => setHoveredIndex(i)}
-                onMouseLeave={() => setHoveredIndex(-1)}
-              >
+                onMouseLeave={() => setHoveredIndex(-1)}>
                 <div
                   className={`-skew-x-12 ms-2 flex items-center justify-center size-18 mb-6 transition-colors duration-300 ${
                     isHovered ? "bg-monster" : "bg-[#171717]"
-                  }`}
-                >
+                  }`}>
                   <Icon className="size-10 skew-x-12 text-white" />
                 </div>
 

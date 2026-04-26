@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { HOW_IT_WORKS_STEPS } from "@/lib/data/program";
-import FadeInView from "../FadeInView";
+import FadeInView from "../animation/FadeInView";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const DOT_COUNT = 6;
@@ -41,24 +41,21 @@ export default function HowItWorksSection() {
                 <div
                   className="flex flex-row items-start gap-4 cursor-default"
                   onMouseEnter={() => setHoveredIndex(i)}
-                  onMouseLeave={() => setHoveredIndex(-1)}
-                >
+                  onMouseLeave={() => setHoveredIndex(-1)}>
                   {/* Number box */}
                   <div
                     className="flex items-center justify-center rounded shrink-0 transition-colors duration-300"
                     style={{
-                      width:      BOX_SIZE_MOBILE,
-                      height:     BOX_SIZE_MOBILE,
+                      width: BOX_SIZE_MOBILE,
+                      height: BOX_SIZE_MOBILE,
                       background: i <= hoveredIndex ? "#22bb39" : "#171717",
-                    }}
-                  >
+                    }}>
                     <span
                       className="font-display font-black transition-colors duration-300"
                       style={{
                         fontSize: "1.5rem",
-                        color:    i <= hoveredIndex ? "#ffffff" : "#22bb39",
-                      }}
-                    >
+                        color: i <= hoveredIndex ? "#ffffff" : "#22bb39",
+                      }}>
                       {step.numEn}
                     </span>
                   </div>
@@ -68,14 +65,15 @@ export default function HowItWorksSection() {
                     <h3
                       className="font-display font-black uppercase mb-1 transition-colors duration-300"
                       style={{
-                        fontSize:      "0.875rem",
+                        fontSize: "0.875rem",
                         letterSpacing: "0.06em",
-                        color:         i <= hoveredIndex ? "#22bb39" : "#ffffff",
-                      }}
-                    >
+                        color: i <= hoveredIndex ? "#22bb39" : "#ffffff",
+                      }}>
                       {isAr ? step.titleAr : step.titleEn}
                     </h3>
-                    <p className="font-proxima text-[#ccccd0] text-sm" style={{ lineHeight: "1.6" }}>
+                    <p
+                      className="font-proxima text-[#ccccd0] text-sm"
+                      style={{ lineHeight: "1.6" }}>
                       {isAr ? step.descAr : step.descEn}
                     </p>
                   </div>
@@ -85,14 +83,13 @@ export default function HowItWorksSection() {
                 {!isLast && (
                   <div
                     className="flex flex-col items-center gap-1.25 py-2"
-                    style={{ width: BOX_SIZE_MOBILE }}
-                  >
+                    style={{ width: BOX_SIZE_MOBILE }}>
                     {Array.from({ length: DOT_COUNT }).map((_, d) => (
                       <span
                         key={d}
                         className="size-1 rounded-full transition-colors duration-250"
                         style={{
-                          background:      connectorLit ? "#22bb39" : "#444444",
+                          background: connectorLit ? "#22bb39" : "#444444",
                           transitionDelay: connectorLit
                             ? `${d * 40}ms`
                             : `${(DOT_COUNT - 1 - d) * 40}ms`,
@@ -123,23 +120,20 @@ export default function HowItWorksSection() {
                   className="flex flex-col cursor-default shrink-0"
                   style={{ width: "clamp(100px, 20vw, 200px)" }}
                   onMouseEnter={() => setHoveredIndex(i)}
-                  onMouseLeave={() => setHoveredIndex(-1)}
-                >
+                  onMouseLeave={() => setHoveredIndex(-1)}>
                   <div
                     className="flex items-center justify-center rounded mb-4 transition-colors duration-300 relative z-10"
                     style={{
-                      width:      BOX_SIZE_DESKTOP,
-                      height:     BOX_SIZE_DESKTOP,
+                      width: BOX_SIZE_DESKTOP,
+                      height: BOX_SIZE_DESKTOP,
                       background: i <= hoveredIndex ? "#22bb39" : "#171717",
-                    }}
-                  >
+                    }}>
                     <span
                       className="font-display font-black transition-colors duration-300"
                       style={{
                         fontSize: "clamp(1.2rem, 2.5vw, 2.5rem)",
-                        color:    i <= hoveredIndex ? "#ffffff" : "#22bb39",
-                      }}
-                    >
+                        color: i <= hoveredIndex ? "#ffffff" : "#22bb39",
+                      }}>
                       {step.numEn}
                     </span>
                   </div>
@@ -148,9 +142,8 @@ export default function HowItWorksSection() {
                     className="font-display font-black uppercase mb-2 header-small transition-colors duration-300"
                     style={{
                       letterSpacing: "0.06em",
-                      color:         i <= hoveredIndex ? "#22bb39" : "#ffffff",
-                    }}
-                  >
+                      color: i <= hoveredIndex ? "#22bb39" : "#ffffff",
+                    }}>
                     {isAr ? step.titleAr : step.titleEn}
                   </h3>
 
@@ -164,14 +157,13 @@ export default function HowItWorksSection() {
                   <div
                     className="shrink-0 flex items-center ms-[-10%]"
                     style={{
-                      flex:          "1 1 0",
-                      minWidth:      0,
+                      flex: "1 1 0",
+                      minWidth: 0,
                       // center dots on the box: push down by half box, then shift left slightly
-                      marginTop:     `calc(${BOX_SIZE_DESKTOP} / 2)`,
-                      transform:     "translateY(-50%) translateX(-8px)",
-                      paddingRight:  "8px",
-                    }}
-                  >
+                      marginTop: `calc(${BOX_SIZE_DESKTOP} / 2)`,
+                      transform: "translateY(-50%) translateX(-8px)",
+                      paddingRight: "8px",
+                    }}>
                     {/* md → xl: 6 dots */}
                     <div className="xl:hidden flex flex-row flex-nowrap justify-between w-full">
                       {Array.from({ length: DOT_COUNT }).map((_, d) => (
@@ -179,7 +171,7 @@ export default function HowItWorksSection() {
                           key={d}
                           className="size-1 rounded-full shrink-0 transition-colors duration-250"
                           style={{
-                            background:      connectorLit ? "#22bb39" : "#444444",
+                            background: connectorLit ? "#22bb39" : "#444444",
                             transitionDelay: connectorLit
                               ? `${d * 40}ms`
                               : `${(DOT_COUNT - 1 - d) * 40}ms`,
@@ -195,7 +187,7 @@ export default function HowItWorksSection() {
                           key={d}
                           className="size-1 rounded-full shrink-0 transition-colors duration-250"
                           style={{
-                            background:      connectorLit ? "#22bb39" : "#444444",
+                            background: connectorLit ? "#22bb39" : "#444444",
                             transitionDelay: connectorLit
                               ? `${d * 40}ms`
                               : `${(DOT_COUNT_XL - 1 - d) * 40}ms`,
@@ -209,7 +201,6 @@ export default function HowItWorksSection() {
             );
           })}
         </div>
-
       </div>
     </section>
   );

@@ -10,7 +10,7 @@ export default function ProgramOverview() {
   const t = useTranslations("hero");
 
   return (
-    <section id="overview" className="w-full bg-black">
+    <section className="w-full bg-black">
       <div className="container xl:px-8 px-4 py-16 md:py-25 
                       grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-x-20 items-center">
 

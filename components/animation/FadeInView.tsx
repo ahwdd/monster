@@ -1,4 +1,4 @@
-// src/components/ui/FadeInView.tsx
+// src/components/animation/FadeInView.tsx
 "use client";
 import { motion, Variants } from "framer-motion";
 import { ReactNode } from "react";

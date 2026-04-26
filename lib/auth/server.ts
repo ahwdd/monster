@@ -36,21 +36,21 @@ export const safeUserSelect = {
       status:              true,
       adminNotes:          true,
       approvedAt:          true,
-
       currentRankReach:    true,
       totalReachAllTime:   true,
-
       pictureCount:        true,
       storyCount:          true,
       reelCount:           true,
       longVideoCount:      true,
       postCount:           true,
-
       totalPictureCount:   true,
       totalStoryCount:     true,
       totalReelCount:      true,
       totalLongVideoCount: true,
       totalPostCount:      true,
+      engagementRate:      true,
+      commitmentScore:     true,
+      adminGradeScore:     true,
       isActive:            true,
       joinedAt:            true,
     },
@@ -98,6 +98,9 @@ export type UserSession = {
     totalReelCount:      number;
     totalLongVideoCount: number;
     totalPostCount:      number;
+    engagementRate:      number;
+    commitmentScore:     number;
+    adminGradeScore:     number;
     isActive:            boolean;
     joinedAt?:           Date | null;
   } | null;
@@ -170,9 +173,7 @@ async function verifyExternalToken(token: string): Promise<any | null> {
         method:  "GET",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       }, timeout);
-
       if (!res.ok) return null;
-
       const body = await res.json().catch(() => null);
       const user = body?.data?.user ?? null;
       verificationCache.set(token, { ts: Date.now(), data: user });
@@ -188,7 +189,6 @@ export async function getCurrentUser(authHeader?: string): Promise<UserSession |
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.substring(7)
     : await getAuthToken();
-
   if (!token) return null;
 
   const externalUser = await verifyExternalToken(token);
@@ -201,10 +201,9 @@ export async function getCurrentUser(authHeader?: string): Promise<UserSession |
   if (where.length === 0) return null;
 
   const local = await prisma.user.findFirst({
-    where: { OR: where },
+    where:  { OR: where },
     select: safeUserSelect,
   });
-
   if (!local || !local.isActive) return null;
   return local as unknown as UserSession;
 }

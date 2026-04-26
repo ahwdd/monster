@@ -7,7 +7,7 @@ import { IoCheckmarkCircle } from "react-icons/io5";
 import PageTitle from "@/components/ui/PageTitle";
 import { RANK_DETAILS } from "@/lib/data/program";
 import Header from "@/components/Header";
-import FadeInView from "@/components/FadeInView";
+import FadeInView from "@/components/animation/FadeInView";
 import OutlinedParaBtn from "@/components/ui/OutlinedParaBtn";
 import SolidParaBtn from "@/components/ui/SolidParaBtn";
 

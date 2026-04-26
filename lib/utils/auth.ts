@@ -19,32 +19,35 @@ export const safeUserSelect = {
   lastLogin:  true,
   profile: {
     select: {
-      id:                 true,
-      channelLogo:        true,
-      platforms:          true,
-      contentType:        true,
-      primarySocialLink:  true,
-      platformLinks:      true,
-      followers:          true,
-      eventAttendance:    true,
-      rank:               true,
-      currentRankReach:   true,
-      totalReachAllTime:  true,
-      pictureCount:       true,
-      storyCount:         true,
-      reelCount:          true,
-      longVideoCount:     true,
-      postCount:          true,
-      totalPictureCount:  true,
-      totalStoryCount:    true,
-      totalReelCount:     true,
-      totalLongVideoCount:true,
-      totalPostCount:     true,
-      status:             true,
-      adminNotes:         true,
-      approvedAt:         true,
-      isActive:           true,
-      joinedAt:           true,
+      id:                  true,
+      channelLogo:         true,
+      platforms:           true,
+      contentType:         true,
+      primarySocialLink:   true,
+      platformLinks:       true,
+      followers:           true,
+      eventAttendance:     true,
+      rank:                true,
+      currentRankReach:    true,
+      totalReachAllTime:   true,
+      pictureCount:        true,
+      storyCount:          true,
+      reelCount:           true,
+      longVideoCount:      true,
+      postCount:           true,
+      totalPictureCount:   true,
+      totalStoryCount:     true,
+      totalReelCount:      true,
+      totalLongVideoCount: true,
+      totalPostCount:      true,
+      engagementRate:      true,
+      commitmentScore:     true,
+      adminGradeScore:     true,
+      status:              true,
+      adminNotes:          true,
+      approvedAt:          true,
+      isActive:            true,
+      joinedAt:            true,
     },
   },
 } as const;
@@ -57,7 +60,6 @@ export async function findUserByContact(
   if (email) where.push({ email: email.toLowerCase().trim() });
   if (phone) where.push({ phone });
   if (where.length === 0) return null;
-
   return prisma.user.findFirst({
     where:  { OR: where },
     select: safeUserSelect,
@@ -69,12 +71,9 @@ export function isFakeHubEmail(
   phone?: string | null
 ): boolean {
   if (!email) return false;
-
-  const lower    = email.toLowerCase().trim();
-  const [local]  = lower.split("@");
-
+  const lower   = email.toLowerCase().trim();
+  const [local] = lower.split("@");
   if (local.startsWith("+")) return true;
-
   return false;
 }
 

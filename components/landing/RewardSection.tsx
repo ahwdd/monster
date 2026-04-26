@@ -2,13 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { PACK_IMAGES, REWARD_PACKS } from "@/lib/data/program";
-import FadeInView from "../FadeInView";
+import FadeInView from "../animation/FadeInView";
 import PackSection from "./PackSection";
 
 const XD_COLORS: Record<string, string> = {
   "Rookie Pack": "#22bb39",
   "Rising Pack": "#d4ff00",
-  "Cold Pack":   "#00cfff",
+  "Cold Pack": "#00cfff",
 };
 
 export default function RewardsSection() {
@@ -18,9 +18,7 @@ export default function RewardsSection() {
 
   return (
     <section
-      id="rewards"
-      className="w-full bg-black py-16 md:py-25 px-4 md:px-20 lg:px-35 relative overflow-hidden"
-    >
+      className="w-full bg-black py-16 md:py-25 px-4 md:px-20 lg:px-35 relative overflow-hidden">
       <div className="container px-[10%]">
         {/* Title */}
         <FadeInView className="text-center mb-12 md:mb-16 relative z-2">

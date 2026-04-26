@@ -32,6 +32,35 @@ export const rankLinks = [
   },
 ] as const;
 
+
+export const NAV_ITEMS = [
+  { labelEn: "Home", labelAr: "الرئيسية", href: `/`, sectionId: null },
+  {
+    labelEn: "Overview",
+    labelAr: "نظرة عامة",
+    href: `/#overview`,
+    sectionId: "overview",
+  },
+  {
+    labelEn: "Levels",
+    labelAr: "التصنيفات",
+    href: `/#levels`,
+    sectionId: "levels",
+  },
+  {
+    labelEn: "Rewards",
+    labelAr: "المكافآت",
+    href: `/#rewards`,
+    sectionId: "rewards",
+  },
+  {
+    labelEn: "Leaderboard",
+    labelAr: "الصدارة",
+    href: `/#leaderboard`,
+    sectionId: "leaderboard",
+  },
+];
+
 export const footerLinks = [
   {
     titleKey: "footer.program",

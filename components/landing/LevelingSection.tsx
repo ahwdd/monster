@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, rgba } from "framer-motion";
 import { LANDING_RANKS } from "@/lib/data/program";
-import FadeInView from "../FadeInView";
+import FadeInView from "../animation/FadeInView";
 import { hexToRgba } from "@/lib/utils/colors";
 import { FaStar } from "react-icons/fa";
 
@@ -13,12 +13,11 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const XD_COLORS: Record<string, string> = {
   rookie: "#22bb39",
   rising: "#d4ff00",
-  cold:   "#00cfff",
+  cold: "#00cfff",
 };
 
 // Shorten a requirement string to a compact label + value pair
 function parseReq(text: string): { value: string; label: string } {
-
   if (/stream|reel|stor/i.test(text)) {
     const nums = (text.match(/\d+/g) ?? []).map(Number);
     const total = nums.reduce((a, b) => a + b, 0);
@@ -49,7 +48,12 @@ function parseReq(text: string): { value: string; label: string } {
   return { value: words[0], label: words.slice(1, 3).join(" ") };
 }
 
-function ReqCircle({ value, label, fullText, color }: {
+function ReqCircle({
+  value,
+  label,
+  fullText,
+  color,
+}: {
   value: string;
   label: string;
   fullText: string;
@@ -61,8 +65,7 @@ function ReqCircle({ value, label, fullText, color }: {
     <div
       className="flex flex-col items-center gap-1.5 relative cursor-default"
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+      onMouseLeave={() => setHovered(false)}>
       {/* Tooltip */}
       <div
         className="absolute bottom-full left-1/2 mb-2 z-10 pointer-events-none
@@ -77,22 +80,19 @@ function ReqCircle({ value, label, fullText, color }: {
           width: "80px",
           whiteSpace: "normal",
           lineHeight: "1.4",
-        }}
-      >
+        }}>
         {fullText}
       </div>
 
       {/* Circle */}
       <div
         className={`flex items-center justify-center rounded-full transition-colors duration-200 
-          ${hovered? "bg-white text-black": "bg-white/20 text-white/80"}`}
+          ${hovered ? "bg-white text-black" : "bg-white/20 text-white/80"}`}
         style={{
-          width:      "clamp(24px, 6vw, 44px)",
-          height:     "clamp(24px, 6vw, 44px)",
-        }}
-      >
-        <span
-          className="font-display font-black leading-none txt-large">
+          width: "clamp(24px, 6vw, 44px)",
+          height: "clamp(24px, 6vw, 44px)",
+        }}>
+        <span className="font-display font-black leading-none txt-large">
           {value}
         </span>
       </div>
@@ -102,10 +102,9 @@ function ReqCircle({ value, label, fullText, color }: {
         className="font-proxima text-center leading-tight"
         style={{
           fontSize: "clamp(0.55rem, 0.75vw, 0.65rem)",
-          color:    "#9ca3af",
+          color: "#9ca3af",
           maxWidth: "clamp(44px, 6vw, 60px)",
-        }}
-      >
+        }}>
         {label}
       </span>
     </div>
@@ -119,11 +118,8 @@ export default function LevelingSection() {
 
   return (
     <section
-      id="levels"
-      className="w-screen py-16 lg:py-25 px-4 lg:px-35 relative"
-    >
+      className="w-screen py-16 lg:py-25 px-4 lg:px-35 relative">
       <div className="container">
-        
         <div className="absolute w-screen inset-x-0 top-10 z-1 lg:-mt-14 -mt-10 overflow-hidden">
           <div className="clip-skew w-full h-full">
             <img
@@ -153,24 +149,21 @@ export default function LevelingSection() {
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
-              >
+                transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}>
                 <div
                   className="block p-6 lg:p-8 h-full overflow-hidden relative rounded-md"
                   style={{
-                    border:     `3px solid ${color}`,
+                    border: `3px solid ${color}`,
                     background: `linear-gradient(to top, ${hexToRgba(color, 0.3)} 0%, ${hexToRgba(color, 0.2)} 10%, ${hexToRgba(color, 0)} 100%)`,
-                  }}
-                >
+                  }}>
                   {/* Icon badge */}
                   <div
                     className="rounded-full w-fit p-3 mb-3"
                     style={{
                       color,
-                      border:     `1px solid ${color}`,
+                      border: `1px solid ${color}`,
                       background: hexToRgba(color, 0.1),
-                    }}
-                  >
+                    }}>
                     <FaStar className="size-6" />
                   </div>
 
@@ -178,11 +171,10 @@ export default function LevelingSection() {
                   <h3
                     className="font-display font-black uppercase "
                     style={{
-                      fontSize:      "clamp(1rem, 1.5vw, 1.3rem)",
+                      fontSize: "clamp(1rem, 1.5vw, 1.3rem)",
                       color,
                       letterSpacing: "0.05em",
-                    }}
-                  >
+                    }}>
                     {isAr ? rank.nameAr : rank.nameEn}
                   </h3>
 

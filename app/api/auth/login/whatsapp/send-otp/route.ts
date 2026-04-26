@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
           method:  "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body:    JSON.stringify({
-            name:      "Monster Creator", // placeholder — updated later on verify
+            name:      "Monster Creator",
             phone:     validatedData.phone,
             phone_key: validatedData.phone_key,
           }),

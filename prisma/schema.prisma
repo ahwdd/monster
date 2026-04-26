@@ -139,6 +139,10 @@ model CreatorProfile {
   totalReelCount      Int @default(0)
   totalLongVideoCount Int @default(0)
   totalPostCount      Int @default(0)
+  
+  engagementRate   Float @default(0) //(likes+comments+shares)/reach
+  commitmentScore  Float @default(0) //0-15
+  adminGradeScore  Float @default(0) //0-30
 
   rankedUpAt DateTime?
 
@@ -165,6 +169,11 @@ model Submission {
   previousAcceptedReach Int? // null = no previous
 
   statsScreenshotUrl String?
+
+  engagementRate    Float?   //%
+  submittedLikes    Int?     //
+  submittedComments Int?
+  submittedShares   Int?
 
   status      SubmissionStatus @default(PENDING)
   adminNotes  String?

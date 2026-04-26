@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { formatNumber } from "@/lib/utils/rank";
-import FadeInView from "../FadeInView";
+import FadeInView from "../animation/FadeInView";
 import { SkeletonTableRow } from "../Skeleton";
 import OutlinedParaBtn from "../ui/OutlinedParaBtn";
 
@@ -54,7 +54,6 @@ export default function TopMonstersSection() {
 
   return (
     <section
-      id="leaderboard"
       className="w-full bg-black py-16 md:py-25 px-4 md:px-35 relative">
       <img
         src="/assets/textures/monster-texture.png"

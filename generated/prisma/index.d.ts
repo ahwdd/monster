@@ -2386,6 +2386,9 @@ export namespace Prisma {
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
   }
 
   export type CreatorProfileSumAggregateOutputType = {
@@ -2402,6 +2405,9 @@ export namespace Prisma {
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
   }
 
   export type CreatorProfileMinAggregateOutputType = {
@@ -2436,6 +2442,9 @@ export namespace Prisma {
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
     rankedUpAt: Date | null
     isActive: boolean | null
     joinedAt: Date | null
@@ -2474,6 +2483,9 @@ export namespace Prisma {
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
     rankedUpAt: Date | null
     isActive: boolean | null
     joinedAt: Date | null
@@ -2514,6 +2526,9 @@ export namespace Prisma {
     totalReelCount: number
     totalLongVideoCount: number
     totalPostCount: number
+    engagementRate: number
+    commitmentScore: number
+    adminGradeScore: number
     rankedUpAt: number
     isActive: number
     joinedAt: number
@@ -2536,6 +2551,9 @@ export namespace Prisma {
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
   }
 
   export type CreatorProfileSumAggregateInputType = {
@@ -2552,6 +2570,9 @@ export namespace Prisma {
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
   }
 
   export type CreatorProfileMinAggregateInputType = {
@@ -2586,6 +2607,9 @@ export namespace Prisma {
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
     rankedUpAt?: true
     isActive?: true
     joinedAt?: true
@@ -2624,6 +2648,9 @@ export namespace Prisma {
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
     rankedUpAt?: true
     isActive?: true
     joinedAt?: true
@@ -2664,6 +2691,9 @@ export namespace Prisma {
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
     rankedUpAt?: true
     isActive?: true
     joinedAt?: true
@@ -2791,6 +2821,9 @@ export namespace Prisma {
     totalReelCount: number
     totalLongVideoCount: number
     totalPostCount: number
+    engagementRate: number
+    commitmentScore: number
+    adminGradeScore: number
     rankedUpAt: Date | null
     isActive: boolean
     joinedAt: Date
@@ -2851,6 +2884,9 @@ export namespace Prisma {
     totalReelCount?: boolean
     totalLongVideoCount?: boolean
     totalPostCount?: boolean
+    engagementRate?: boolean
+    commitmentScore?: boolean
+    adminGradeScore?: boolean
     rankedUpAt?: boolean
     isActive?: boolean
     joinedAt?: boolean
@@ -2894,13 +2930,16 @@ export namespace Prisma {
     totalReelCount?: boolean
     totalLongVideoCount?: boolean
     totalPostCount?: boolean
+    engagementRate?: boolean
+    commitmentScore?: boolean
+    adminGradeScore?: boolean
     rankedUpAt?: boolean
     isActive?: boolean
     joinedAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "realName" | "contactEmail" | "contactPhone" | "nickname" | "birthDate" | "nationality" | "residency" | "platforms" | "platformLinks" | "primarySocialLink" | "channelLogo" | "contentType" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "status" | "adminNotes" | "approvedAt" | "rank" | "currentRankReach" | "totalReachAllTime" | "pictureCount" | "storyCount" | "reelCount" | "longVideoCount" | "postCount" | "totalPictureCount" | "totalStoryCount" | "totalReelCount" | "totalLongVideoCount" | "totalPostCount" | "rankedUpAt" | "isActive" | "joinedAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
+  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "realName" | "contactEmail" | "contactPhone" | "nickname" | "birthDate" | "nationality" | "residency" | "platforms" | "platformLinks" | "primarySocialLink" | "channelLogo" | "contentType" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "status" | "adminNotes" | "approvedAt" | "rank" | "currentRankReach" | "totalReachAllTime" | "pictureCount" | "storyCount" | "reelCount" | "longVideoCount" | "postCount" | "totalPictureCount" | "totalStoryCount" | "totalReelCount" | "totalLongVideoCount" | "totalPostCount" | "engagementRate" | "commitmentScore" | "adminGradeScore" | "rankedUpAt" | "isActive" | "joinedAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2944,6 +2983,9 @@ export namespace Prisma {
       totalReelCount: number
       totalLongVideoCount: number
       totalPostCount: number
+      engagementRate: number
+      commitmentScore: number
+      adminGradeScore: number
       rankedUpAt: Date | null
       isActive: boolean
       joinedAt: Date
@@ -3376,6 +3418,9 @@ export namespace Prisma {
     readonly totalReelCount: FieldRef<"CreatorProfile", 'Int'>
     readonly totalLongVideoCount: FieldRef<"CreatorProfile", 'Int'>
     readonly totalPostCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly engagementRate: FieldRef<"CreatorProfile", 'Float'>
+    readonly commitmentScore: FieldRef<"CreatorProfile", 'Float'>
+    readonly adminGradeScore: FieldRef<"CreatorProfile", 'Float'>
     readonly rankedUpAt: FieldRef<"CreatorProfile", 'DateTime'>
     readonly isActive: FieldRef<"CreatorProfile", 'Boolean'>
     readonly joinedAt: FieldRef<"CreatorProfile", 'DateTime'>
@@ -3785,6 +3830,10 @@ export namespace Prisma {
     acceptedReach: number | null
     pendingReach: number | null
     previousAcceptedReach: number | null
+    engagementRate: number | null
+    submittedLikes: number | null
+    submittedComments: number | null
+    submittedShares: number | null
   }
 
   export type SubmissionSumAggregateOutputType = {
@@ -3792,6 +3841,10 @@ export namespace Prisma {
     acceptedReach: number | null
     pendingReach: number | null
     previousAcceptedReach: number | null
+    engagementRate: number | null
+    submittedLikes: number | null
+    submittedComments: number | null
+    submittedShares: number | null
   }
 
   export type SubmissionMinAggregateOutputType = {
@@ -3806,6 +3859,10 @@ export namespace Prisma {
     pendingReach: number | null
     previousAcceptedReach: number | null
     statsScreenshotUrl: string | null
+    engagementRate: number | null
+    submittedLikes: number | null
+    submittedComments: number | null
+    submittedShares: number | null
     status: $Enums.SubmissionStatus | null
     adminNotes: string | null
     isEdited: boolean | null
@@ -3825,6 +3882,10 @@ export namespace Prisma {
     pendingReach: number | null
     previousAcceptedReach: number | null
     statsScreenshotUrl: string | null
+    engagementRate: number | null
+    submittedLikes: number | null
+    submittedComments: number | null
+    submittedShares: number | null
     status: $Enums.SubmissionStatus | null
     adminNotes: string | null
     isEdited: boolean | null
@@ -3846,6 +3907,10 @@ export namespace Prisma {
     pendingReach: number
     previousAcceptedReach: number
     statsScreenshotUrl: number
+    engagementRate: number
+    submittedLikes: number
+    submittedComments: number
+    submittedShares: number
     status: number
     adminNotes: number
     isEdited: number
@@ -3860,6 +3925,10 @@ export namespace Prisma {
     acceptedReach?: true
     pendingReach?: true
     previousAcceptedReach?: true
+    engagementRate?: true
+    submittedLikes?: true
+    submittedComments?: true
+    submittedShares?: true
   }
 
   export type SubmissionSumAggregateInputType = {
@@ -3867,6 +3936,10 @@ export namespace Prisma {
     acceptedReach?: true
     pendingReach?: true
     previousAcceptedReach?: true
+    engagementRate?: true
+    submittedLikes?: true
+    submittedComments?: true
+    submittedShares?: true
   }
 
   export type SubmissionMinAggregateInputType = {
@@ -3881,6 +3954,10 @@ export namespace Prisma {
     pendingReach?: true
     previousAcceptedReach?: true
     statsScreenshotUrl?: true
+    engagementRate?: true
+    submittedLikes?: true
+    submittedComments?: true
+    submittedShares?: true
     status?: true
     adminNotes?: true
     isEdited?: true
@@ -3900,6 +3977,10 @@ export namespace Prisma {
     pendingReach?: true
     previousAcceptedReach?: true
     statsScreenshotUrl?: true
+    engagementRate?: true
+    submittedLikes?: true
+    submittedComments?: true
+    submittedShares?: true
     status?: true
     adminNotes?: true
     isEdited?: true
@@ -3921,6 +4002,10 @@ export namespace Prisma {
     pendingReach?: true
     previousAcceptedReach?: true
     statsScreenshotUrl?: true
+    engagementRate?: true
+    submittedLikes?: true
+    submittedComments?: true
+    submittedShares?: true
     status?: true
     adminNotes?: true
     isEdited?: true
@@ -4029,6 +4114,10 @@ export namespace Prisma {
     pendingReach: number | null
     previousAcceptedReach: number | null
     statsScreenshotUrl: string | null
+    engagementRate: number | null
+    submittedLikes: number | null
+    submittedComments: number | null
+    submittedShares: number | null
     status: $Enums.SubmissionStatus
     adminNotes: string | null
     isEdited: boolean
@@ -4069,6 +4158,10 @@ export namespace Prisma {
     pendingReach?: boolean
     previousAcceptedReach?: boolean
     statsScreenshotUrl?: boolean
+    engagementRate?: boolean
+    submittedLikes?: boolean
+    submittedComments?: boolean
+    submittedShares?: boolean
     status?: boolean
     adminNotes?: boolean
     isEdited?: boolean
@@ -4093,6 +4186,10 @@ export namespace Prisma {
     pendingReach?: boolean
     previousAcceptedReach?: boolean
     statsScreenshotUrl?: boolean
+    engagementRate?: boolean
+    submittedLikes?: boolean
+    submittedComments?: boolean
+    submittedShares?: boolean
     status?: boolean
     adminNotes?: boolean
     isEdited?: boolean
@@ -4100,7 +4197,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "nickname" | "rank" | "platform" | "contentLink" | "contentTypes" | "monsterAppearances" | "submittedReach" | "acceptedReach" | "pendingReach" | "previousAcceptedReach" | "statsScreenshotUrl" | "status" | "adminNotes" | "isEdited" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
+  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "nickname" | "rank" | "platform" | "contentLink" | "contentTypes" | "monsterAppearances" | "submittedReach" | "acceptedReach" | "pendingReach" | "previousAcceptedReach" | "statsScreenshotUrl" | "engagementRate" | "submittedLikes" | "submittedComments" | "submittedShares" | "status" | "adminNotes" | "isEdited" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
   export type SubmissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4124,6 +4221,10 @@ export namespace Prisma {
       pendingReach: number | null
       previousAcceptedReach: number | null
       statsScreenshotUrl: string | null
+      engagementRate: number | null
+      submittedLikes: number | null
+      submittedComments: number | null
+      submittedShares: number | null
       status: $Enums.SubmissionStatus
       adminNotes: string | null
       isEdited: boolean
@@ -4535,6 +4636,10 @@ export namespace Prisma {
     readonly pendingReach: FieldRef<"Submission", 'Int'>
     readonly previousAcceptedReach: FieldRef<"Submission", 'Int'>
     readonly statsScreenshotUrl: FieldRef<"Submission", 'String'>
+    readonly engagementRate: FieldRef<"Submission", 'Float'>
+    readonly submittedLikes: FieldRef<"Submission", 'Int'>
+    readonly submittedComments: FieldRef<"Submission", 'Int'>
+    readonly submittedShares: FieldRef<"Submission", 'Int'>
     readonly status: FieldRef<"Submission", 'SubmissionStatus'>
     readonly adminNotes: FieldRef<"Submission", 'String'>
     readonly isEdited: FieldRef<"Submission", 'Boolean'>
@@ -4987,6 +5092,9 @@ export namespace Prisma {
     totalReelCount: 'totalReelCount',
     totalLongVideoCount: 'totalLongVideoCount',
     totalPostCount: 'totalPostCount',
+    engagementRate: 'engagementRate',
+    commitmentScore: 'commitmentScore',
+    adminGradeScore: 'adminGradeScore',
     rankedUpAt: 'rankedUpAt',
     isActive: 'isActive',
     joinedAt: 'joinedAt',
@@ -5010,6 +5118,10 @@ export namespace Prisma {
     pendingReach: 'pendingReach',
     previousAcceptedReach: 'previousAcceptedReach',
     statsScreenshotUrl: 'statsScreenshotUrl',
+    engagementRate: 'engagementRate',
+    submittedLikes: 'submittedLikes',
+    submittedComments: 'submittedComments',
+    submittedShares: 'submittedShares',
     status: 'status',
     adminNotes: 'adminNotes',
     isEdited: 'isEdited',
@@ -5175,6 +5287,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ContentType[]'
    */
   export type ListEnumContentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContentType[]'>
@@ -5213,20 +5339,6 @@ export namespace Prisma {
    * Reference to a field of type 'SubmissionStatus[]'
    */
   export type ListEnumSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -5379,6 +5491,9 @@ export namespace Prisma {
     totalReelCount?: IntFilter<"CreatorProfile"> | number
     totalLongVideoCount?: IntFilter<"CreatorProfile"> | number
     totalPostCount?: IntFilter<"CreatorProfile"> | number
+    engagementRate?: FloatFilter<"CreatorProfile"> | number
+    commitmentScore?: FloatFilter<"CreatorProfile"> | number
+    adminGradeScore?: FloatFilter<"CreatorProfile"> | number
     rankedUpAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     isActive?: BoolFilter<"CreatorProfile"> | boolean
     joinedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
@@ -5421,6 +5536,9 @@ export namespace Prisma {
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
     rankedUpAt?: SortOrder
     isActive?: SortOrder
     joinedAt?: SortOrder
@@ -5466,6 +5584,9 @@ export namespace Prisma {
     totalReelCount?: IntFilter<"CreatorProfile"> | number
     totalLongVideoCount?: IntFilter<"CreatorProfile"> | number
     totalPostCount?: IntFilter<"CreatorProfile"> | number
+    engagementRate?: FloatFilter<"CreatorProfile"> | number
+    commitmentScore?: FloatFilter<"CreatorProfile"> | number
+    adminGradeScore?: FloatFilter<"CreatorProfile"> | number
     rankedUpAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     isActive?: BoolFilter<"CreatorProfile"> | boolean
     joinedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
@@ -5507,6 +5628,9 @@ export namespace Prisma {
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
     rankedUpAt?: SortOrder
     isActive?: SortOrder
     joinedAt?: SortOrder
@@ -5555,6 +5679,9 @@ export namespace Prisma {
     totalReelCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     totalLongVideoCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     totalPostCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    engagementRate?: FloatWithAggregatesFilter<"CreatorProfile"> | number
+    commitmentScore?: FloatWithAggregatesFilter<"CreatorProfile"> | number
+    adminGradeScore?: FloatWithAggregatesFilter<"CreatorProfile"> | number
     rankedUpAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
     isActive?: BoolWithAggregatesFilter<"CreatorProfile"> | boolean
     joinedAt?: DateTimeWithAggregatesFilter<"CreatorProfile"> | Date | string
@@ -5578,6 +5705,10 @@ export namespace Prisma {
     pendingReach?: IntNullableFilter<"Submission"> | number | null
     previousAcceptedReach?: IntNullableFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableFilter<"Submission"> | string | null
+    engagementRate?: FloatNullableFilter<"Submission"> | number | null
+    submittedLikes?: IntNullableFilter<"Submission"> | number | null
+    submittedComments?: IntNullableFilter<"Submission"> | number | null
+    submittedShares?: IntNullableFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
     isEdited?: BoolFilter<"Submission"> | boolean
@@ -5600,6 +5731,10 @@ export namespace Prisma {
     pendingReach?: SortOrder
     previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
+    engagementRate?: SortOrder
+    submittedLikes?: SortOrder
+    submittedComments?: SortOrder
+    submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
     isEdited?: SortOrder
@@ -5625,6 +5760,10 @@ export namespace Prisma {
     pendingReach?: IntNullableFilter<"Submission"> | number | null
     previousAcceptedReach?: IntNullableFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableFilter<"Submission"> | string | null
+    engagementRate?: FloatNullableFilter<"Submission"> | number | null
+    submittedLikes?: IntNullableFilter<"Submission"> | number | null
+    submittedComments?: IntNullableFilter<"Submission"> | number | null
+    submittedShares?: IntNullableFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
     isEdited?: BoolFilter<"Submission"> | boolean
@@ -5647,6 +5786,10 @@ export namespace Prisma {
     pendingReach?: SortOrder
     previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
+    engagementRate?: SortOrder
+    submittedLikes?: SortOrder
+    submittedComments?: SortOrder
+    submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
     isEdited?: SortOrder
@@ -5676,6 +5819,10 @@ export namespace Prisma {
     pendingReach?: IntNullableWithAggregatesFilter<"Submission"> | number | null
     previousAcceptedReach?: IntNullableWithAggregatesFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableWithAggregatesFilter<"Submission"> | string | null
+    engagementRate?: FloatNullableWithAggregatesFilter<"Submission"> | number | null
+    submittedLikes?: IntNullableWithAggregatesFilter<"Submission"> | number | null
+    submittedComments?: IntNullableWithAggregatesFilter<"Submission"> | number | null
+    submittedShares?: IntNullableWithAggregatesFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusWithAggregatesFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableWithAggregatesFilter<"Submission"> | string | null
     isEdited?: BoolWithAggregatesFilter<"Submission"> | boolean
@@ -5847,6 +5994,9 @@ export namespace Prisma {
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
     rankedUpAt?: Date | string | null
     isActive?: boolean
     joinedAt?: Date | string
@@ -5889,6 +6039,9 @@ export namespace Prisma {
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
     rankedUpAt?: Date | string | null
     isActive?: boolean
     joinedAt?: Date | string
@@ -5928,6 +6081,9 @@ export namespace Prisma {
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
     rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5969,6 +6125,9 @@ export namespace Prisma {
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
     rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6010,6 +6169,9 @@ export namespace Prisma {
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
     rankedUpAt?: Date | string | null
     isActive?: boolean
     joinedAt?: Date | string
@@ -6049,6 +6211,9 @@ export namespace Prisma {
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
     rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6089,6 +6254,9 @@ export namespace Prisma {
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
     rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6108,6 +6276,10 @@ export namespace Prisma {
     pendingReach?: number | null
     previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
+    engagementRate?: number | null
+    submittedLikes?: number | null
+    submittedComments?: number | null
+    submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
     isEdited?: boolean
@@ -6130,6 +6302,10 @@ export namespace Prisma {
     pendingReach?: number | null
     previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
+    engagementRate?: number | null
+    submittedLikes?: number | null
+    submittedComments?: number | null
+    submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
     isEdited?: boolean
@@ -6149,6 +6325,10 @@ export namespace Prisma {
     pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
     previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    submittedLikes?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedComments?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
@@ -6170,6 +6350,10 @@ export namespace Prisma {
     pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
     previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    submittedLikes?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedComments?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
@@ -6191,6 +6375,10 @@ export namespace Prisma {
     pendingReach?: number | null
     previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
+    engagementRate?: number | null
+    submittedLikes?: number | null
+    submittedComments?: number | null
+    submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
     isEdited?: boolean
@@ -6210,6 +6398,10 @@ export namespace Prisma {
     pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
     previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    submittedLikes?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedComments?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
@@ -6230,6 +6422,10 @@ export namespace Prisma {
     pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
     previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    submittedLikes?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedComments?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
@@ -6518,6 +6714,17 @@ export namespace Prisma {
     not?: NestedEnumCreatorRankFilter<$PrismaModel> | $Enums.CreatorRank
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -6561,6 +6768,9 @@ export namespace Prisma {
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
     rankedUpAt?: SortOrder
     isActive?: SortOrder
     joinedAt?: SortOrder
@@ -6581,6 +6791,9 @@ export namespace Prisma {
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
   }
 
   export type CreatorProfileMaxOrderByAggregateInput = {
@@ -6615,6 +6828,9 @@ export namespace Prisma {
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
     rankedUpAt?: SortOrder
     isActive?: SortOrder
     joinedAt?: SortOrder
@@ -6653,6 +6869,9 @@ export namespace Prisma {
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
     rankedUpAt?: SortOrder
     isActive?: SortOrder
     joinedAt?: SortOrder
@@ -6673,6 +6892,9 @@ export namespace Prisma {
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -6721,6 +6943,22 @@ export namespace Prisma {
     _max?: NestedEnumCreatorRankFilter<$PrismaModel>
   }
 
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type EnumPlatformFilter<$PrismaModel = never> = {
     equals?: $Enums.Platform | EnumPlatformFieldRefInput<$PrismaModel>
     in?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
@@ -6756,6 +6994,18 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
+  }
+
   export type EnumSubmissionStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.SubmissionStatus | EnumSubmissionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
@@ -6777,6 +7027,10 @@ export namespace Prisma {
     pendingReach?: SortOrder
     previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
+    engagementRate?: SortOrder
+    submittedLikes?: SortOrder
+    submittedComments?: SortOrder
+    submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
     isEdited?: SortOrder
@@ -6789,6 +7043,10 @@ export namespace Prisma {
     acceptedReach?: SortOrder
     pendingReach?: SortOrder
     previousAcceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    submittedLikes?: SortOrder
+    submittedComments?: SortOrder
+    submittedShares?: SortOrder
   }
 
   export type SubmissionMaxOrderByAggregateInput = {
@@ -6803,6 +7061,10 @@ export namespace Prisma {
     pendingReach?: SortOrder
     previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
+    engagementRate?: SortOrder
+    submittedLikes?: SortOrder
+    submittedComments?: SortOrder
+    submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
     isEdited?: SortOrder
@@ -6822,6 +7084,10 @@ export namespace Prisma {
     pendingReach?: SortOrder
     previousAcceptedReach?: SortOrder
     statsScreenshotUrl?: SortOrder
+    engagementRate?: SortOrder
+    submittedLikes?: SortOrder
+    submittedComments?: SortOrder
+    submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
     isEdited?: SortOrder
@@ -6834,6 +7100,10 @@ export namespace Prisma {
     acceptedReach?: SortOrder
     pendingReach?: SortOrder
     previousAcceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    submittedLikes?: SortOrder
+    submittedComments?: SortOrder
+    submittedShares?: SortOrder
   }
 
   export type EnumPlatformWithAggregatesFilter<$PrismaModel = never> = {
@@ -6860,6 +7130,23 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
     isSet?: boolean
   }
 
@@ -7033,6 +7320,14 @@ export namespace Prisma {
     set?: $Enums.CreatorRank
   }
 
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutProfileNestedInput = {
     create?: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutProfileInput
@@ -7070,6 +7365,15 @@ export namespace Prisma {
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+    unset?: boolean
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
     decrement?: number
@@ -7288,6 +7592,17 @@ export namespace Prisma {
     not?: NestedEnumCreatorRankFilter<$PrismaModel> | $Enums.CreatorRank
   }
 
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -7302,17 +7617,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedEnumEventAttendanceWithAggregatesFilter<$PrismaModel = never> = {
@@ -7345,11 +7649,39 @@ export namespace Prisma {
     _max?: NestedEnumCreatorRankFilter<$PrismaModel>
   }
 
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type NestedEnumPlatformFilter<$PrismaModel = never> = {
     equals?: $Enums.Platform | EnumPlatformFieldRefInput<$PrismaModel>
     in?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
     notIn?: $Enums.Platform[] | ListEnumPlatformFieldRefInput<$PrismaModel>
     not?: NestedEnumPlatformFilter<$PrismaModel> | $Enums.Platform
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
   }
 
   export type NestedEnumSubmissionStatusFilter<$PrismaModel = never> = {
@@ -7386,7 +7718,7 @@ export namespace Prisma {
     isSet?: boolean
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -7394,7 +7726,12 @@ export namespace Prisma {
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
     isSet?: boolean
   }
 
@@ -7442,6 +7779,9 @@ export namespace Prisma {
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
     rankedUpAt?: Date | string | null
     isActive?: boolean
     joinedAt?: Date | string
@@ -7482,6 +7822,9 @@ export namespace Prisma {
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
     rankedUpAt?: Date | string | null
     isActive?: boolean
     joinedAt?: Date | string
@@ -7506,6 +7849,10 @@ export namespace Prisma {
     pendingReach?: number | null
     previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
+    engagementRate?: number | null
+    submittedLikes?: number | null
+    submittedComments?: number | null
+    submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
     isEdited?: boolean
@@ -7526,6 +7873,10 @@ export namespace Prisma {
     pendingReach?: number | null
     previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
+    engagementRate?: number | null
+    submittedLikes?: number | null
+    submittedComments?: number | null
+    submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
     isEdited?: boolean
@@ -7586,6 +7937,9 @@ export namespace Prisma {
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
     rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7625,6 +7979,9 @@ export namespace Prisma {
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
     rankedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7664,6 +8021,10 @@ export namespace Prisma {
     pendingReach?: IntNullableFilter<"Submission"> | number | null
     previousAcceptedReach?: IntNullableFilter<"Submission"> | number | null
     statsScreenshotUrl?: StringNullableFilter<"Submission"> | string | null
+    engagementRate?: FloatNullableFilter<"Submission"> | number | null
+    submittedLikes?: IntNullableFilter<"Submission"> | number | null
+    submittedComments?: IntNullableFilter<"Submission"> | number | null
+    submittedShares?: IntNullableFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
     isEdited?: BoolFilter<"Submission"> | boolean
@@ -7873,6 +8234,10 @@ export namespace Prisma {
     pendingReach?: number | null
     previousAcceptedReach?: number | null
     statsScreenshotUrl?: string | null
+    engagementRate?: number | null
+    submittedLikes?: number | null
+    submittedComments?: number | null
+    submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
     isEdited?: boolean
@@ -7892,6 +8257,10 @@ export namespace Prisma {
     pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
     previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    submittedLikes?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedComments?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
@@ -7911,6 +8280,10 @@ export namespace Prisma {
     pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
     previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    submittedLikes?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedComments?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
@@ -7930,6 +8303,10 @@ export namespace Prisma {
     pendingReach?: NullableIntFieldUpdateOperationsInput | number | null
     previousAcceptedReach?: NullableIntFieldUpdateOperationsInput | number | null
     statsScreenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
+    submittedLikes?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedComments?: NullableIntFieldUpdateOperationsInput | number | null
+    submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean

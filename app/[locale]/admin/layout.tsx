@@ -11,11 +11,15 @@ import {
   IoDocumentTextOutline,
   IoPeopleOutline,
   IoArrowUpCircleOutline,
-  IoGridOutline,
 } from "react-icons/io5";
 import { useAuth } from "@/hooks/useAuth";
+import RepairTool from "@/components/admin/RepairTool";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const t = useTranslations("admin");
   const locale = useLocale();
   const isRTL = locale === "ar";
@@ -29,14 +33,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [initializationComplete, isAuthenticated, user, router, locale]);
 
   const NAV = [
-    { href: `/admin/submissions`,   icon: IoDocumentTextOutline, labelEn: "Submissions",   labelAr: "المشاركات" },
-    { href: `/admin/registrations`, icon: IoPeopleOutline,        labelEn: "Registrations", labelAr: "التسجيلات" },
-    { href: `/admin/rank-ups`,      icon: IoArrowUpCircleOutline, labelEn: "Rank Ups",      labelAr: "الترقيات" },
+    {
+      href: `/admin/submissions`,
+      icon: IoDocumentTextOutline,
+      labelEn: "Submissions",
+      labelAr: "المشاركات",
+    },
+    {
+      href: `/admin/registrations`,
+      icon: IoPeopleOutline,
+      labelEn: "Registrations",
+      labelAr: "التسجيلات",
+    },
+    {
+      href: `/admin/rank-ups`,
+      icon: IoArrowUpCircleOutline,
+      labelEn: "Rank Ups",
+      labelAr: "الترقيات",
+    },
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#000]">
-      {/* Fixed sidebar */}
+    <div className="flex min-h-screen bg-black">
+      {/* ── Fixed sidebar ────────────────────────────────────────────── */}
       <aside
         className="fixed top-0 bottom-0 z-30 flex flex-col bg-[#050505]"
         style={{
@@ -44,18 +63,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           borderInlineEnd: "1px solid #272727",
           [isRTL ? "right" : "left"]: 0,
         }}>
-        {/* Logo area */}
+        {/* Logo */}
         <div
           className="flex items-center px-6 shrink-0"
           style={{ height: "80px", borderBottom: "1px solid #272727" }}>
           <Link href={`/admin/submissions`}>
-            <Image src="/assets/logo.png" alt="Monster" width={120} height={52} className="object-contain h-8 w-auto" />
+            <Image
+              src="/assets/logo.png"
+              alt="Monster"
+              width={120}
+              height={52}
+              className="object-contain h-8 w-auto"
+            />
           </Link>
         </div>
 
         {/* Admin label */}
         <div className="px-6 py-4 border-b border-[#272727]">
-          <p className="font-display font-bold uppercase text-[#6bd41a] tracking-[2px]" style={{ fontSize: "11px" }}>
+          <p
+            className="font-display font-bold uppercase text-[#6bd41a] tracking-[2px]"
+            style={{ fontSize: "11px" }}>
             {isRTL ? "لوحة الإدارة" : "Admin Panel"}
           </p>
         </div>
@@ -80,26 +107,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        {/* User info bottom */}
+        {/* ── Repair tool ───────────────────────────────────────────── */}
+        <div className="px-3 pb-3 border-t border-[#272727] pt-3">
+          <RepairTool />
+        </div>
+
+        {/* User info */}
         {user && (
           <div className="px-6 py-4 border-t border-[#272727]">
             <p className="font-proxima txt-smaller text-[#555]">
               {user.firstName} {user.lastName}
             </p>
-            <p className="font-proxima txt-smaller text-[#333]">{user.email ?? user.phone ?? ""}</p>
+            <p className="font-proxima txt-smaller text-[#333]">
+              {user.email ?? user.phone ?? ""}
+            </p>
           </div>
         )}
       </aside>
 
-      {/* Main content — offset by sidebar width */}
+      {/* ── Main content ─────────────────────────────────────────────── */}
       <div
         className="flex-1 flex flex-col"
         style={{ [isRTL ? "marginRight" : "marginLeft"]: "240px" }}>
-        {/* Top header bar */}
+        {/* Top header */}
         <header
           className="sticky top-0 z-20 flex items-center justify-between px-6 bg-[#050505]"
           style={{ height: "80px", borderBottom: "1px solid #272727" }}>
-          <h1 className="font-display font-black text-white uppercase tracking-wide" style={{ fontSize: "1.2rem" }}>
+          <h1
+            className="font-display font-black text-white uppercase tracking-wide"
+            style={{ fontSize: "1.2rem" }}>
             {t("dashboardTitle")}
           </h1>
           <Link

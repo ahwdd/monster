@@ -36,6 +36,7 @@ type Submission = {
   adminNotes: string | null;
   isEdited: boolean;
   createdAt: string;
+  engagementRate: number | null;
   user: {
     firstName: string;
     lastName: string;
@@ -47,23 +48,30 @@ type Submission = {
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function AdminSubmissionsPage() {
-  const t = useTranslations("admin");
+  const t      = useTranslations("admin");
   const locale = useLocale();
   const router = useRouter();
-  const toast = useToast();
+  const toast  = useToast();
   const { user, isAuthenticated, initializationComplete } = useAuth();
 
   const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [filter, setFilter] = useState<
-    "all" | "PENDING" | "APPROVED" | "REJECTED"
-  >("all");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [reachInput, setReachInput] = useState("");
-  const [notesInput, setNotesInput] = useState("");
+  const [loading,     setLoading]     = useState(true);
+  const [page,        setPage]        = useState(1);
+  const [totalPages,  setTotalPages]  = useState(1);
+  const [filter,      setFilter]      = useState<"all" | "PENDING" | "APPROVED" | "REJECTED">("all");
+  const [expandedId,  setExpandedId]  = useState<string | null>(null);
+  const [editingId,   setEditingId]   = useState<string | null>(null);
+
+  // Edit panel state
+  const [reachInput,    setReachInput]    = useState("");
+  const [notesInput,    setNotesInput]    = useState("");
+  // Engagement — admin picks ONE mode
+  const [engMode,       setEngMode]       = useState<"rate" | "raw">("rate");
+  const [engRate,       setEngRate]       = useState("");      // direct %
+  const [engLikes,      setEngLikes]      = useState("");
+  const [engComments,   setEngComments]   = useState("");
+  const [engShares,     setEngShares]     = useState("");
+
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -81,9 +89,7 @@ export default function AdminSubmissionsPage() {
     try {
       const params = new URLSearchParams({ page: String(page), limit: "15" });
       if (filter !== "all") params.set("status", filter);
-      const res = await fetch(`/api/admin/submissions?${params}`, {
-        credentials: "include",
-      });
+      const res  = await fetch(`/api/admin/submissions?${params}`, { credentials: "include" });
       const data = await res.json();
       if (data.success) {
         setSubmissions(data.data);
@@ -96,33 +102,77 @@ export default function AdminSubmissionsPage() {
     }
   }
 
+  function openEdit(s: Submission) {
+    setEditingId(s.id);
+    setExpandedId(s.id);
+    setReachInput(String(s.pendingReach ?? s.submittedReach));
+    setNotesInput(s.adminNotes ?? "");
+    setEngMode("rate");
+    setEngRate(s.engagementRate != null ? String(s.engagementRate.toFixed(2)) : "");
+    setEngLikes("");
+    setEngComments("");
+    setEngShares("");
+  }
+
+  function closeEdit() {
+    setEditingId(null);
+    setReachInput("");
+    setNotesInput("");
+    setEngRate("");
+    setEngLikes("");
+    setEngComments("");
+    setEngShares("");
+  }
+
+  // Live preview: if admin is using raw mode, compute rate from current reach input
+  function previewRate(s: Submission): string | null {
+    if (engMode !== "raw") return null;
+    const reach = reachInput ? parseInt(reachInput, 10) : (s.pendingReach ?? s.submittedReach);
+    const interactions =
+      (parseInt(engLikes    || "0", 10)) +
+      (parseInt(engComments || "0", 10)) +
+      (parseInt(engShares   || "0", 10));
+    if (!reach || !interactions) return null;
+    return ((interactions / reach) * 100).toFixed(2);
+  }
+
   async function handleDecision(id: string, status: "APPROVED" | "REJECTED") {
     setSaving(true);
     const overrideReach = reachInput ? parseInt(reachInput, 10) : undefined;
+
+    // Build engagement payload
+    const engPayload: Record<string, any> = {};
+    if (status === "APPROVED" && editingId === id) {
+      if (engMode === "rate" && engRate) {
+        engPayload.engagementRate = parseFloat(engRate);
+      } else if (engMode === "raw") {
+        if (engLikes)    engPayload.submittedLikes    = parseInt(engLikes,    10);
+        if (engComments) engPayload.submittedComments = parseInt(engComments, 10);
+        if (engShares)   engPayload.submittedShares   = parseInt(engShares,   10);
+      }
+    }
+
     try {
       const res = await fetch(`/api/admin/submissions/${id}`, {
-        method: "PATCH",
+        method:  "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status,
           acceptedReach: overrideReach,
-          adminNotes: notesInput || undefined,
+          adminNotes:    notesInput || undefined,
+          ...engPayload,
         }),
       });
       const data = await res.json();
       if (data.success) {
         setSubmissions((prev) =>
-          prev.map((s) => (s.id === id ? { ...s, ...data.data } : s)),
+          prev.map((s) => (s.id === id ? { ...s, ...data.data } : s))
         );
-        toast.success(
-          status === "APPROVED" ? t("approvedOk") : t("rejectedOk"),
-        );
-        setEditingId(null);
-        setReachInput("");
-        setNotesInput("");
+        toast.success(status === "APPROVED" ? t("approvedOk") : t("rejectedOk"));
+        closeEdit();
       } else {
-        toast.error(t("failedUpdate"));
+        toast.error(data.error || t("failedUpdate"));
       }
     } catch {
       toast.error(t("failedUpdate"));
@@ -143,7 +193,7 @@ export default function AdminSubmissionsPage() {
 
   const STATUS_STYLE: Record<string, string> = {
     APPROVED: "text-[#22bb39] bg-[#22bb39]/10",
-    PENDING: "text-[#bfec1d] bg-[#bfec1d]/10",
+    PENDING:  "text-[#bfec1d] bg-[#bfec1d]/10",
     REJECTED: "text-red-400 bg-red-400/10",
   };
 
@@ -164,14 +214,9 @@ export default function AdminSubmissionsPage() {
             {(["all", "PENDING", "APPROVED", "REJECTED"] as const).map((f) => (
               <button
                 key={f}
-                onClick={() => {
-                  setFilter(f);
-                  setPage(1);
-                }}
+                onClick={() => { setFilter(f); setPage(1); }}
                 className={`px-3 py-1.5 txt-smaller font-display font-bold uppercase tracking-wider transition-colors ${
-                  filter === f
-                    ? "bg-[#6bd41a] text-black"
-                    : "text-[#ccccd0] hover:text-white"
+                  filter === f ? "bg-[#6bd41a] text-black" : "text-[#ccccd0] hover:text-white"
                 }`}>
                 {f === "all" ? t("all") : t(f.toLowerCase() as any)}
               </button>
@@ -194,10 +239,12 @@ export default function AdminSubmissionsPage() {
       ) : (
         <div className="space-y-2">
           {submissions.map((s, i) => {
-            const hasDelta = s.pendingReach !== null;
-            const delta = hasDelta
-              ? s.pendingReach! - (s.previousAcceptedReach ?? s.acceptedReach)
-              : 0;
+            const hasDelta   = s.pendingReach !== null;
+            const delta      = hasDelta ? s.pendingReach! - (s.previousAcceptedReach ?? s.acceptedReach) : 0;
+            const isExpanded = expandedId === s.id;
+            const isEditing  = editingId  === s.id;
+            const ratePreview = isEditing ? previewRate(s) : null;
+
             return (
               <motion.div
                 key={s.id}
@@ -205,23 +252,16 @@ export default function AdminSubmissionsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.02, ease: EASE }}
                 className="bg-[#0a0a0a] border border-[#272727] overflow-hidden">
+
+                {/* ── Card header ── */}
                 <div className="p-4 flex items-center gap-4 flex-wrap">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="font-display font-bold text-white txt-small">
-                        {s.nickname}
-                      </span>
-                      <span className="txt-smaller text-[#555]">
-                        {s.user.firstName} {s.user.lastName}
-                      </span>
-                      <span className="txt-smaller uppercase text-[#6bd41a] bg-[#6bd41a]/10 px-2 py-0.5">
-                        {s.platform}
-                      </span>
-                      <span className="txt-smaller text-[#ccccd0] uppercase">
-                        {s.rank.replace(/_/g, " ")}
-                      </span>
-                      <span
-                        className={`txt-smaller px-2 py-0.5 ${STATUS_STYLE[s.status]}`}>
+                      <span className="font-display font-bold text-white txt-small">{s.nickname}</span>
+                      <span className="txt-smaller text-[#555]">{s.user.firstName} {s.user.lastName}</span>
+                      <span className="txt-smaller uppercase text-[#6bd41a] bg-[#6bd41a]/10 px-2 py-0.5">{s.platform}</span>
+                      <span className="txt-smaller text-[#ccccd0] uppercase">{s.rank.replace(/_/g, " ")}</span>
+                      <span className={`txt-smaller px-2 py-0.5 ${STATUS_STYLE[s.status]}`}>
                         {t(s.status.toLowerCase() as any)}
                       </span>
                       {hasDelta && (
@@ -230,34 +270,27 @@ export default function AdminSubmissionsPage() {
                           {t("pendingEdit")}
                         </span>
                       )}
+                      {s.engagementRate != null && s.engagementRate > 0 && (
+                        <span className="txt-smaller text-[#bfec1d] bg-[#bfec1d]/5 px-2 py-0.5">
+                          {s.engagementRate.toFixed(2)}% eng
+                        </span>
+                      )}
                     </div>
                     <div className="flex gap-4 txt-smaller flex-wrap">
                       <span>
-                        <span className="text-[#555]">
-                          {t("acceptedReach")}:{" "}
-                        </span>
-                        <span className="text-white font-medium">
-                          {formatNumber(s.acceptedReach)}
-                        </span>
+                        <span className="text-[#555]">{t("acceptedReach")}: </span>
+                        <span className="text-white font-medium">{formatNumber(s.acceptedReach)}</span>
                       </span>
                       {hasDelta && (
                         <span>
-                          <span className="text-[#555]">
-                            {t("pendingEdit")}:{" "}
-                          </span>
+                          <span className="text-[#555]">{t("pendingEdit")}: </span>
                           <span className="text-[#bfec1d] font-medium">
                             {formatNumber(s.pendingReach!)}
-                            {delta > 0 && (
-                              <span className="text-[#555] ms-1">
-                                (+{formatNumber(delta)})
-                              </span>
-                            )}
+                            {delta > 0 && <span className="text-[#555] ms-1">(+{formatNumber(delta)})</span>}
                           </span>
                         </span>
                       )}
-                      <span className="text-[#555]">
-                        {new Date(s.createdAt).toLocaleDateString(locale)}
-                      </span>
+                      <span className="text-[#555]">{new Date(s.createdAt).toLocaleDateString(locale)}</span>
                     </div>
                   </div>
 
@@ -279,38 +312,23 @@ export default function AdminSubmissionsPage() {
                       </button>
                     )}
                     <button
-                      onClick={() => {
-                        setEditingId(s.id);
-                        setExpandedId(s.id);
-                        setReachInput(
-                          String(s.pendingReach ?? s.submittedReach),
-                        );
-                        setNotesInput(s.adminNotes ?? "");
-                      }}
+                      onClick={() => isEditing ? closeEdit() : openEdit(s)}
                       className="px-3 py-2 bg-[#171717] border border-[#272727] hover:border-[#444] text-white txt-smaller transition-colors">
-                      {t("edit")}
+                      {isEditing ? t("cancel") : t("edit")}
                     </button>
                     <button
-                      onClick={() =>
-                        setExpandedId(expandedId === s.id ? null : s.id)
-                      }
+                      onClick={() => setExpandedId(isExpanded ? null : s.id)}
                       className="p-2 text-[#555] hover:text-white transition-colors">
-                      {expandedId === s.id ? (
-                        <IoChevronUp className="size-4" />
-                      ) : (
-                        <IoChevronDown className="size-4" />
-                      )}
+                      {isExpanded ? <IoChevronUp className="size-4" /> : <IoChevronDown className="size-4" />}
                     </button>
                   </div>
                 </div>
 
-                {/* Expanded detail */}
-                {expandedId === s.id && (
+                {/* ── Expanded detail ── */}
+                {isExpanded && (
                   <div className="border-t border-[#272727] p-5 space-y-4 bg-[#050505]">
                     <div>
-                      <p className="txt-smaller text-[#555] mb-1">
-                        {t("contentLink")}
-                      </p>
+                      <p className="txt-smaller text-[#555] mb-1">{t("contentLink")}</p>
                       <a
                         href={s.contentLink}
                         target="_blank"
@@ -323,28 +341,20 @@ export default function AdminSubmissionsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="txt-smaller text-[#555] mb-2">
-                          {t("contentTypes")}
-                        </p>
+                        <p className="txt-smaller text-[#555] mb-2">{t("contentTypes")}</p>
                         <div className="flex flex-wrap gap-1">
                           {s.contentTypes.map((c) => (
-                            <span
-                              key={c}
-                              className="txt-smaller px-2 py-0.5 bg-[#171717] border border-[#272727] text-[#ccccd0]">
+                            <span key={c} className="txt-smaller px-2 py-0.5 bg-[#171717] border border-[#272727] text-[#ccccd0]">
                               {c.replace(/_/g, " ")}
                             </span>
                           ))}
                         </div>
                       </div>
                       <div>
-                        <p className="txt-smaller text-[#555] mb-2">
-                          {t("monsterAppearance")}
-                        </p>
+                        <p className="txt-smaller text-[#555] mb-2">{t("monsterAppearance")}</p>
                         <div className="flex flex-wrap gap-1">
                           {s.monsterAppearances.map((a) => (
-                            <span
-                              key={a}
-                              className="txt-smaller px-2 py-0.5 bg-[#171717] border border-[#272727] text-[#ccccd0]">
+                            <span key={a} className="txt-smaller px-2 py-0.5 bg-[#171717] border border-[#272727] text-[#ccccd0]">
                               {a.replace(/_/g, " ")}
                             </span>
                           ))}
@@ -354,32 +364,19 @@ export default function AdminSubmissionsPage() {
 
                     {hasDelta && (
                       <div className="border border-[#bfec1d]/20 bg-[#bfec1d]/5 p-3 space-y-1">
-                        <p className="txt-smaller font-bold text-[#bfec1d]">
-                          {t("pendingEdit")}
-                        </p>
+                        <p className="txt-smaller font-bold text-[#bfec1d]">{t("pendingEdit")}</p>
                         <div className="flex gap-4 txt-smaller flex-wrap">
                           <span>
-                            <span className="text-[#555]">
-                              {t("previousAccepted")}:{" "}
-                            </span>
-                            <span className="text-white">
-                              {formatNumber(
-                                s.previousAcceptedReach ?? s.acceptedReach,
-                              )}
-                            </span>
+                            <span className="text-[#555]">{t("previousAccepted")}: </span>
+                            <span className="text-white">{formatNumber(s.previousAcceptedReach ?? s.acceptedReach)}</span>
                           </span>
                           <span>
                             <span className="text-[#555]">New: </span>
-                            <span className="text-[#bfec1d]">
-                              {formatNumber(s.pendingReach!)}
-                            </span>
+                            <span className="text-[#bfec1d]">{formatNumber(s.pendingReach!)}</span>
                           </span>
                           <span>
                             <span className="text-[#555]">Delta: </span>
-                            <span
-                              className={
-                                delta >= 0 ? "text-[#22bb39]" : "text-red-400"
-                              }>
+                            <span className={delta >= 0 ? "text-[#22bb39]" : "text-red-400"}>
                               +{formatNumber(delta)}
                             </span>
                           </span>
@@ -389,9 +386,7 @@ export default function AdminSubmissionsPage() {
 
                     {s.statsScreenshotUrl && (
                       <div>
-                        <p className="txt-smaller text-[#555] mb-2">
-                          {t("statsScreenshot")}
-                        </p>
+                        <p className="txt-smaller text-[#555] mb-2">{t("statsScreenshot")}</p>
                         <div className="relative w-full max-w-xs h-40 border border-[#272727] overflow-hidden">
                           <Image
                             src={s.statsScreenshotUrl}
@@ -403,17 +398,18 @@ export default function AdminSubmissionsPage() {
                       </div>
                     )}
 
-                    {editingId === s.id && (
-                      <div className="border-t border-[#272727] pt-4 space-y-3">
+                    {/* ── Edit panel ── */}
+                    {isEditing && (
+                      <div className="border-t border-[#272727] pt-4 space-y-4">
                         <p className="txt-small font-display font-bold text-white uppercase tracking-wide">
                           {t("editSubmission")}
                         </p>
+
+                        {/* Reach override */}
                         <div className="space-y-1">
                           <label className="txt-smaller text-[#ccccd0]">
                             {t("overrideReach")}{" "}
-                            <span className="text-[#555]">
-                              ({t("overrideReachHint")})
-                            </span>
+                            <span className="text-[#555]">({t("overrideReachHint")})</span>
                           </label>
                           <input
                             type="number"
@@ -423,10 +419,81 @@ export default function AdminSubmissionsPage() {
                             className="xd-input"
                           />
                         </div>
+
+                        {/* ── Engagement section ── */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <label className="txt-smaller text-[#ccccd0]">
+                              Engagement Rate
+                              <span className="text-[#555] ms-1">(optional)</span>
+                            </label>
+                            {/* Mode toggle */}
+                            <div className="flex gap-1 bg-[#0a0a0a] border border-[#272727] p-0.5">
+                              {(["rate", "raw"] as const).map((m) => (
+                                <button
+                                  key={m}
+                                  onClick={() => setEngMode(m)}
+                                  className={`px-2 py-1 txt-smaller font-bold uppercase tracking-wide transition-colors ${
+                                    engMode === m
+                                      ? "bg-[#bfec1d] text-black"
+                                      : "text-[#555] hover:text-white"
+                                  }`}>
+                                  {m === "rate" ? "% Direct" : "Raw Counts"}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {engMode === "rate" ? (
+                            /* Direct % input */
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                value={engRate}
+                                onChange={(e) => setEngRate(e.target.value)}
+                                placeholder="e.g. 2.35"
+                                className="xd-input flex-1"
+                              />
+                              <span className="txt-small text-[#555] shrink-0">%</span>
+                            </div>
+                          ) : (
+                            /* Raw counts → auto-calculate */
+                            <div className="space-y-2">
+                              <div className="grid grid-cols-3 gap-2">
+                                {[
+                                  { label: "Likes",    val: engLikes,    set: setEngLikes },
+                                  { label: "Comments", val: engComments, set: setEngComments },
+                                  { label: "Shares",   val: engShares,   set: setEngShares },
+                                ].map(({ label, val, set }) => (
+                                  <div key={label} className="space-y-1">
+                                    <label className="txt-smaller text-[#555]">{label}</label>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={val}
+                                      onChange={(e) => set(e.target.value)}
+                                      placeholder="0"
+                                      className="xd-input"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                              {/* Live rate preview */}
+                              {ratePreview && (
+                                <p className="txt-smaller text-[#bfec1d]">
+                                  → Calculated rate: <span className="font-bold">{ratePreview}%</span>
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Admin notes */}
                         <div className="space-y-1">
-                          <label className="txt-smaller text-[#ccccd0]">
-                            {t("notes")}
-                          </label>
+                          <label className="txt-smaller text-[#ccccd0]">{t("notes")}</label>
                           <textarea
                             value={notesInput}
                             onChange={(e) => setNotesInput(e.target.value)}
@@ -435,13 +502,11 @@ export default function AdminSubmissionsPage() {
                             className="w-full px-4 py-3 bg-[#171717] border border-[#272727] text-white txt-small outline-none focus:border-[#6bd41a] resize-none placeholder:text-[#555] transition-colors"
                           />
                         </div>
+
+                        {/* Action buttons */}
                         <div className="flex gap-2">
                           <button
-                            onClick={() => {
-                              setEditingId(null);
-                              setReachInput("");
-                              setNotesInput("");
-                            }}
+                            onClick={closeEdit}
                             className="flex-1 py-2.5 bg-[#171717] border border-[#272727] hover:border-[#444] text-white txt-smaller transition-colors">
                             {t("cancel")}
                           </button>
@@ -461,10 +526,8 @@ export default function AdminSubmissionsPage() {
                       </div>
                     )}
 
-                    {s.adminNotes && editingId !== s.id && (
-                      <p className="txt-smaller text-[#555] italic">
-                        "{s.adminNotes}"
-                      </p>
+                    {s.adminNotes && !isEditing && (
+                      <p className="txt-smaller text-[#555] italic">"{s.adminNotes}"</p>
                     )}
                   </div>
                 )}

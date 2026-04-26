@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { formatNumber } from "@/lib/utils/rank";
 import Header from "@/components/Header";
-import FadeInView from "@/components/FadeInView";
+import FadeInView from "@/components/animation/FadeInView";
 import { SkeletonTableRow } from "@/components/Skeleton";
 
 type Leader = {
@@ -198,9 +198,7 @@ export default function LeaderboardPage() {
           className="container px-35 flex items-center justify-between font-proxima text-[#ccccd0]"
           style={{ height: "58px", fontSize: "13px" }}>
           <span>© 2026 Monster Energy Ambassadors Program.</span>
-          <Link
-            href={`/terms`}
-            className="hover:text-white transition-colors">
+          <Link href={`/terms`} className="hover:text-white transition-colors">
             Terms & Conditions
           </Link>
         </div>

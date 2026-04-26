@@ -1,3 +1,4 @@
+// src/app/[locale]/auth/profile/ProfileSkeleton.tsx
 import Skeleton from "@/components/Skeleton";
 import React from "react";
 import { motion } from "framer-motion";
@@ -28,6 +29,64 @@ export default function ProfileSkeleton() {
   );
 }
 
+export function CircularProgress({
+  pct,
+  size = 52,
+  stroke = 5,
+  color,
+}: {
+  pct: number;
+  size?: number;
+  stroke?: number;
+  color?: string;
+}) {
+  const radius      = (size - stroke) / 2;
+  const circ        = 2 * Math.PI * radius;
+  const clamped     = Math.min(pct, 100);
+  const dashOffset  = circ - (clamped / 100) * circ;
+
+  // Color: red → orange → yellow → green (Monster green at ≥ 75%)
+  const resolvedColor =
+    color ??
+    (pct >= 100
+      ? "#22bb39"         // ≥ 100% — max green
+      : pct >= 75
+      ? "#22bb39"         // 75–99% — monster green
+      : pct >= 50
+      ? "#d4ff00"         // 50–74% — monster yellow
+      : pct >= 25
+      ? "#f97316"         // 25–49% — orange
+      : "#ef4444");       // 0–24%  — red
+
+  return (
+    <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+      {/* Track */}
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="#272727"
+        strokeWidth={stroke}
+      />
+      {/* Progress arc */}
+      <motion.circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke={resolvedColor}
+        strokeWidth={stroke}
+        strokeLinecap="round"
+        strokeDasharray={circ}
+        initial={{ strokeDashoffset: circ }}
+        animate={{ strokeDashoffset: dashOffset }}
+        transition={{ duration: 1, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      />
+    </svg>
+  );
+}
+
 export function ReqRow({
   label,
   current,
@@ -44,7 +103,6 @@ export function ReqRow({
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
         <span className="txt-smaller text-[#ccccd0]">{label}</span>
-        {/* current smaller + muted, / separator, max bigger + green */}
         <span className="tabular-nums flex items-baseline gap-0.5">
           <span className="txt-smaller text-[#666]">{current}&nbsp;/</span>
           <span className="txt-small font-bold" style={{ color: "#22bb39" }}>
@@ -65,40 +123,50 @@ export function ReqRow({
   );
 }
 
+// ── Stat card with circular progress ─────────────────────────────────────────
 export function StatCard({
   label,
   current,
   target,
   targetColor,
+  currentRaw,   // raw number for pct calculation
+  targetRaw,    // raw number for pct calculation
   plain,
 }: {
   label: string;
   current?: string;
   target?: string;
   targetColor?: string;
+  currentRaw?: number;
+  targetRaw?: number;
   plain?: string;
 }) {
+  const pct =
+    currentRaw !== undefined && targetRaw !== undefined && targetRaw > 0
+      ? Math.round((currentRaw / targetRaw) * 100)
+      : undefined;
+
   return (
-    <div className="bg-[#171717] rounded-lg px-5 py-4 flex flex-col gap-1.5">
+    <div className="bg-[#171717] border border-[#272727] rounded-lg px-5 py-4 flex flex-col gap-2">
       <p className="txt-smaller font-black text-white capitalize tracking-wider">{label}</p>
+
       {plain !== undefined ? (
-        <p
-          className="header-small text-white leading-none">
-          {plain}
-        </p>
+        <p className="header-small text-white leading-none">{plain}</p>
       ) : (
-        <div className="flex items-baseline gap-1 leading-none header-small">
-          <span
-            className="tabular-nums text-[#ccc]">
-            {current}&nbsp;/
-          </span>
-          <span
-            className="tabular-nums header-regular"
-            style={{
-              color: targetColor ?? "#22bb39",
-            }}>
-            {target}
-          </span>
+        <div className="flex items-center justify-between gap-2">
+          {/* Numbers */}
+          <div className="flex items-baseline gap-1 leading-none">
+            <span className="tabular-nums text-[#ccc] txt-small">{current}&nbsp;/</span>
+            <span
+              className="tabular-nums font-bold txt-small"
+              style={{ color: targetColor ?? "#22bb39" }}>
+              {target}
+            </span>
+          </div>
+          {/* Circular progress */}
+          {pct !== undefined && (
+            <CircularProgress pct={pct} size={44} stroke={4} />
+          )}
         </div>
       )}
     </div>
@@ -119,7 +187,7 @@ export function RankBadge({ rank, label }: { rank: string; label: string }) {
     <span
       className="px-1 txt-smaller rounded-full text-[#ccccd0] border border-[#333] flex items-center justify-center gap-1"
       style={{
-        borderColor: hexToRgba(color, .5),
+        borderColor: hexToRgba(color, 0.5),
         color: color === "#d4ff00" ? "#000" : "#fff",
       }}>
       <FaTrophy />
@@ -163,7 +231,10 @@ export const KPI_ENG: Record<string, string> = {
   UNRANKED: "0.5%", ROOKIE: "1%", RISING: "2%", COLD: "3%",
 };
 export const REQ: Record<string, [number, number, number]> = {
-  UNRANKED: [8, 2, 10], ROOKIE: [12, 4, 16], RISING: [16, 8, 24], COLD: [20, 16, 36],
+  UNRANKED: [8, 2, 10],
+  ROOKIE:   [12, 4, 16],
+  RISING:   [16, 8, 24],
+  COLD:     [20, 16, 36],
 };
 export const STATUS_BG: Record<string, string> = {
   APPROVED: "#22bb39",

@@ -2,7 +2,7 @@
 "use client";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import FadeInView from "../FadeInView";
+import FadeInView from "../animation/FadeInView";
 
 export default function CtaStrip() {
   const locale = useLocale();
