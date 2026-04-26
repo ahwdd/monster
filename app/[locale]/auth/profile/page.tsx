@@ -45,6 +45,7 @@ import ProfileSkeleton, {
   STATUS_BG,
   REQ,
 } from "./ProfileSkeleton";
+import { MdAdd } from "react-icons/md";
 
 const PENDING_CAP = 5;
 
@@ -197,7 +198,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                   {isApproved && <RankBadge rank={rank} label={rankLabel} />}
                   {isApproved && (
-                    <span className=" text-[#555] txt-smaller">
+                    <span className=" text-[#555] txt-larger">
                       {isRTL
                         ? `• الربع 1 | الشهر ${Math.min(monthsIn, maxMonth)}`
                         : `• Quarter 1 | Month ${Math.min(monthsIn, maxMonth)}`}
@@ -205,13 +206,13 @@ export default function ProfilePage() {
                   )}
                   {isPending && (
                     <span
-                      className=" txt-smaller px-2 py-0.5 border"
+                      className=" txt-larger px-2 py-0.5 border"
                       style={{ color: "#bfec1d", borderColor: "#bfec1d44" }}>
                       {isRTL ? "قيد المراجعة" : "Pending Approval"}
                     </span>
                   )}
                   {isRejected && (
-                    <span className=" txt-smaller px-2 py-0.5 border border-red-400/30 text-red-400">
+                    <span className=" txt-larger px-2 py-0.5 border border-red-400/30 text-red-400">
                       {isRTL ? "مرفوض" : "Rejected"}
                     </span>
                   )}
@@ -224,9 +225,9 @@ export default function ProfilePage() {
               {isApproved && canSubmit && (
                 <Link
                   href={`/submissions/submit`}
-                  className="h-11 px-5 bg-[#22bb39] txt-smaller flex items-center gap-2  
-                  font-bold uppercase text-black tracking-[1.2px] hover:opacity-90 transition-opacity whitespace-nowrap">
-                  <IoAddCircleOutline className="size-4" />
+                  className="py-1 px-2 bg-monster txt-larger flex items-center gap-0.5  rounded-xl
+                  font-bold capitalize text-white tracking-[1.2px] hover:opacity-90 transition-opacity whitespace-nowrap">
+                  <MdAdd className="size-5" />
                   <span>{isRTL ? "رفع محتوى" : "Submit Content"}</span>
                 </Link>
               )}
@@ -246,18 +247,18 @@ export default function ProfilePage() {
                 />
                 <div>
                   <p
-                    className=" font-bold uppercase txt-small"
+                    className=" font-bold capitalize txt-small"
                     style={{ color: "#bfec1d" }}>
                     {t("applicationUnderReview")}
                   </p>
-                  <p className=" txt-smaller text-[#ccccd0] mt-1">
+                  <p className=" txt-larger text-[#ccccd0] mt-1">
                     {t("applicationUnderReviewDesc")}
                   </p>
                 </div>
               </div>
               <Link
                 href={`/submissions/register?editMode=true`}
-                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#171717] text-white  txt-smaller hover:bg-[#222] transition-colors whitespace-nowrap">
+                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#171717] text-white  txt-larger hover:bg-[#222] transition-colors whitespace-nowrap">
                 <IoCreateOutline className="size-3.5" />
                 {t("editApplication")}
               </Link>
@@ -272,17 +273,17 @@ export default function ProfilePage() {
               <div className="flex items-start gap-3">
                 <IoWarningOutline className="size-5 text-red-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className=" font-bold text-red-400 uppercase txt-small">
+                  <p className=" font-bold text-red-400 capitalize txt-small">
                     {t("applicationRejected")}
                   </p>
-                  <p className=" txt-smaller text-[#ccccd0] mt-1">
+                  <p className=" txt-larger text-[#ccccd0] mt-1">
                     {t("applicationRejectedDesc")}
                   </p>
                 </div>
               </div>
               <Link
                 href={`/submissions/register?editMode=true`}
-                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#22bb39] text-white  txt-smaller font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
+                className="shrink-0 flex items-center gap-1.5 px-3 h-8 bg-[#22bb39] text-white  txt-larger font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
                 <IoCreateOutline className="size-3.5" />
                 {t("editApplication")}
               </Link>
@@ -293,27 +294,27 @@ export default function ProfilePage() {
           {isApproved && (
             <>
               {/* Row 1: Level Progress + Performance Score */}
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.06 }}
-                  className="bg-[#171717] rounded-lg p-5 md:p-6">
-                  <p className="txt-smaller font-bold text-white uppercase tracking-wider mb-4">
+                  className="col-span-2 bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 ">
+                  <p className="txt-larger font-bold text-[#ccc] capitalize tracking-wider">
                     {isRTL ? "تقدم المستوى" : "Level Progress"}
                   </p>
                   <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
-                        className="font-black uppercase txt-small"
+                        className="font-black capitalize txt-small"
                         style={{ color: rankColor }}>
                         {rankLabel}
                       </span>
                       {rank !== "COLD" && (
                         <>
-                          <span className="text-[#444] txt-smaller">→</span>
+                          <span className="text-white txt-larger">→</span>
                           <span
-                            className="font-black uppercase txt-small"
+                            className="font-black capitalize txt-small"
                             style={{ color: NEXT_RANK_COLOR_MAP[rank] }}>
                             {isRTL
                               ? NEXT_RANK_LABEL_AR[rank]
@@ -349,7 +350,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   {rank !== "COLD" && (
-                    <p className="txt-smaller text-[#555] mt-3">
+                    <p className="txt-larger text-[#555] mt-3">
                       {isRTL
                         ? `${formatNumber(Math.max(0, threshold - currentRankReach))} مشاهدة متبقية`
                         : `${formatNumber(Math.max(0, threshold - currentRankReach))} views left to next level`}
@@ -362,8 +363,8 @@ export default function ProfilePage() {
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.09 }}
-                  className="bg-[#171717] rounded-lg p-5 md:p-6 flex flex-col justify-center">
-                  <p className="txt-smaller font-bold text-white uppercase tracking-wider mb-3">
+                  className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6  flex flex-col justify-center">
+                  <p className="txt-larger font-bold text-white capitalize tracking-wider mb-3">
                     {isRTL ? "نقاط الأداء" : "Performance Score"}
                   </p>
                   <p className="text-white leading-none mb-1 header-small">
@@ -372,7 +373,7 @@ export default function ProfilePage() {
                       {scoreMax} pts
                     </span>
                   </p>
-                  <p className="txt-smaller text-[#555]">
+                  <p className="txt-larger text-[#555]">
                     {isRTL
                       ? "نقاط التفاعل الإجمالية"
                       : "Overall Engagement Score"}
@@ -411,18 +412,18 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="bg-[#171717] rounded-lg p-5 md:p-6">
-                <p className="txt-smaller font-bold text-white uppercase tracking-wider mb-4">
+                className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 ">
+                <p className="txt-larger font-bold text-white capitalize tracking-wider">
                   {isRTL ? "مستهدفات KPI" : "KPI Metric Targets"}
                 </p>
                 <div className="space-y-5">
                   {/* Views KPI */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="txt-smaller text-[#ccccd0]">
+                      <span className="txt-larger text-[#ccccd0]">
                         {isRTL ? "مشاهدات KPI" : "Views KPI"}
                       </span>
-                      <span className="txt-smaller font-semibold tabular-nums text-[#22bb39]">
+                      <span className="txt-larger font-semibold tabular-nums text-[#22bb39]">
                         {formatNumber(currentRankReach)} /{" "}
                         {KPI_VIEWS[rank] ?? "50K"}
                       </span>
@@ -445,11 +446,11 @@ export default function ProfilePage() {
                   {/* Engagement Rate — target */}
                   {/* <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="txt-smaller text-[#ccccd0]">
+                      <span className="txt-larger text-[#ccccd0]">
                         {isRTL ? "معدل التفاعل" : "Engagement Rate"}
                       </span>
                       <span
-                        className="txt-smaller font-semibold tabular-nums"
+                        className="txt-larger font-semibold tabular-nums"
                         style={{ color: "#bfec1d" }}>
                         0.8% / {KPI_ENG[rank] ?? "0.5%"}
                       </span>
@@ -478,14 +479,14 @@ export default function ProfilePage() {
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.17 }}
-                  className="bg-[#171717] rounded-lg p-5 md:p-6 overflow-x-auto">
-                  <div className="flex items-center justify-between mb-4 min-w-100">
-                    <p className=" txt-smaller text-[#b6b6b6] uppercase tracking-wider">
+                  className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6  overflow-x-auto">
+                  <div className="flex items-center justify-between min-w-100">
+                    <p className=" txt-larger text-[#b6b6b6] capitalize tracking-wider">
                       {isRTL ? "آخر المشاركات" : "Recent Submissions"}
                     </p>
                     <Link
                       href={`/submissions`}
-                      className=" txt-smaller text-[#555] hover:text-[#ccccd0] transition-colors flex items-center gap-1">
+                      className=" txt-larger text-[#555] hover:text-[#ccccd0] transition-colors flex items-center gap-1">
                       {isRTL ? "عرض الكل" : "View All"}
                       <Arrow className="size-3" />
                     </Link>
@@ -498,7 +499,7 @@ export default function ProfilePage() {
                       ).map((h, i) => (
                         <span
                           key={i}
-                          className="font-bold text-white uppercase tracking-wider"
+                          className="font-bold text-white capitalize tracking-wider"
                           style={{ fontSize: "11px" }}>
                           {h}
                         </span>
@@ -508,20 +509,20 @@ export default function ProfilePage() {
                       <div
                         key={sub.id}
                         className="grid grid-cols-[1fr_100px_100px_90px] gap-3 py-3 border-b border-[#272727] items-center">
-                        <span className=" txt-smaller text-white truncate">
+                        <span className=" txt-larger text-white truncate">
                           {sub.contentLink?.split("/").pop()?.slice(0, 24) ??
                             "Content"}
                         </span>
-                        <span className=" txt-smaller text-[#ccccd0] capitalize">
+                        <span className=" txt-larger text-[#ccccd0] capitalize">
                           {sub.contentTypes?.[0]?.toLowerCase() ?? "-"}
                         </span>
-                        <span className=" txt-smaller text-white tabular-nums">
+                        <span className=" txt-larger text-white tabular-nums">
                           {formatNumber(
                             sub.acceptedReach ?? sub.submittedReach ?? 0,
                           )}
                         </span>
                         <span
-                          className="inline-flex items-center justify-center font-bold uppercase
+                          className="inline-flex items-center justify-center font-bold capitalize
                           h-5 px-1.5 text-xs text-[9px] tracking-wider w-fit rounded-lg"
                           style={{
                             background: STATUS_BG[sub.status] ?? "#555",
@@ -544,7 +545,7 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-[#171717] rounded-lg p-8 md:p-10 text-center border border-[#272727]">
               <p
-                className=" font-black text-white uppercase mb-2"
+                className=" font-black text-white capitalize mb-2"
                 style={{ fontSize: "clamp(1.1rem, 2vw, 1.5rem)" }}>
                 {isRTL ? "أكمل تسجيلك" : "Complete Your Registration"}
               </p>
@@ -553,7 +554,7 @@ export default function ProfilePage() {
               </p>
               <Link
                 href={`/submissions/register`}
-                className="inline-flex items-center gap-2 h-12 px-10 bg-[#22bb39] text-white  font-black uppercase txt-small tracking-[2px] hover:opacity-90 transition-opacity">
+                className="inline-flex items-center gap-2 h-12 px-10 bg-[#22bb39] text-white  font-black capitalize txt-small tracking-[2px] hover:opacity-90 transition-opacity">
                 {ts("registerStart")}
                 <Arrow className="size-4" />
               </Link>
@@ -565,8 +566,8 @@ export default function ProfilePage() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.19 }}
-            className="bg-[#171717] rounded-lg p-5 md:p-6">
-            <p className=" txt-smaller text-[#b6b6b6] uppercase tracking-wider mb-4">
+            className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 ">
+            <p className=" txt-larger text-[#b6b6b6] capitalize tracking-wider">
               {t("contactInfo")}
             </p>
             {[
@@ -591,7 +592,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-3 min-w-0">
                   <Icon className="size-4 text-[#444] shrink-0" />
                   <div className="min-w-0">
-                    <p className=" txt-smaller text-[#b6b6b6]">{label}</p>
+                    <p className=" txt-larger text-[#b6b6b6]">{label}</p>
                     <p className=" txt-small text-white truncate">
                       {value || t("notSet")}
                     </p>
@@ -599,7 +600,7 @@ export default function ProfilePage() {
                 </div>
                 <button
                   onClick={onEdit}
-                  className="shrink-0 px-3 h-8 bg-black border border-[#333] text-[#ccccd0]  hover:text-white hover:border-[#555] transition-colors txt-smaller whitespace-nowrap">
+                  className="shrink-0 px-3 h-8 bg-black border border-[#333] text-[#ccccd0]  hover:text-white hover:border-[#555] transition-colors txt-larger whitespace-nowrap">
                   {cta}
                 </button>
               </div>
@@ -612,7 +613,7 @@ export default function ProfilePage() {
               toast.info(t("loggingOut"));
               logout();
             }}
-            className="w-full flex items-center justify-center gap-3 h-12 border border-[#2a2a2a] text-[#ccccd0] hover:text-red-400 hover:border-red-400/30  font-bold uppercase transition-colors"
+            className="w-full flex items-center justify-center gap-3 h-12 border border-[#2a2a2a] text-[#ccccd0] hover:text-red-400 hover:border-red-400/30  font-bold capitalize transition-colors"
             style={{ fontSize: "13px", letterSpacing: "1.5px" }}>
             <IoLogOutOutline className="size-5" />
             {t("logout")}

@@ -199,7 +199,7 @@ export default function LeaderboardPage() {
           style={{ height: "58px", fontSize: "13px" }}>
           <span>© 2026 Monster Energy Ambassadors Program.</span>
           <Link
-            href={`/program`}
+            href={`/terms`}
             className="hover:text-white transition-colors">
             Terms & Conditions
           </Link>

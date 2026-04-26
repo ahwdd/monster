@@ -83,7 +83,7 @@ export default function ProgramHero() {
         </p>
 
         <div className="flex items-center gap-4">
-          <OutlinedParaBtn href={`/program`} withBorder>
+          <OutlinedParaBtn href={`/terms`} withBorder>
             {t("learnMore")}
           </OutlinedParaBtn>
 

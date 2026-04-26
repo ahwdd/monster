@@ -1,6 +1,8 @@
 import Skeleton from "@/components/Skeleton";
 import React from "react";
 import { motion } from "framer-motion";
+import { FaTrophy } from "react-icons/fa";
+import { hexToRgba } from "@/lib/utils/colors";
 
 export default function ProfileSkeleton() {
   return (
@@ -74,12 +76,11 @@ export function StatCard({
   current?: string;
   target?: string;
   targetColor?: string;
-  /** pass plain + value for simple non-split display (e.g. "42 submissions") */
   plain?: string;
 }) {
   return (
     <div className="bg-[#171717] rounded-lg px-5 py-4 flex flex-col gap-1.5">
-      <p className="txt-smaller font-black text-white uppercase tracking-wider">{label}</p>
+      <p className="txt-smaller font-black text-white capitalize tracking-wider">{label}</p>
       {plain !== undefined ? (
         <p
           className="header-small text-white leading-none">
@@ -108,20 +109,21 @@ export function RankBadge({ rank, label }: { rank: string; label: string }) {
   const color = RANK_COLORS[rank] ?? "#6b7280";
   if (rank === "UNRANKED") {
     return (
-      <span className="inline-block px-3 py-1 font-proxima txt-smaller text-[#ccccd0] border border-[#333]">
-        {label}
-      </span>
+      <div className="px-1 txt-smaller rounded-full text-[#ccccd0] border border-[#333] flex items-center justify-center gap-1">
+        <FaTrophy />
+        <span>{label}</span>
+      </div>
     );
   }
   return (
     <span
-      className="inline-flex items-center px-3 font-proxima font-semibold txt-smaller"
+      className="px-1 txt-smaller rounded-full text-[#ccccd0] border border-[#333] flex items-center justify-center gap-1"
       style={{
-        height: "26px",
-        background: color,
+        borderColor: hexToRgba(color, .5),
         color: color === "#d4ff00" ? "#000" : "#fff",
       }}>
-      {label}
+      <FaTrophy />
+      <span>{label}</span>
     </span>
   );
 }
