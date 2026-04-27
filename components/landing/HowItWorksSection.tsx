@@ -24,7 +24,7 @@ export default function HowItWorksSection() {
           <h2 className="header-larger font-display font-black text-white uppercase mb-0.5 lg:mb-1 tracking-wide">
             {t("howItWorks")}
           </h2>
-          <p className="font-proxima text-[#ccccd0] header-small max-w-140 mx-auto">
+          <p className="font-proxima text-[#ccccd0] txt-large max-w-120 mx-auto">
             {t("howItWorksDesc")}
           </p>
         </FadeInView>
