@@ -41,7 +41,7 @@ function XdInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-12 px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima
+        className="w-full h-12 px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima rounded-lg
           placeholder:text-[#ccccd0]/40 outline-none border border-transparent transition-colors"
       />
       {error && <p className="font-proxima text-red-400 text-xs">{error}</p>}
@@ -253,7 +253,7 @@ export default function SignupPage() {
                             setErrors({});
                           }}
                           placeholder={t("phonePlaceholder")}
-                          className="flex-1 h-full px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima
+                          className="flex-1 h-full px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima rounded-lg
                             placeholder:text-[#ccccd0]/40 outline-none border border-transparent transition-colors"
                         />
                       </div>

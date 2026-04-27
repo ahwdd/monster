@@ -12,7 +12,7 @@ export const readonlyInput =
   "w-full px-4 h-12 bg-[#0d0d0d] border border-[#272727] text-[#555] text-sm flex items-center opacity-70 cursor-not-allowed";
 
 export function input(error?: string) {
-  return `w-full px-4 h-12 bg-[#171717] border text-white rounded-lg text-sm 
+  return `w-full px-4 h-12 bg-[#171717] border text-white rounded-lg text-sm rounded-lg
   placeholder:text-[#ccccd0]/40 outline-none transition-colors duration-200 ${
     error
       ? "border-red-500 focus:border-red-400"

@@ -332,7 +332,7 @@ export default function SigninPage() {
                           }}
                           placeholder={t("phonePlaceholder")}
                           className="flex-1 h-full px-4 bg-[#171717] text-[#ccccd0] text-sm
-                            font-proxima placeholder:text-[#ccccd0]/40 outline-none
+                            font-proxima placeholder:text-[#ccccd0]/40 outline-none rounded-lg
                             border border-transparent transition-colors"
                         />
                       </div>
@@ -510,7 +510,7 @@ export default function SigninPage() {
                     isRTL ? "أدخل اسمك الكامل" : "Enter your full name"
                   }
                   className="w-full h-12 px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima
-                    placeholder:text-[#ccccd0]/40 outline-none border border-transparent
+                    placeholder:text-[#ccccd0]/40 outline-none border border-transparent rounded-lg
                     transition-colors"
                 />
                 {errors.name && (
