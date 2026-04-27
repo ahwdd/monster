@@ -77,8 +77,8 @@ export default function TopMonstersSection() {
               {HEADERS.map((h, i) => (
                 <span
                   key={i}
-                  className="font-display font-bold text-[#22bb39] uppercase"
-                  style={{ fontSize: "13px", letterSpacing: "0.08em" }}>
+                  className="font-display font-bold text-[#22bb39] uppercase header-smallest"
+                  style={{ letterSpacing: "0.08em" }}>
                   {h}
                 </span>
               ))}

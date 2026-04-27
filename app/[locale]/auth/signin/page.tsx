@@ -49,7 +49,7 @@ function XdInput({
         placeholder={placeholder}
         className="w-full h-12 px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima
           placeholder:text-[#ccccd0]/50 outline-none border border-transparent
-          focus:border-[#6bd41a] transition-colors"
+          transition-colors"
       />
       {error && <p className="font-proxima text-red-400 text-xs">{error}</p>}
     </div>
@@ -74,14 +74,14 @@ function XdBtn({
     variant === "white"
       ? "bg-white text-black hover:bg-[#eee]"
       : variant === "green"
-        ? "bg-[#6bd41a] text-black hover:bg-[#7de020]"
+        ? "bg-[#6bd41a] text-white hover:bg-[#7de020]"
         : "bg-[#171717] text-white hover:bg-[#222]";
   return (
     <button
       onClick={onClick}
       disabled={loading}
-      className={`h-12 px-8 font-display font-bold text-sm uppercase tracking-[2px]
-        transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+      className={`h-12 px-8 font-bold text-sm uppercase tracking-[2px]
+        transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg
         flex items-center justify-center gap-2 ${bg} ${className}`}>
       {loading ? (
         <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
@@ -333,7 +333,7 @@ export default function SigninPage() {
                           placeholder={t("phonePlaceholder")}
                           className="flex-1 h-full px-4 bg-[#171717] text-[#ccccd0] text-sm
                             font-proxima placeholder:text-[#ccccd0]/40 outline-none
-                            border border-transparent focus:border-[#6bd41a] transition-colors"
+                            border border-transparent transition-colors"
                         />
                       </div>
                       {errors.phone && (
@@ -393,11 +393,11 @@ export default function SigninPage() {
               )}
             </AnimatePresence>
 
-            {/* ── Sign in button — XD: white bg, black text ── */}
+            {/* ── Sign in button ── */}
             <XdBtn
               onClick={step === "contact" ? handleSend : handleVerify}
               loading={loading}
-              variant="white"
+              variant="green"
               className="w-full">
               {step === "contact" ? t("sendOtp") : t("verifyAndSignin")}
               {!loading &&
@@ -511,7 +511,7 @@ export default function SigninPage() {
                   }
                   className="w-full h-12 px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima
                     placeholder:text-[#ccccd0]/40 outline-none border border-transparent
-                    focus:border-[#6bd41a] transition-colors"
+                    transition-colors"
                 />
                 {errors.name && (
                   <p className="font-proxima text-red-400 text-xs">

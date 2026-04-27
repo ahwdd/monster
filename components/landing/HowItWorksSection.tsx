@@ -8,6 +8,7 @@ import FadeInView from "../animation/FadeInView";
 const EASE = [0.22, 1, 0.36, 1] as const;
 const DOT_COUNT = 6;
 const DOT_COUNT_XL = 10;
+const DOT_COUNT_2XL = 16;
 const BOX_SIZE_DESKTOP = "clamp(52px, 8vw, 86px)";
 const BOX_SIZE_MOBILE = "56px";
 
@@ -155,11 +156,10 @@ export default function HowItWorksSection() {
                 {/* Horizontal dots connector */}
                 {!isLast && (
                   <div
-                    className="shrink-0 flex items-center ms-[-10%]"
+                    className="shrink-0 flex items-center ms-[-10%] xl:ms-[-12%] 2xl:ms-[-7.5%]"
                     style={{
                       flex: "1 1 0",
                       minWidth: 0,
-                      // center dots on the box: push down by half box, then shift left slightly
                       marginTop: `calc(${BOX_SIZE_DESKTOP} / 2)`,
                       transform: "translateY(-50%) translateX(-8px)",
                       paddingRight: "8px",
@@ -181,7 +181,7 @@ export default function HowItWorksSection() {
                     </div>
 
                     {/* xl+: 10 dots */}
-                    <div className="hidden xl:flex flex-row flex-nowrap justify-between w-full">
+                    <div className="hidden 2xl:hidden xl:flex flex-row flex-nowrap justify-between w-full">
                       {Array.from({ length: DOT_COUNT_XL }).map((_, d) => (
                         <span
                           key={d}
@@ -191,6 +191,22 @@ export default function HowItWorksSection() {
                             transitionDelay: connectorLit
                               ? `${d * 40}ms`
                               : `${(DOT_COUNT_XL - 1 - d) * 40}ms`,
+                          }}
+                        />
+                      ))}
+                    </div>
+                    
+                    {/* 2xl+: 16 dots */}
+                    <div className="hidden 2xl:flex flex-row flex-nowrap justify-around w-full">
+                      {Array.from({ length: DOT_COUNT_2XL }).map((_, d) => (
+                        <span
+                          key={d}
+                          className="size-1 rounded-full shrink-0 transition-colors duration-250"
+                          style={{
+                            background: connectorLit ? "#22bb39" : "#444444",
+                            transitionDelay: connectorLit
+                              ? `${d * 40}ms`
+                              : `${(DOT_COUNT_2XL - 1 - d) * 40}ms`,
                           }}
                         />
                       ))}

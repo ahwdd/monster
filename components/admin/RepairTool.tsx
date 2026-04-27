@@ -202,8 +202,7 @@ export default function RepairTool() {
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search name or nickname..."
                       className="w-full ps-8 pe-3 py-2 bg-[#0a0a0a] border border-[#272727]
-                                 text-white txt-smaller placeholder:text-[#444] outline-none
-                                 focus:border-[#6bd41a] transition-colors font-proxima"
+                 text-white txt-smaller placeholder:text-[#444] outline-none transition-colors font-proxima"
                     />
                   </div>
                   {/* Select-all icon button */}

@@ -15,14 +15,14 @@ export default function CtaStrip() {
         <FadeInView>
           <div
             className="relative flex items-center justify-between gap-2 lg:gap-6 rounded-lg 
-            px-8 lg:px-14 py-5 lg:py-6 min-h-40 max-lg:flex-wrap"
+            px-8 lg:px-14 py-8 lg:py-14 min-h-40 max-lg:flex-wrap"
             style={{
               background: isAr
                 ? "linear-gradient(to left, #22bb39 0%, #bfec1d 60%, #d4ff00 100%)"
                 : "linear-gradient(to right, #22bb39 0%, #bfec1d 60%, #d4ff00 100%)",
             }}>
             {/* Left — text */}
-            <div className="relative z-10 max-w-md">
+            <div className="relative z-10">
               <h2 className="font-display header-regular font-black text-white uppercase leading-none mb-2">
                 {isAr ? "مستعد لتصبح مونستر؟" : "READY TO BECOME A MONSTER?"}
               </h2>

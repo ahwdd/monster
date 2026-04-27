@@ -197,7 +197,7 @@ export default function Header() {
           href={`/`}
           className="shrink-0 flex items-center justify-center xl:ps-12 px-9 h-20 bg-[#171717] pt-4 -ms-4 pe-4 -skew-x-12">
           <Image src="/assets/logo.png" alt="Monster Energy" width={140} height={60}
-            className="object-contain xl:h-17 -mt-2 h-14 w-auto skew-x-12" />
+            className="object-contain xl:h-15 -mt-1 h-14 w-auto skew-x-12" />
         </Link>
 
         {/* Desktop nav */}

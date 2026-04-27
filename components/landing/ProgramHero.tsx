@@ -78,16 +78,16 @@ export default function ProgramHero() {
           <span className="text-accent">{t("heroMonster")}</span>
         </h1>
 
-        <p className="font-proxima text-[#ccccd0] max-w-100 leading-relaxed mb-8 hidden sm:block txt-large">
+        <p className="font-proxima text-[#ccccd0] max-w-100 sm:leading-relaxed mb-8 txt-large">
           {t("heroSub")}
         </p>
 
         <div className="flex items-center gap-4">
-          <OutlinedParaBtn href={`/terms`} withBorder>
+          <OutlinedParaBtn href={`/terms`} withBorder className="py-2.5!">
             {t("learnMore")}
           </OutlinedParaBtn>
 
-          <SolidParaBtn href={`/submissions/register`}>
+          <SolidParaBtn href={`/submissions/register`} className="py-2!">
             {t("joinNow")}
           </SolidParaBtn>
         </div>

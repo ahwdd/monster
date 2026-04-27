@@ -164,7 +164,7 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
 
         {/* ── Desktop floating image — lives on the list container, not a row ── */}
         <div className="hidden lg:block">
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 <motion.div
                 key={activeIdx}
                 initial={{ opacity: 0, x: isAr ? 12 : -12, scale: 0.97 }}

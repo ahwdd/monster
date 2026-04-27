@@ -48,21 +48,15 @@ function parseReq(text: string): { value: string; label: string } {
 }
 
 function ReqCircle({
-  value,
-  label,
-  fullText,
-  color,
+  value, label, fullText, color,
 }: {
-  value: string;
-  label: string;
-  fullText: string;
-  color: string;
+  value: string; label: string; fullText: string; color: string;
 }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
-      className="flex flex-col items-center gap-1.5 relative cursor-default"
+      className="flex flex-col items-center gap-1.5 relative cursor-default w-[calc(20%-12px)]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}>
       {/* Tooltip */}
@@ -85,22 +79,18 @@ function ReqCircle({
 
       {/* Circle */}
       <div
-        className={`flex items-center justify-center rounded-full transition-colors duration-200 
-          ${hovered ? "bg-white text-black" : "bg-white/20 text-white/80"}`}
-        style={{
-          width: "clamp(16px, 6vw, 36px)",
-          height: "clamp(16px, 6vw, 36px)",
-        }}>
-        <span className="font-display font-black leading-none txt-regular">
+        className={`flex items-center justify-center rounded-full transition-colors duration-200
+          w-full aspect-square 
+          ${hovered ? "bg-white text-black" : "bg-white/10 text-white/50"}`}>
+        <span className="font-black leading-none txt-larger">
           {value}
         </span>
       </div>
 
       {/* Label */}
       <span
-        className="font-proxima text-center leading-tight"
+        className="text-center leading-tight txt-large"
         style={{
-          fontSize: "clamp(0.55rem, 0.75vw, 0.65rem)",
           color: "#9ca3af",
           maxWidth: "clamp(44px, 6vw, 60px)",
         }}>
@@ -124,7 +114,7 @@ export default function LevelingSection() {
             <img
               src="/assets/textures/texture.webp"
               alt=""
-              className="w-full h-full object-cover object-top grayscale saturate-50"
+              className="w-full h-full object-cover object-top grayscale saturate-50 opacity-50"
             />
           </div>
         </div>
@@ -180,7 +170,7 @@ export default function LevelingSection() {
                   </h3>
 
                   {/* Requirements label */}
-                  <p className="font-proxima text-white font-semibold txt-regular mb-3 -ms-3">
+                  <p className="font-proxima text-white font-semibold txt-regular mb-3 -ms-1">
                     {t("requirements")}:
                   </p>
 
