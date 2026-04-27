@@ -121,12 +121,12 @@ export default function Header() {
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
-            className="fixed inset-0 bg-black/80 z-9997 md:hidden"
+            className="fixed inset-0 bg-black/80 z-9997 lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
           <motion.aside
             variants={panelV} initial="hidden" animate="visible" exit="exit"
-            className={`fixed top-0 bottom-0 z-9999 w-72 bg-black flex flex-col md:hidden ${
+            className={`fixed top-0 bottom-0 z-9999 w-72 bg-black flex flex-col lg:hidden ${
               isRTL
                 ? "right-0 border-s border-[#171717]"
                 : "left-0 border-e border-[#171717]"
@@ -147,7 +147,7 @@ export default function Header() {
                     href={href}
                     onClick={() => setMobileOpen(false)}
                     className="flex items-center h-12 px-6 font-display font-bold uppercase transition-colors
-                               text-[13px] tracking-[1.5px] border-b border-[#111] text-white
+                               txt-larger border-b border-[#111] text-white
                                hover:text-[#6bd41a] hover:bg-[#0a0a0a]">
                     {isRTL ? labelAr : labelEn}
                   </Link>
@@ -201,7 +201,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center flex-1 justify-center gap-8 lg:gap-10">
+        <nav className="hidden lg:flex items-center flex-1 justify-center gap-8 xl:gap-10">
           {NAV_ITEMS.map((item) => {
             const active = isNavActive(item);
             return (
@@ -209,7 +209,7 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 className={`relative font-display font-bold uppercase transition-colors group
-                            tracking-[1.5px] text-sm whitespace-nowrap
+                            txt-larger whitespace-nowrap
                             ${active ? "text-[#6bd41a]" : "text-white hover:text-[#6bd41a]"}`}>
                 {isRTL ? item.labelAr : item.labelEn}
                 <span
@@ -224,7 +224,7 @@ export default function Header() {
         </nav>
 
         {/* Desktop CTAs */}
-        <div className="hidden md:flex items-center gap-3 pe-6 lg:pe-9 shrink-0">
+        <div className="hidden lg:flex items-center gap-3 pe-6 xl:pe-9 shrink-0">
           {initializationComplete ? (
             isAuthenticated ? (
               <>
@@ -252,7 +252,7 @@ export default function Header() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden ltr:ms-auto rtl:me-auto me-4 p-2 text-white hover:text-[#6bd41a] transition-colors"
+          className="lg:hidden ltr:ms-auto rtl:me-auto me-4 p-2 text-white hover:text-[#6bd41a] transition-colors"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu">
           <motion.div animate={{ rotate: mobileOpen ? 90 : 0 }} transition={{ duration: 0.18 }}>

@@ -132,9 +132,7 @@ export default function SigninPage() {
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [step]);
-  // Dedup: show each unique error message exactly once.
-  // The ref is never reset to null — only updated when a new different error arrives.
-  // This prevents the same message firing multiple times across Redux re-render cycles.
+  
   const lastToastedError = useRef<string | null>(null);
   useEffect(() => {
     if (error && error !== lastToastedError.current) {

@@ -16,7 +16,6 @@ const XD_COLORS: Record<string, string> = {
   cold: "#00cfff",
 };
 
-// Shorten a requirement string to a compact label + value pair
 function parseReq(text: string): { value: string; label: string } {
   if (/stream|reel|stor/i.test(text)) {
     const nums = (text.match(/\d+/g) ?? []).map(Number);
@@ -89,10 +88,10 @@ function ReqCircle({
         className={`flex items-center justify-center rounded-full transition-colors duration-200 
           ${hovered ? "bg-white text-black" : "bg-white/20 text-white/80"}`}
         style={{
-          width: "clamp(24px, 6vw, 44px)",
-          height: "clamp(24px, 6vw, 44px)",
+          width: "clamp(16px, 6vw, 36px)",
+          height: "clamp(16px, 6vw, 36px)",
         }}>
-        <span className="font-display font-black leading-none txt-large">
+        <span className="font-display font-black leading-none txt-regular">
           {value}
         </span>
       </div>
@@ -120,8 +119,8 @@ export default function LevelingSection() {
     <section
       className="w-screen py-16 lg:py-25 px-4 lg:px-35 relative">
       <div className="container">
-        <div className="absolute w-screen inset-x-0 top-10 z-1 lg:-mt-14 -mt-10 overflow-hidden">
-          <div className="clip-skew w-full h-full">
+        <div className="absolute w-screen h-full inset-x-0 top-10 z-1 lg:-mt-14 -mt-10 overflow-hidden">
+          <div className="clip-skew w-full">
             <img
               src="/assets/textures/texture.webp"
               alt=""
@@ -138,7 +137,7 @@ export default function LevelingSection() {
           </p>
         </FadeInView>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6 relative z-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6 relative z-2">
           {LANDING_RANKS.map((rank, i) => {
             const color = XD_COLORS[rank.id] ?? rank.color;
             const reqs = isAr ? rank.requirementsAr : rank.requirementsEn;
@@ -149,7 +148,9 @@ export default function LevelingSection() {
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}>
+                transition={{ duration: 0.5, delay: i * 0.1, ease: EASE }}
+                className={i === 2 ? "md:w-full md:max-w-112.5 md:col-span-2 md:justify-self-center xl:col-span-1" : ""}
+              >
                 <div
                   className="block p-6 lg:p-8 h-full overflow-hidden relative rounded-md"
                   style={{

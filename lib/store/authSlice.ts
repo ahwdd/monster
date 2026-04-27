@@ -241,7 +241,10 @@ const authSlice = createSlice({
         state.lastFetchTime = Date.now();
       })
       .addCase(fetchCurrentUser.rejected,  (state, action) => {
-        state.loading = false; state.error = action.payload as string;
+        state.loading = false; 
+        // state.error = action.payload as string;
+        const msg = action.payload as string;
+        state.error = msg === "Unauthorized" ? null : msg;
         state.user = null; state.isAuthenticated = false; state.lastFetchTime = null;
       })
 

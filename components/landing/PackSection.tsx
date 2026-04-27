@@ -1,5 +1,5 @@
 import { motion, AnimatePresence, Easing } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { REWARD_PACKS } from "@/lib/data/program";
 import { hexToRgba } from "@/lib/utils/colors";
@@ -26,6 +26,21 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
   // Refs to each row so we can measure their offsetTop + height
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
+  
+  // Track dynamic image height for centering math (135px for lg, 240px for xl)
+  const [imgHeight, setImgHeight] = useState(135);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Tailwind's 'xl' breakpoint is 1280px.
+      // 240px is approx 5 rows. 135px is approx 3 rows.
+      setImgHeight(window.innerWidth >= 1280 ? 240 : 135);
+    };
+
+    handleResize(); // Set on initial client load
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Compute the pixel top for the floating image:
   // center of the active row, clamped so the image never overflows the list
@@ -37,9 +52,6 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
     const listHeight = list.offsetHeight;
     const rowTop = row.offsetTop;
     const rowCenter = rowTop + row.offsetHeight / 2;
-
-    // Image is 240px wide, aspect-video = 135px tall (w-60 = 240px)
-    const imgHeight = 135;
 
     // Ideal: center image on the active row's center
     const ideal = rowCenter - imgHeight / 2;
@@ -168,14 +180,15 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
                 }}
                 >
                 <div
-                    className="overflow-hidden rounded-sm"
+                    className="overflow-hidden rounded-sm transition-all duration-300"
                     style={{
                     border: `1px solid ${color}`,
                     padding: "4px",
                     background: hexToRgba(color, 0.05),
                     }}
                 >
-                    <div className="relative w-60 aspect-video">
+                    {/* Added xl:w-[426px] to expand the image to 5 rows dynamically */}
+                    <div className="relative w-60 xl:w-[426px] aspect-video transition-all duration-300">
                     <Image
                         src={activeImage}
                         alt={items[activeIdx]}

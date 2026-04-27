@@ -584,7 +584,7 @@ export default function CreatorRegistrationForm({
               prefix={t("termsPrefix")}
               conditionsWord={t("termsConditionsWord")}
               andWord={t("termsAndWord")}
-              termsWord={t("termsWord")}
+              termsWord={t("termsLink")}
               modalTitle={t("welcomeTitle")}
               modalBody={t("welcomeBody")}
               modalRulesTitle={t("rulesTitle")}
