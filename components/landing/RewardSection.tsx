@@ -20,6 +20,16 @@ export default function RewardsSection() {
     <section
       className="w-full bg-black py-16 md:py-25 px-4 md:px-20 lg:px-35 relative overflow-hidden">
       <div className="container px-[10%]">
+        
+        <div className="absolute w-screen h-full inset-x-0 top-10 z-1 lg:-mt-14 -mt-10 overflow-hidden">
+          <div className="clip-skew w-full">
+            <img
+              src="/assets/textures/texture.webp"
+              alt=""
+              className="w-full h-full object-cover object-top grayscale saturate-50 opacity-30"
+            />
+          </div>
+        </div>
         {/* Title */}
         <FadeInView className="text-center mb-12 md:mb-16 relative z-2">
           <h2 className="header-larger tracking-wide font-display font-black text-white uppercase">

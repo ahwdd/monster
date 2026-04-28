@@ -81,7 +81,7 @@ function ReqCircle({
       <div
         className={`flex items-center justify-center rounded-full transition-colors duration-200
           w-full aspect-square 
-          ${hovered ? "bg-white text-black" : "bg-white/10 text-white/50"}`}>
+          ${hovered ? "bg-white text-black" : "bg-white/10 text-white"}`}>
         <span className="font-black leading-none txt-larger">
           {value}
         </span>
@@ -114,7 +114,7 @@ export default function LevelingSection() {
             <img
               src="/assets/textures/texture.webp"
               alt=""
-              className="w-full h-full object-cover object-top grayscale saturate-50 opacity-50"
+              className="w-full h-full object-cover object-top grayscale saturate-50 opacity-30"
             />
           </div>
         </div>

@@ -60,9 +60,9 @@ export default function AdminLayout({
             <Image
               src="/assets/logo.png"
               alt="Monster"
-              width={120}
-              height={52}
-              className="object-contain h-8 w-auto"
+              width={160}
+              height={80}
+              className="object-contain h-16 w-auto"
             />
           </Link>
         </div>

@@ -85,6 +85,8 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
       <div ref={listRef} className="relative flex flex-col lg:w-full max-w-180">
         {items.map((item, i) => {
           const isActive = i === activeIdx;
+          const isFirstAndActive = isActive && i === 0;
+          const isLastAndActive = isActive && i === items.length - 1;
 
           return (
             <div
@@ -127,32 +129,25 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
               <div
                 className={`flex items-center gap-3 py-3 px-4 cursor-pointer transition-all duration-300
                   relative bg-black lg:border-0
-                  ${isActive ? "border-b lg:border-b-0 z-2" : "border-b border-b-white/10"}`}
+                  ${isActive ? "border-b lg:border-b-0 z-2" : "border-b border-b-white/10"}
+                `}
                 style={isActive ? { borderBottomColor: color } : undefined}
               >
-                <span
-                  className={`hidden lg:block absolute inset-y-0 inset-s-0 w-0.5 transition-all duration-300
-                    ${isActive ? "opacity-100" : "opacity-0"}`}
-                  style={{ background: color }}
-                />
-                <span
-                  className={`hidden lg:block absolute top-0 inset-s-0 inset-e-0 h-px transition-all duration-300
-                    ${isActive ? "opacity-100" : "opacity-0"}`}
-                  style={{ background: color }}
-                />
-                <span
-                  className={`hidden lg:block absolute bottom-0 inset-s-0 inset-e-0 h-px transition-all duration-300
-                    ${isActive ? "opacity-100" : "opacity-0"}`}
-                  style={{ background: color }}
+                {/* ── Active Border Overlay ── */}
+                <div
+                  className={`hidden lg:block absolute inset-0 border-s-2 border-y pointer-events-none transition-all duration-300
+                    ${isActive ? "opacity-100" : "opacity-0"}
+                  `}
+                  style={{ borderColor: color }}
                 />
 
                 <FaBoltLightning
-                  className="shrink-0 size-3.5 transition-colors duration-300"
+                  className="shrink-0 size-3.5 transition-colors duration-300 z-10"
                   style={{ color: isActive ? color : "rgba(255,255,255,0.4)" }}
                 />
 
                 <span
-                  className="font-proxima txt-large transition-colors duration-300"
+                  className="font-proxima txt-large transition-colors duration-300 z-10"
                   style={{ color: isActive ? color : "rgba(255,255,255,0.75)" }}
                 >
                   {item}
@@ -180,27 +175,31 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
                 }}
                 >
                 <div
-                    className="overflow-hidden rounded-sm transition-all duration-300"
+                    className={`transition-all duration-300 flex items-center justify-center
+                        w-60 xl:w-106.5 aspect-video p-3 xl:px-4 xl:py-3 bg-black
+                        rounded-lg
+                        ${activeIdx === 0 ? "rounded-ss-none!" : ""}
+                        ${activeIdx === items.length - 1 ? "rounded-es-none!" : ""}
+                    `}
                     style={{
-                    border: `1px solid ${color}`,
-                    padding: "4px",
-                    background: hexToRgba(color, 0.05),
+                      border: `1px solid ${color}`,
+                      background: hexToRgba(color, 0.05),
                     }}
                 >
-                    {/* Added xl:w-[426px] to expand the image to 5 rows dynamically */}
-                    <div className="relative w-60 xl:w-[426px] aspect-video transition-all duration-300">
-                    <Image
-                        src={activeImage}
-                        alt={items[activeIdx]}
-                        fill
-                        className="object-cover rounded-xs"
-                    />
-                    <div
-                        className="absolute inset-0 rounded-xs"
-                        style={{
-                        background: `linear-gradient(160deg, ${hexToRgba(color, 0.22)} 0%, transparent 55%)`,
-                        }}
-                    />
+                    {/* Inner wrapper shrinks due to padding but maintains shape */}
+                    <div className="relative w-full h-full rounded-sm overflow-hidden transition-all duration-300 shadow-lg">
+                      <Image
+                          src={activeImage}
+                          alt={items[activeIdx]}
+                          fill
+                          className="object-cover"
+                      />
+                      <div
+                          className="absolute inset-0"
+                          style={{
+                            background: `linear-gradient(160deg, ${hexToRgba(color, 0.22)} 0%, transparent 55%)`,
+                          }}
+                      />
                     </div>
                 </div>
             </motion.div>

@@ -56,7 +56,7 @@ export default function TopMonstersSection() {
     <section
       className="w-full bg-black py-16 md:py-25 px-4 md:px-35 relative">
       <img
-        src="/assets/textures/monster-texture.png"
+        src="/assets/textures/monster-texture.jpg"
         alt=""
         className="absolute size-full inset-x-0 top-8 z-1 object-cover object-top max-lg:object-[70%]"
       />
