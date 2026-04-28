@@ -136,8 +136,7 @@ function PackSection({ pack, color, images, index, isAr }: PackSectionProps) {
                 {/* ── Active Border Overlay ── */}
                 <div
                   className={`hidden lg:block absolute inset-0 border-s-2 border-y pointer-events-none transition-all duration-300
-                    ${isActive ? "opacity-100" : "opacity-0"}
-                  `}
+                    rounded-s-lg ${isActive ? "opacity-100" : "opacity-0"}`}
                   style={{ borderColor: color }}
                 />
 

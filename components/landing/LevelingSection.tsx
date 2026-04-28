@@ -170,7 +170,7 @@ export default function LevelingSection() {
                   </h3>
 
                   {/* Requirements label */}
-                  <p className="font-proxima text-white font-semibold txt-regular mb-3 -ms-1">
+                  <p className="font-proxima text-white font-semibold txt-regular mb-3">
                     {t("requirements")}:
                   </p>
 
