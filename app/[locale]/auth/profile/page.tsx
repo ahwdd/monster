@@ -12,7 +12,7 @@ import {
   IoInformationCircleOutline,
 } from "react-icons/io5";
 import { MdAdd } from "react-icons/md";
-import AuthShell       from "@/components/auth/AuthShell";
+import AuthShell        from "@/components/auth/AuthShell";
 import ChangeEmailModal from "@/components/profile/ChangeEmailModal";
 import ChangePhoneModal from "@/components/profile/ChangePhoneModal";
 import { useAuth }  from "@/hooks/useAuth";
@@ -114,26 +114,44 @@ export default function ProfilePage() {
 
   const [reqStreams, reqReels, reqStories] = CONTENT_REQ[rank] ?? CONTENT_REQ.UNRANKED;
 
-  const recentSubs   = submissions.slice(0, 3);
-  const approvedSubs = submissions.filter((s) => s.status === "APPROVED").length;
+  const recentSubs = submissions.slice(0, 3);
 
-  // ── Performance score — pts come from data, maxes from SCORE_COMPONENTS ──
-  const minContent      = MIN_CONTENT[rank]        ?? 20;
-  const scoreMax        = MIN_QUARTER_SCORE[rank]  || 50;
-  const targetEngRate   = (MIN_ENGAGEMENT_RATE[rank] ?? 0.005) * 100;
+  // ── Approved submissions for score: only those at the CURRENT rank ────────
+  // After rank-up, old submissions (at previous rank) must not inflate the
+  // content score for the new rank window. We match by submission.rank === rank.
+  const approvedSubsCurrentRank = submissions.filter(
+    (s) => s.status === "APPROVED" && s.rank === rank
+  ).length;
 
-  const viewsPts   = Math.min(SCORE_COMPONENTS[0].max, Math.round((currentRankReach / (threshold || 1)) * SCORE_COMPONENTS[0].max));
-  const contentPts = Math.min(SCORE_COMPONENTS[1].max, Math.round((approvedSubs / (minContent || 1)) * SCORE_COMPONENTS[1].max));
-  const engPts     = Math.min(SCORE_COMPONENTS[2].max, Math.round(((profile?.engagementRate ?? 0) / (targetEngRate || 0.5)) * SCORE_COMPONENTS[2].max));
+  // Total approved (all ranks) — used for the stat card display only
+  const approvedSubsTotal = submissions.filter((s) => s.status === "APPROVED").length;
 
+  // ── Performance score ─────────────────────────────────────────────────────
+  const minContent    = MIN_CONTENT[rank]        ?? 20;
+  const scoreMax      = MIN_QUARTER_SCORE[rank]  || 50;
+  const targetEngRate = (MIN_ENGAGEMENT_RATE[rank] ?? 0.005) * 100;
+
+  // viewsPts: based on currentRankReach vs threshold (rank-window reach)
+  const viewsPts = Math.min(
+    SCORE_COMPONENTS[0].max,
+    Math.round((currentRankReach / (threshold || 1)) * SCORE_COMPONENTS[0].max)
+  );
+  // contentPts: based on approved submissions AT current rank only
+  const contentPts = Math.min(
+    SCORE_COMPONENTS[1].max,
+    Math.round((approvedSubsCurrentRank / (minContent || 1)) * SCORE_COMPONENTS[1].max)
+  );
   const engagementRate  = profile?.engagementRate  ?? 0;
   const commitmentScore = profile?.commitmentScore ?? 0;
   const adminGradeScore = profile?.adminGradeScore ?? 0;
   const adminNote       = profile?.adminNote       ?? null;
 
+  const engPts = Math.min(
+    SCORE_COMPONENTS[2].max,
+    Math.round((engagementRate / (targetEngRate || 0.5)) * SCORE_COMPONENTS[2].max)
+  );
   const totalScore = viewsPts + contentPts + engPts + commitmentScore + adminGradeScore;
 
-  // Score breakdown rows — labels from SCORE_COMPONENTS, pts computed above
   const scoreRows = [
     { ...SCORE_COMPONENTS[0], pts: viewsPts                    },
     { ...SCORE_COMPONENTS[1], pts: contentPts                  },
@@ -142,26 +160,32 @@ export default function ProfilePage() {
     { ...SCORE_COMPONENTS[4], pts: Math.round(adminGradeScore) },
   ];
 
-  // ── Stat maximums ─────────────────────────────────────────────────────────
+  // ── Stat card maximums ────────────────────────────────────────────────────
   const maxSubs  = MAX_SUBMISSIONS_PER_RANK[rank] ?? 20;
   const maxReach = MAX_REACH_PER_RANK[rank]       ?? 50_000;
 
   // ── Rank-up eligibility ───────────────────────────────────────────────────
   const elig = isApproved && rank !== "COLD"
     ? checkRankUpEligibility(rank, currentRankReach, approvedAt, {
-        pictureCount: profile?.pictureCount ?? 0, storyCount: profile?.storyCount ?? 0,
-        reelCount: profile?.reelCount ?? 0, longVideoCount: profile?.longVideoCount ?? 0,
-        postCount: profile?.postCount ?? 0,
+        pictureCount:   profile?.pictureCount   ?? 0,
+        storyCount:     profile?.storyCount     ?? 0,
+        reelCount:      profile?.reelCount      ?? 0,
+        longVideoCount: profile?.longVideoCount ?? 0,
+        postCount:      profile?.postCount      ?? 0,
       })
     : null;
   const isEligible    = elig?.reachOk ?? false;
   const nextRankColor = NEXT_RANK_COLOR[rank] ?? "#22bb39";
 
-  // ── Content counts ────────────────────────────────────────────────────────
+  // ── Content counts from profile rank-window counters ─────────────────────
   const currentCounts: Record<string, number> = {
-    streams: (profile?.longVideoCount ?? 0) + (profile?.liveCount ?? 0) + (profile?.streamCount ?? 0),
+    streams: (profile?.longVideoCount ?? 0)
+           + (profile?.liveCount      ?? 0)
+           + (profile?.streamCount    ?? 0),
     reels:   profile?.reelCount   ?? 0,
-    stories: (profile?.storyCount  ?? 0) + (profile?.postCount   ?? 0) + (profile?.pictureCount ?? 0),
+    stories: (profile?.storyCount  ?? 0)
+           + (profile?.postCount   ?? 0)
+           + (profile?.pictureCount ?? 0),
   };
   const reqCounts: Record<string, number> = {
     streams: reqStreams, reels: reqReels, stories: reqStories,
@@ -312,7 +336,6 @@ export default function ProfilePage() {
                         </>
                       )}
                     </div>
-                    {/* Percentage — use rankColor when maxed */}
                     <span className="font-black txt-larger tabular-nums"
                       style={{ color: progressPct >= 100 ? nextRankColor : "white" }}>
                       {rank === "COLD" ? "MAX" : `${progressPct}%`}
@@ -346,10 +369,7 @@ export default function ProfilePage() {
                     </p>
                     <p className="leading-none mb-1 header-small">
                       <span style={{ color: totalScore >= scoreMax ? nextRankColor : "white" }}>{Math.round(totalScore)} </span>
-                      {/* Score total color: rankColor when at/above target */}
-                      <span className="header-regular" style={{ color: nextRankColor }}>
-                        /{scoreMax} pts
-                      </span>
+                      <span className="header-regular" style={{ color: nextRankColor }}>/{scoreMax} pts</span>
                     </p>
                     <p className="txt-larger text-[#555]">
                       {isRTL ? "نقاط التفاعل الإجمالية" : "Overall Engagement Score"}
@@ -370,10 +390,7 @@ export default function ProfilePage() {
                                 <span className="txt-smaller text-[#555]">{isRTL ? keyAr : keyEn}</span>
                                 <span className="tabular-nums flex items-baseline gap-0.5">
                                   <span className="txt-smaller" style={{ color: isMetPts ? nextRankColor : "#888" }}>{pts}</span>
-                                  <span className="txt-large font-bold"
-                                    style={{ color: nextRankColor }}>
-                                    &nbsp;/{max}
-                                  </span>
+                                  <span className="txt-large font-bold" style={{ color: nextRankColor }}>&nbsp;/{max}</span>
                                 </span>
                               </div>
                             );
@@ -385,26 +402,37 @@ export default function ProfilePage() {
                 </motion.div>
               </div>
 
-              {/* Row 2: Stat cards — rankColor passed for met state */}
+              {/* Row 2: Stat cards ────────────────────────────────────────
+                  ── Total Views: currentRankReach vs maxReach (rank window)
+                  ── Total Reach: totalReachAllTime vs maxReach
+                  ── Approved Submissions: current-rank approved vs maxSubs
+                  Note: currentRaw/targetRaw drive the circular progress ring.
+              ─────────────────────────────────────────────────────────── */}
               <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.11 }}
                 className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+                {/* Card 1: All-time reach — informational, no progress ring */}
                 <StatCard
-                  label={isRTL ? "إجمالي المشاهدات" : "Total Views"}
-                  current={formatNumber(7000000)} target={KPI_VIEWS_LABEL[rank] ?? "50K"}
-                  targetColor={nextRankColor} rankColor={nextRankColor}
-                  currentRaw={7000000} targetRaw={maxReach}
+                  label={isRTL ? "إجمالي الوصول الكلي" : "All-time Reach"}
+                  current={formatNumber(totalReachAllTime)}
+                  plain={formatNumber(totalReachAllTime)}
                 />
+
+                {/* Card 2: Rank window reach vs target */}
                 <StatCard
-                  label={isRTL ? "إجمالي الوصول" : "Total Reach"}
-                  current={formatNumber(totalReachAllTime)} target={formatNumber(maxReach)}
+                  label={isRTL ? "وصول هذا المستوى" : "Rank Reach"}
+                  current={formatNumber(currentRankReach)}
+                  target={formatNumber(maxReach)}
                   targetColor={nextRankColor} rankColor={nextRankColor}
-                  currentRaw={totalReachAllTime} targetRaw={maxReach}
+                  currentRaw={currentRankReach} targetRaw={maxReach}
                 />
+
+                {/* Card 3: Approved submissions this rank */}
                 <StatCard
                   label={isRTL ? "المشاركات المقبولة" : "Approved Submissions"}
-                  current={String(approvedSubs)} target={String(maxSubs)}
+                  current={String(approvedSubsCurrentRank)}
+                  target={String(maxSubs)}
                   targetColor={nextRankColor} rankColor={nextRankColor}
-                  currentRaw={approvedSubs} targetRaw={maxSubs}
+                  currentRaw={approvedSubsCurrentRank} targetRaw={maxSubs}
                 />
               </motion.div>
 
@@ -426,18 +454,15 @@ export default function ProfilePage() {
                       return (
                         <div key={key} className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-2 min-w-0">
-                            {/* Icon turns rankColor when met */}
                             <Icon className="size-4 shrink-0" style={{ color: isMet ? nextRankColor : "#555" }} />
                             <span className="txt-larger text-[#ccccd0] truncate">{label}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <div className="flex items-baseline gap-0.5 tabular-nums">
-                              {/* Current count: rankColor when met/exceeded */}
-                              <span className="txt-small font-semibold"
-                                style={{ color: isMet ? nextRankColor : "white" }}>
+                              <span className="txt-small font-semibold" style={{ color: isMet ? nextRankColor : "white" }}>
                                 {cur}
                               </span>
-                              <span className="txt-larger text-[#22bb39] font-bold">/{req}</span>
+                              <span className="txt-larger font-bold" style={{ color: nextRankColor }}>/{req}</span>
                             </div>
                             <CircularProgress pct={pct} size={32} stroke={3} rankColor={nextRankColor} />
                           </div>
@@ -453,24 +478,23 @@ export default function ProfilePage() {
                     {isRTL ? "مستهدفات KPI والتفاعل" : "KPI & Engagement Targets"}
                   </p>
                   <div className="space-y-5">
-                    {/* Views KPI */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="txt-larger text-[#ccccd0]">{isRTL ? "مشاهدات KPI" : "Views KPI"}</span>
                         <span className="txt-larger font-semibold tabular-nums"
-                          style={{ color: progressPct >= 100 ? nextRankColor : "#22bb39" }}>
-                          {formatNumber(currentRankReach)} / {KPI_VIEWS_LABEL[rank] ?? "50K"}
+                          style={{ color: progressPct >= 100 ? nextRankColor : "#ccc" }}>
+                          <span>{formatNumber(currentRankReach)} </span>
+                          <span className="txt-huge" style={{color: nextRankColor}}>/{KPI_VIEWS_LABEL[rank] ?? "50K"}</span>
                         </span>
                       </div>
                       <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "6px" }}>
                         <motion.div className="h-full"
-                          style={{ background: progressPct >= 100 ? nextRankColor : "#22bb39" }}
+                          style={{ background: progressPct >= 100 ? nextRankColor : rankColor }}
                           initial={{ width: 0 }} animate={{ width: `${progressPct}%` }}
                           transition={{ duration: 0.9, delay: 0.45, ease: [0.4, 0, 0.2, 1] }}
                         />
                       </div>
                     </div>
-                    {/* Engagement Rate */}
                     <div>
                       {(() => {
                         const engPct = Math.min(Math.round((engagementRate / (targetEngRate || 0.5)) * 100), 100);
@@ -480,8 +504,9 @@ export default function ProfilePage() {
                             <div className="flex items-center justify-between mb-2">
                               <span className="txt-larger text-[#ccccd0]">{isRTL ? "معدل التفاعل" : "Engagement Rate"}</span>
                               <span className="txt-larger font-semibold tabular-nums"
-                                style={{ color: engMet ? nextRankColor : "#bfec1d" }}>  {/* ← nextRankColor when met */}
-                                {engagementRate.toFixed(2)}% / {KPI_ENG_LABEL[rank] ?? "0.5%"}
+                                style={{ color: engMet ? nextRankColor : "#ccc" }}>
+                                <span>{engagementRate.toFixed(2)}% </span> 
+                                <span className="txt-huge" style={{color: nextRankColor}}>/{KPI_ENG_LABEL[rank] ?? "0.5%"}</span>
                               </span>
                             </div>
                             <div className="w-full bg-[#272727] rounded-full overflow-hidden" style={{ height: "6px" }}>
@@ -564,7 +589,7 @@ export default function ProfilePage() {
             className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
             <p className="txt-larger text-[#b6b6b6] capitalize tracking-wider">{t("contactInfo")}</p>
             {[
-              { Icon: IoMailOutline,          label: t("email"), value: displayEmail,    onEdit: () => setShowEmail(true), cta: displayEmail ? t("change") : t("add") },
+              { Icon: IoMailOutline,          label: t("email"), value: displayEmail,     onEdit: () => setShowEmail(true), cta: displayEmail ? t("change") : t("add") },
               { Icon: IoPhonePortraitOutline, label: t("phone"), value: user.phone||null, onEdit: () => setShowPhone(true), cta: user.phone ? t("change") : t("add") },
             ].map(({ Icon, label, value, onEdit, cta }) => (
               <div key={label} className="flex items-center justify-between py-3 border-b border-[#272727] last:border-0 gap-3">

@@ -18,13 +18,11 @@ const schema = z.object({
   acceptedReach:     z.number().int().min(0).optional(),
   adminNotes:        z.string().optional().nullable(),
   rejectionReason:   z.enum(REJECTION_REASONS).optional().nullable(),
-  // Engagement
   engagementRate:    z.number().min(0).max(100).optional(),
   submittedLikes:    z.number().int().min(0).optional(),
   submittedComments: z.number().int().min(0).optional(),
   submittedShares:   z.number().int().min(0).optional(),
-  // Quality rating — 0.5–5.0 in 0.5 steps
-  qualityRating:     z.number().min(0.5).max(5).multipleOf(0.5).optional().nullable(),
+  qualityRating:     z.number().min(0.5).max(5).optional().nullable(),
 });
 
 export async function PATCH(
@@ -46,7 +44,6 @@ export async function PATCH(
 
     const wasAlreadyApproved = submission.status === "APPROVED";
 
-    // ── Reach delta ───────────────────────────────────────────────────────
     let reachToCredit    = 0;
     let newAcceptedReach = submission.acceptedReach;
 
@@ -64,7 +61,6 @@ export async function PATCH(
       }
     }
 
-    // ── Engagement rate ───────────────────────────────────────────────────
     let resolvedEngagementRate = 0;
     if (data.status === "APPROVED") {
       const hasRaw =
@@ -82,13 +78,12 @@ export async function PATCH(
       }
     }
 
-    // ── Update submission ─────────────────────────────────────────────────
     const updated = await prisma.submission.update({
       where: { id },
       data: {
         status:                data.status,
         adminNotes:            data.adminNotes ?? null,
-        acceptedReach:         newAcceptedReach,
+        acceptedReach:         data.status === "APPROVED" ? newAcceptedReach : submission.acceptedReach,
         pendingReach:          null,
         previousAcceptedReach: null,
         rejectionReason:       data.status === "REJECTED" ? (data.rejectionReason ?? null) : null,
@@ -102,16 +97,66 @@ export async function PATCH(
       },
     });
 
-    // ── Update creator profile ────────────────────────────────────────────
-    if (data.status === "APPROVED") {
-      const profile = await prisma.creatorProfile.findUnique({
-        where: { userId: submission.userId },
-      });
+    const profile = await prisma.creatorProfile.findUnique({
+      where: { userId: submission.userId },
+    });
 
-      if (profile) {
-        // Content counters — only on fresh approvals
+    if (profile) {
+      // ── CASE 1: REJECTION of a previously APPROVED submission ─────────
+      // Subtract the reach that was credited and reverse the content counters.
+      if (data.status === "REJECTED" && wasAlreadyApproved) {
+        const reachToRemove = submission.acceptedReach; // what was credited
+
+        const contentDecrements: any = {};
+        const totalDecrements:   any = {};
+        submission.contentTypes.forEach((ct) => {
+          const field = contentTypeToField(ct);
+          contentDecrements[field]                   = { decrement: 1 };
+          totalDecrements[`total${capitalize(field)}`] = { decrement: 1 };
+        });
+
+        // Recalculate weighted average engagement excluding this submission
+        const remainingApproved = await prisma.submission.findMany({
+          where: {
+            userId: submission.userId,
+            status: "APPROVED",
+            id:     { not: id },
+          },
+          select: { acceptedReach: true, engagementRate: true },
+        });
+
+        let newProfileEngagement = 0;
+        const totalWeight = remainingApproved.reduce((s, x) => s + (x.acceptedReach ?? 0), 0);
+        if (totalWeight > 0) {
+          newProfileEngagement = remainingApproved.reduce(
+            (s, x) => s + (x.engagementRate ?? 0) * (x.acceptedReach ?? 0), 0
+          ) / totalWeight;
+        }
+
+        await prisma.creatorProfile.update({
+          where: { userId: submission.userId },
+          data: {
+            currentRankReach:  { decrement: reachToRemove },
+            totalReachAllTime: { decrement: reachToRemove },
+            engagementRate:    newProfileEngagement,
+            ...contentDecrements,
+            ...totalDecrements,
+          },
+        });
+
+        // Also remove the PlatformStat record for this submission
+        await (prisma as any).platformStat.deleteMany({
+          where: { submissionId: id },
+        });
+      }
+
+      // ── CASE 2: APPROVAL (fresh or re-approval) ───────────────────────
+      if (data.status === "APPROVED") {
+        // Content counters: only increment on FRESH approvals
+        // (wasAlreadyApproved = false means it was PENDING or REJECTED before)
         const rankWindowIncrements: any = {};
-        const totalIncrements: any      = {};
+        const totalIncrements:      any = {};
+
         if (!wasAlreadyApproved) {
           const contentCounts: Record<string, number> = {};
           submission.contentTypes.forEach((ct) => {
@@ -124,7 +169,7 @@ export async function PATCH(
           });
         }
 
-        // Weighted average engagement
+        // Weighted average engagement across all approved submissions
         let newProfileEngagement = profile.engagementRate;
         if (newAcceptedReach > 0) {
           const approvedSubs = await prisma.submission.findMany({
@@ -157,8 +202,7 @@ export async function PATCH(
           },
         });
 
-        // ── Upsert PlatformStat ───────────────────────────────────────────
-        // One record per submission — update reach delta on re-approvals
+        // Upsert PlatformStat
         await (prisma as any).platformStat.upsert({
           where:  { submissionId: id },
           create: {
@@ -202,9 +246,15 @@ export async function PATCH(
 
 function contentTypeToField(ct: string): string {
   const map: Record<string, string> = {
-    PICTURE: "pictureCount", STORY: "storyCount", REEL: "reelCount",
-    LONG_VIDEO: "longVideoCount", POST: "postCount",
+    PICTURE:    "pictureCount",
+    STORY:      "storyCount",
+    REEL:       "reelCount",
+    LONG_VIDEO: "longVideoCount",
+    POST:       "postCount",
+    LIVE:       "liveCount",
+    STREAM:     "streamCount",
   };
   return map[ct] ?? "postCount";
 }
+
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }

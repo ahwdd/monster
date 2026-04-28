@@ -169,7 +169,11 @@ export default function AdminCreatorDetail() {
   const totalScore   = viewsPts + contentPts + engPts + Math.round(commitmentSaved) + Math.round(adminGradeSaved);
   const scorePct     = scoreMax > 0 ? Math.round((totalScore/scoreMax)*100) : 0;
 
-  const elig = rank !== "COLD" ? checkRankUpEligibility(rank, profile.currentRankReach, profile.approvedAt, {
+  const elig = rank !== "COLD" ? checkRankUpEligibility(
+  rank,
+  profile.currentRankReach,
+  profile.approvedAt ? new Date(profile.approvedAt) : null,
+  {
     pictureCount:profile.pictureCount, storyCount:profile.storyCount, reelCount:profile.reelCount,
     longVideoCount:profile.longVideoCount, postCount:profile.postCount,
   }) : null;
