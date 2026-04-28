@@ -43,11 +43,15 @@ export const safeUserSelect = {
       reelCount:           true,
       longVideoCount:      true,
       postCount:           true,
+      streamCount:         true,
+      liveCount:           true,
       totalPictureCount:   true,
       totalStoryCount:     true,
       totalReelCount:      true,
       totalLongVideoCount: true,
       totalPostCount:      true,
+      totalStreamCount:    true,
+      totalLiveCount:      true,
       engagementRate:      true,
       commitmentScore:     true,
       adminGradeScore:     true,
@@ -93,11 +97,15 @@ export type UserSession = {
     reelCount:           number;
     longVideoCount:      number;
     postCount:           number;
+    streamCount:         number;
+    liveCount:           number;
     totalPictureCount:   number;
     totalStoryCount:     number;
     totalReelCount:      number;
     totalLongVideoCount: number;
     totalPostCount:      number;
+    totalStreamCount:    number;
+    totalLiveCount:      number;
     engagementRate:      number;
     commitmentScore:     number;
     adminGradeScore:     number;

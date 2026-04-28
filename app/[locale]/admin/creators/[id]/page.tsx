@@ -6,19 +6,25 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   IoArrowBack, IoSaveOutline, IoArrowUpCircleOutline,
-  IoStar, IoStarOutline,
+  IoStar, IoStarOutline, IoChevronBack, IoChevronForward,
+  IoVideocamOutline, IoFilmOutline, IoCameraOutline,
 } from "react-icons/io5";
 import { useAuth }  from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
 import {
-  formatNumber, checkRankUpEligibility, RANK_THRESHOLDS,
-  MIN_QUARTER_SCORE, MIN_ENGAGEMENT_RATE,
+  formatNumber, checkRankUpEligibility,
+  RANK_THRESHOLDS, MIN_QUARTER_SCORE, MIN_ENGAGEMENT_RATE,
+  MIN_CONTENT, MAX_SUBMISSIONS_PER_RANK, MAX_REACH_PER_RANK,
 } from "@/lib/utils/rank";
-import { RANK_COLOR, PLATFORM_COLOR, STATUS_TEXT_CLASS } from "@/lib/data/rankConfig";
+import {
+  RANK_COLOR, PLATFORM_COLOR, STATUS_TEXT_CLASS,
+  SCORE_COMPONENTS, CONTENT_REQ, NEXT_RANK_COLOR,
+} from "@/lib/data/rankConfig";
 import Skeleton from "@/components/Skeleton";
 import { CircularProgress } from "@/app/[locale]/auth/profile/ProfileSkeleton";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const PAGE_SIZE = 20;
 
 function Stars({ value }: { value: number | null }) {
   if (!value) return <span className="txt-smaller text-[#333]">—</span>;
@@ -27,11 +33,9 @@ function Stars({ value }: { value: number | null }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1,2,3,4,5].map((s) => (
-        value >= s
-          ? <IoStar key={s} className="size-3" style={{color}}/>
-          : value >= s-0.5
-          ? <IoStar key={s} className="size-3 opacity-50" style={{color}}/>
-          : <IoStarOutline key={s} className="size-3 text-[#333]"/>
+        value >= s ? <IoStar key={s} className="size-3" style={{color}}/>
+        : value >= s-0.5 ? <IoStar key={s} className="size-3 opacity-50" style={{color}}/>
+        : <IoStarOutline key={s} className="size-3 text-[#333]"/>
       ))}
       <span className="txt-smaller text-[#555] ms-1">{value.toFixed(1)}</span>
     </div>
@@ -63,6 +67,7 @@ export default function AdminCreatorDetail() {
   const [loading,  setLoading]  = useState(true);
   const [saving,   setSaving]   = useState(false);
   const [snapping, setSnapping] = useState(false);
+  const [subPage,  setSubPage]  = useState(1);
 
   const [commitmentScore, setCommitmentScore] = useState("");
   const [adminGradeScore, setAdminGradeScore]  = useState("");
@@ -125,10 +130,8 @@ export default function AdminCreatorDetail() {
         method:"POST", credentials:"include",
       });
       const json = await res.json();
-      if (json.success) {
-        toast.success("Snapshot saved for " + new Date().toISOString().slice(0,7));
-        load();
-      } else toast.error(json.error || "Failed");
+      if (json.success) { toast.success("Snapshot saved for " + new Date().toISOString().slice(0,7)); load(); }
+      else toast.error(json.error || "Failed");
     } catch { toast.error("Error"); }
     finally   { setSnapping(false); }
   }
@@ -150,33 +153,58 @@ export default function AdminCreatorDetail() {
   }
 
   const { profile, submissions, snapshots, platformStats } = data;
-  const rank      = profile.rank ?? "UNRANKED";
-  const rankColor = RANK_COLOR[rank] ?? "#6b7280";
+  const rank           = profile.rank ?? "UNRANKED";
+  const rankColor      = RANK_COLOR[rank] ?? "#6b7280";
+  const nextRankColor  = NEXT_RANK_COLOR[rank] ?? "#22bb39";
 
-  const engagementRate  = profile.engagementRate  ?? 0;
-  const commitmentSaved = profile.commitmentScore ?? 0;
-  const adminGradeSaved = profile.adminGradeScore  ?? 0;
+  // ── Stats — mirrors profile page logic exactly ─────────────────────────
+  const currentRankReach  = profile.currentRankReach  ?? 0;
+  const totalReachAllTime = profile.totalReachAllTime  ?? 0;
+  const engagementRate    = profile.engagementRate     ?? 0;
+  const commitmentSaved   = profile.commitmentScore    ?? 0;
+  const adminGradeSaved   = profile.adminGradeScore    ?? 0;
 
   const threshold    = RANK_THRESHOLDS[rank] ?? 50000;
   const scoreMax     = MIN_QUARTER_SCORE[rank] || 50;
   const targetEngPct = (MIN_ENGAGEMENT_RATE[rank] ?? 0.005) * 100;
+  const minContent   = MIN_CONTENT[rank] ?? 20;
+  const maxSubs      = MAX_SUBMISSIONS_PER_RANK[rank] ?? 20;
+  const maxReach     = MAX_REACH_PER_RANK[rank] ?? 50_000;
 
-  const approvedSubs = submissions.filter((s:any) => s.status === "APPROVED").length;
-  const minContent   = { UNRANKED:20, ROOKIE:32, RISING:48, COLD:72 }[rank as string] ?? 20;
-  const viewsPts     = Math.min(10, Math.round((profile.currentRankReach/(threshold||1))*10));
-  const contentPts   = Math.min(20, Math.round((approvedSubs/(minContent||1))*20));
-  const engPts       = Math.min(15, Math.round((engagementRate/(targetEngPct||0.5))*15));
-  const totalScore   = viewsPts + contentPts + engPts + Math.round(commitmentSaved) + Math.round(adminGradeSaved);
-  const scorePct     = scoreMax > 0 ? Math.round((totalScore/scoreMax)*100) : 0;
+  // Approved submissions AT CURRENT RANK ONLY (mirrors profile page)
+  const approvedSubsCurrentRank = submissions.filter(
+    (s:any) => s.status === "APPROVED" && s.rank === rank
+  ).length;
+  const approvedSubsTotal = submissions.filter((s:any) => s.status === "APPROVED").length;
 
-  const elig = rank !== "COLD" ? checkRankUpEligibility(
-  rank,
-  profile.currentRankReach,
-  profile.approvedAt ? new Date(profile.approvedAt) : null,
-  {
-    pictureCount:profile.pictureCount, storyCount:profile.storyCount, reelCount:profile.reelCount,
-    longVideoCount:profile.longVideoCount, postCount:profile.postCount,
-  }) : null;
+  // Score components — same formula as profile page
+  const viewsPts   = Math.min(SCORE_COMPONENTS[0].max, Math.round((currentRankReach / (threshold||1)) * SCORE_COMPONENTS[0].max));
+  const contentPts = Math.min(SCORE_COMPONENTS[1].max, Math.round((approvedSubsCurrentRank / (minContent||1)) * SCORE_COMPONENTS[1].max));
+  const engPts     = Math.min(SCORE_COMPONENTS[2].max, Math.round((engagementRate / (targetEngPct||0.5)) * SCORE_COMPONENTS[2].max));
+  const totalScore = viewsPts + contentPts + engPts + Math.round(commitmentSaved) + Math.round(adminGradeSaved);
+  const scorePct   = scoreMax > 0 ? Math.round((totalScore/scoreMax)*100) : 0;
+
+  // Content counts — rank window counters (same as profile)
+  const currentCounts = {
+    streams: (profile.longVideoCount??0) + (profile.liveCount??0) + (profile.streamCount??0),
+    reels:   profile.reelCount   ?? 0,
+    stories: (profile.storyCount ??0) + (profile.postCount??0) + (profile.pictureCount??0),
+  };
+  const [reqStreams, reqReels, reqStories] = CONTENT_REQ[rank] ?? CONTENT_REQ.UNRANKED;
+  const reqCounts = { streams: reqStreams, reels: reqReels, stories: reqStories };
+  const contentRows = [
+    { key:"streams", Icon:IoVideocamOutline, label:"Streams / Live / Long Video", cur:currentCounts.streams, req:reqStreams },
+    { key:"reels",   Icon:IoFilmOutline,     label:"Reels / Short Videos",        cur:currentCounts.reels,   req:reqReels   },
+    { key:"stories", Icon:IoCameraOutline,   label:"Stories / Posts / Pictures",  cur:currentCounts.stories, req:reqStories },
+  ];
+
+  // Eligibility
+  const elig = rank !== "COLD" ? checkRankUpEligibility(rank, currentRankReach,
+    profile.approvedAt ? new Date(profile.approvedAt) : null, {
+      pictureCount:profile.pictureCount??0, storyCount:profile.storyCount??0,
+      reelCount:profile.reelCount??0, longVideoCount:profile.longVideoCount??0, 
+      postCount:profile.postCount??0, streamCount:profile.streamCount??0,  liveCount:profile.liveCount??0, 
+    }) : null;
 
   // Platform breakdown
   const platAgg: Record<string, {reach:number;count:number;engSum:number}> = {};
@@ -191,8 +219,13 @@ export default function AdminCreatorDetail() {
     .map(([platform,v]) => ({platform, totalReach:v.reach, count:v.count, avgEng:v.reach>0?v.engSum/v.reach:0}))
     .sort((a,b) => b.totalReach-a.totalReach);
 
+  // Sparklines
   const reachHistory = snapshots.map((s:any) => s.reach);
   const engHistory   = snapshots.map((s:any) => s.engagementRate);
+
+  // Paginated submissions
+  const totalSubPages = Math.ceil(submissions.length / PAGE_SIZE);
+  const pagedSubs = submissions.slice((subPage-1)*PAGE_SIZE, subPage*PAGE_SIZE);
 
   return (
     <div className="px-6 py-8 max-w-5xl space-y-5">
@@ -227,14 +260,15 @@ export default function AdminCreatorDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        {/* Left: scores + admin controls */}
+        {/* ── Left: score + admin controls ── */}
         <div className="space-y-4">
-          {/* Score card */}
+
+          {/* Performance score */}
           <div className="bg-[#0a0a0a] border border-[#272727] p-5">
             <p className="txt-small font-display font-bold text-white uppercase tracking-wider mb-4">Performance Score</p>
             <div className="flex items-center gap-4 mb-4">
               <div className="relative flex items-center justify-center">
-                <CircularProgress pct={scorePct} size={72} stroke={6}/>
+                <CircularProgress pct={scorePct} size={72} stroke={6} rankColor={rankColor}/>
                 <span className="absolute text-white font-black" style={{fontSize:"14px"}}>{totalScore}</span>
               </div>
               <div>
@@ -244,11 +278,11 @@ export default function AdminCreatorDetail() {
             </div>
             <div className="space-y-1.5 border-t border-[#1a1a1a] pt-3">
               {[
-                {label:"Views (auto)",      pts:viewsPts,                   max:10,  dim:true},
-                {label:"Content (auto)",    pts:contentPts,                 max:20,  dim:true},
-                {label:"Engagement (auto)", pts:engPts,                     max:15,  dim:true},
-                {label:"Commitment",        pts:Math.round(commitmentSaved),max:15,  dim:false},
-                {label:"Admin Grade",       pts:Math.round(adminGradeSaved),max:30,  dim:false},
+                {label:"Views (auto)",      pts:viewsPts,                   max:SCORE_COMPONENTS[0].max, dim:true  },
+                {label:"Content (auto)",    pts:contentPts,                 max:SCORE_COMPONENTS[1].max, dim:true  },
+                {label:"Engagement (auto)", pts:engPts,                     max:SCORE_COMPONENTS[2].max, dim:true  },
+                {label:"Commitment",        pts:Math.round(commitmentSaved),max:SCORE_COMPONENTS[3].max, dim:false },
+                {label:"Admin Grade",       pts:Math.round(adminGradeSaved),max:SCORE_COMPONENTS[4].max, dim:false },
               ].map(({label,pts,max,dim}) => (
                 <div key={label} className="flex justify-between txt-smaller">
                   <span className={dim?"text-[#444]":"text-[#888]"}>{label}</span>
@@ -301,24 +335,70 @@ export default function AdminCreatorDetail() {
           </div>
         </div>
 
-        {/* Right 2 cols */}
+        {/* ── Right 2 cols ── */}
         <div className="lg:col-span-2 space-y-4">
 
-          {/* Stats grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {[
-              {label:"Rank Reach",  value:formatNumber(profile.currentRankReach)},
-              {label:"All-time",    value:formatNumber(profile.totalReachAllTime)},
-              {label:"Engagement",  value:`${engagementRate.toFixed(2)}%`},
-              {label:"Approved",    value:String(approvedSubs)},
-              {label:"Submissions", value:String(submissions.length)},
-              {label:"Followers",   value:formatNumber(profile.followers??0)},
-            ].map(({label,value}) => (
-              <div key={label} className="bg-[#0a0a0a] border border-[#272727] px-4 py-3">
-                <p className="txt-smaller text-[#555]">{label}</p>
-                <p className="txt-small font-bold text-white">{value}</p>
-              </div>
-            ))}
+          {/* ── Rank-window stats (matches profile page) ── */}
+          <div className="bg-[#0a0a0a] border border-[#272727] p-5">
+            <p className="txt-small font-display font-bold text-white uppercase tracking-wider mb-4">
+              Rank Window Stats
+              <span className="txt-smaller text-[#444] ms-2 normal-case">resets on rank-up</span>
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+              {[
+                {label:"Rank Reach",          value:formatNumber(currentRankReach),     sub:`/ ${formatNumber(maxReach)}`},
+                {label:"Engagement",          value:`${engagementRate.toFixed(2)}%`,    sub:`target ${(targetEngPct).toFixed(1)}%`},
+                {label:"Approved (this rank)",value:String(approvedSubsCurrentRank),   sub:`/ ${maxSubs} target`},
+              ].map(({label,value,sub}) => (
+                <div key={label} className="bg-[#111] border border-[#1a1a1a] px-3 py-2.5">
+                  <p className="txt-smaller text-[#555]">{label}</p>
+                  <p className="txt-small font-bold text-white">{value}</p>
+                  <p className="txt-smaller text-[#444]">{sub}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Content requirements */}
+            <div className="space-y-3">
+              {contentRows.map(({key,Icon,label,cur,req}) => {
+                const pct   = req > 0 ? Math.min(Math.round((cur/req)*100),100) : 100;
+                const isMet = cur >= req;
+                return (
+                  <div key={key} className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Icon className="size-3.5 shrink-0" style={{color:isMet?nextRankColor:"#555"}}/>
+                      <span className="txt-smaller text-[#888] truncate">{label}</span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="txt-smaller font-semibold tabular-nums"
+                        style={{color:isMet?nextRankColor:"white"}}>{cur}</span>
+                      <span className="txt-smaller text-[#444]">/ {req}</span>
+                      <CircularProgress pct={pct} size={24} stroke={2.5} rankColor={nextRankColor}/>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── All-time stats ── */}
+          <div className="bg-[#0a0a0a] border border-[#272727] p-5">
+            <p className="txt-small font-display font-bold text-white uppercase tracking-wider mb-3">
+              All-time Stats
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                {label:"Total Reach",     value:formatNumber(totalReachAllTime)},
+                {label:"All Approved",    value:String(approvedSubsTotal)},
+                {label:"Submissions",     value:String(submissions.length)},
+                {label:"Followers",       value:formatNumber(profile.followers??0)},
+              ].map(({label,value}) => (
+                <div key={label} className="bg-[#111] border border-[#1a1a1a] px-3 py-2.5">
+                  <p className="txt-smaller text-[#555]">{label}</p>
+                  <p className="txt-small font-bold text-white">{value}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Snapshot sparklines */}
@@ -377,30 +457,48 @@ export default function AdminCreatorDetail() {
             </div>
           )}
 
-          {/* Submission list */}
+          {/* ── Submissions list — paginated by 20 ── */}
           <div className="bg-[#0a0a0a] border border-[#272727] p-5">
-            <p className="txt-small font-display font-bold text-white uppercase tracking-wider mb-4">
-              Submissions ({submissions.length})
-            </p>
-            <div className="space-y-1.5 max-h-72 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <p className="txt-small font-display font-bold text-white uppercase tracking-wider">
+                Submissions ({submissions.length})
+              </p>
+              {totalSubPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setSubPage((p) => Math.max(1,p-1))} disabled={subPage===1}
+                    className="p-1 text-[#444] hover:text-white disabled:opacity-30 transition-colors">
+                    <IoChevronBack className="size-4"/>
+                  </button>
+                  <span className="txt-smaller text-[#555] tabular-nums">{subPage}/{totalSubPages}</span>
+                  <button onClick={() => setSubPage((p) => Math.min(totalSubPages,p+1))} disabled={subPage===totalSubPages}
+                    className="p-1 text-[#444] hover:text-white disabled:opacity-30 transition-colors">
+                    <IoChevronForward className="size-4"/>
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="space-y-1.5">
               {submissions.length === 0 ? (
                 <p className="txt-smaller text-[#444] text-center py-6">No submissions yet</p>
-              ) : submissions.map((sub:any) => (
+              ) : pagedSubs.map((sub:any) => (
                 <div key={sub.id}
                   className="flex items-center justify-between gap-3 px-3 py-2 bg-[#111] border border-[#1a1a1a]">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className={`w-1.5 h-5 shrink-0 ${
+                    <div className={`w-1 h-5 shrink-0 ${
                       sub.status==="APPROVED"?"bg-[#22bb39]":sub.status==="REJECTED"?"bg-red-400":"bg-[#bfec1d]"
                     }`}/>
-                    <span className="txt-smaller text-[#555]" style={{color:PLATFORM_COLOR[sub.platform]??"#ccc"}}>
+                    <span className="txt-smaller font-bold shrink-0"
+                      style={{color:PLATFORM_COLOR[sub.platform]??"#ccc"}}>
                       {sub.platform}
                     </span>
-                    <span className="txt-smaller text-[#777] truncate max-w-40">{sub.contentLink}</span>
-                    <div className="hidden md:flex gap-1">
+                    <span className="txt-smaller text-[#555] truncate max-w-32">{sub.contentLink}</span>
+                    <div className="hidden md:flex gap-1 shrink-0">
                       {(sub.contentTypes??[]).map((ct:string) => (
                         <span key={ct} className="txt-smaller text-[#444]">{ct.replace(/_/g," ")}</span>
                       ))}
                     </div>
+                    {/* Rank badge on submission */}
+                    <span className="txt-smaller text-[#333] shrink-0">{sub.rank}</span>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <Stars value={sub.qualityRating}/>
@@ -409,6 +507,15 @@ export default function AdminCreatorDetail() {
                 </div>
               ))}
             </div>
+            {totalSubPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-[#1a1a1a]">
+                <button onClick={() => setSubPage((p) => Math.max(1,p-1))} disabled={subPage===1}
+                  className="px-3 py-1.5 bg-[#171717] border border-[#272727] text-white txt-smaller disabled:opacity-40 hover:border-[#444] transition-colors">←</button>
+                <span className="txt-smaller text-[#555]">Page {subPage} of {totalSubPages}</span>
+                <button onClick={() => setSubPage((p) => Math.min(totalSubPages,p+1))} disabled={subPage===totalSubPages}
+                  className="px-3 py-1.5 bg-[#171717] border border-[#272727] text-white txt-smaller disabled:opacity-40 hover:border-[#444] transition-colors">→</button>
+              </div>
+            )}
           </div>
         </div>
       </div>

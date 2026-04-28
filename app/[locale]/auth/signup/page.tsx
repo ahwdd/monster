@@ -19,27 +19,16 @@ type Tab = "whatsapp" | "email";
 type Step = "contact" | "otp";
 
 function XdInput({
-  label,
-  placeholder,
-  type = "text",
-  value,
-  onChange,
-  error,
+  label, placeholder, type = "text", value, onChange, error,
 }: {
-  label: string;
-  placeholder: string;
-  type?: string;
-  value: string;
-  onChange: (v: string) => void;
-  error?: string;
+  label: string; placeholder: string; type?: string;
+  value: string; onChange: (v: string) => void; error?: string;
 }) {
   return (
     <div className="flex flex-col gap-1.5">
       <label className="font-proxima text-white text-sm">{label}</label>
       <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        type={type} value={value} onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full h-12 px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima rounded-lg
           placeholder:text-[#ccccd0]/40 outline-none border border-transparent transition-colors"
@@ -50,37 +39,40 @@ function XdInput({
 }
 
 export default function SignupPage() {
-  const t = useTranslations("auth");
+  const t      = useTranslations("auth");
   const locale = useLocale();
-  const isRTL = locale === "ar";
+  const isRTL  = locale === "ar";
   const router = useRouter();
-  const toast = useToast();
+  const toast  = useToast();
 
   const {
-    sendWhatsAppRegisterOTP,
-    verifyWhatsAppRegisterOTP,
-    sendEmailRegisterOTP,
-    verifyEmailRegisterOTP,
-    loading,
-    error,
-    isAuthenticated,
-    initializationComplete,
-    clearAuthError,
+    sendWhatsAppRegisterOTP, verifyWhatsAppRegisterOTP,
+    sendEmailRegisterOTP,   verifyEmailRegisterOTP,
+    loading, error, isAuthenticated, initializationComplete, clearAuthError,
   } = useAuth();
 
-  const [tab, setTab] = useState<Tab>("whatsapp");
-  const [step, setStep] = useState<Step>("contact");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [tab,      setTab]      = useState<Tab>("whatsapp");
+  const [step,     setStep]     = useState<Step>("contact");
+  const [name,     setName]     = useState("");
+  const [phone,    setPhone]    = useState("");
   const [phoneKey, setPhoneKey] = useState("+20");
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [email,    setEmail]    = useState("");
+  const [otp,      setOtp]      = useState("");
+  const [errors,   setErrors]   = useState<Record<string, string>>({});
 
   const lastToastedError = useRef<string | null>(null);
+
   useEffect(() => {
     if (error && error !== lastToastedError.current) {
       lastToastedError.current = error;
+
+      if (error.toLowerCase().includes("already")) {
+        toast.error(error);
+        clearAuthError();
+        router.push(`/auth/signin`);
+        return;
+      }
+
       toast.error(error);
       clearAuthError();
     }
@@ -100,11 +92,9 @@ export default function SignupPage() {
     if (tab === "whatsapp") {
       if (!phone || !/^\d{7,15}$/.test(phone)) e.phone = t("errorPhone");
     } else {
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-        e.email = t("errorEmail");
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = t("errorEmail");
     }
-    if (step === "otp" && otp.replace(/\s/g, "").length < 6)
-      e.otp = t("errorOtp");
+    if (step === "otp" && otp.replace(/\s/g, "").length < 6) e.otp = t("errorOtp");
     setErrors(e);
     return !Object.keys(e).length;
   }
@@ -112,10 +102,9 @@ export default function SignupPage() {
   async function handleSend() {
     if (!validate()) return;
     clearAuthError();
-    const ok =
-      tab === "whatsapp"
-        ? await sendWhatsAppRegisterOTP(name.trim(), phone, phoneKey)
-        : await sendEmailRegisterOTP(name.trim(), email);
+    const ok = tab === "whatsapp"
+      ? await sendWhatsAppRegisterOTP(name.trim(), phone, phoneKey)
+      : await sendEmailRegisterOTP(name.trim(), email);
     if (ok) {
       setStep("otp");
       setOtp("");
@@ -126,13 +115,9 @@ export default function SignupPage() {
   async function handleVerify() {
     if (!validate()) return;
     clearAuthError();
-    const ok =
-      tab === "whatsapp"
-        ? await verifyWhatsAppRegisterOTP(
-            `${phoneKey}${phone}`,
-            otp.replace(/\s/g, ""),
-          )
-        : await verifyEmailRegisterOTP(email, otp.replace(/\s/g, ""));
+    const ok = tab === "whatsapp"
+      ? await verifyWhatsAppRegisterOTP(`${phoneKey}${phone}`, otp.replace(/\s/g, ""))
+      : await verifyEmailRegisterOTP(email, otp.replace(/\s/g, ""));
     if (ok) {
       toast.success(t("signupSuccess"));
       router.push(`/`);
@@ -141,16 +126,14 @@ export default function SignupPage() {
 
   async function handleResend() {
     clearAuthError();
-    if (tab === "whatsapp")
-      await sendWhatsAppRegisterOTP(name.trim(), phone, phoneKey);
+    if (tab === "whatsapp") await sendWhatsAppRegisterOTP(name.trim(), phone, phoneKey);
     else await sendEmailRegisterOTP(name.trim(), email);
     toast.success(t("otpResent"));
   }
 
   if (!initializationComplete) {
     return (
-      <AuthShell
-        breadcrumbs={[{ label: isRTL ? "إنشاء حساب" : "Join the Crew" }]}>
+      <AuthShell breadcrumbs={[{ label: isRTL ? "إنشاء حساب" : "Join the Crew" }]}>
         <div className="min-h-[60vh] flex items-center justify-center">
           <div className="w-10 h-10 border-2 border-[#6bd41a] border-t-transparent rounded-full animate-spin" />
         </div>
@@ -159,8 +142,7 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthShell
-      breadcrumbs={[{ label: isRTL ? "إنشاء حساب" : "Join the Crew" }]}>
+    <AuthShell breadcrumbs={[{ label: isRTL ? "إنشاء حساب" : "Join the Crew" }]}>
       <div className="flex items-center justify-center py-20 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -170,12 +152,8 @@ export default function SignupPage() {
           {isAuthenticated && <AlreadyLoggedInBanner />}
 
           <div className="text-center mb-8">
-            <h1
-              className="font-display font-black text-white uppercase mb-2"
-              style={{
-                fontSize: "clamp(1.8rem, 4vw, 2.4rem)",
-                letterSpacing: "0.04em",
-              }}>
+            <h1 className="font-display font-black text-white uppercase mb-2"
+              style={{ fontSize: "clamp(1.8rem, 4vw, 2.4rem)", letterSpacing: "0.04em" }}>
               {isRTL ? "إنشاء حساب" : "Join the Crew"}
             </h1>
             <p className="font-proxima text-[#ccccd0] text-sm">
@@ -193,20 +171,12 @@ export default function SignupPage() {
                 className="flex justify-between items-center mb-5 overflow-hidden">
                 <span />
                 <button
-                  onClick={() =>
-                    switchTab(tab === "whatsapp" ? "email" : "whatsapp")
-                  }
+                  onClick={() => switchTab(tab === "whatsapp" ? "email" : "whatsapp")}
                   className="flex items-center gap-1.5 font-proxima text-xs text-[#6bd41a] hover:opacity-80">
                   {tab === "whatsapp" ? (
-                    <>
-                      <CiMail className="size-3.5" />
-                      {t("useEmail")}
-                    </>
+                    <><CiMail className="size-3.5" />{t("useEmail")}</>
                   ) : (
-                    <>
-                      <CiMobile1 className="size-3.5" />
-                      {t("usePhone")}
-                    </>
+                    <><CiMobile1 className="size-3.5" />{t("usePhone")}</>
                   )}
                 </button>
               </motion.div>
@@ -216,8 +186,7 @@ export default function SignupPage() {
           <div className="space-y-4">
             <AnimatePresence mode="wait" initial={false}>
               {step === "contact" && (
-                <motion.div
-                  key={`c-${tab}`}
+                <motion.div key={`c-${tab}`}
                   initial={{ opacity: 0, x: isRTL ? -16 : 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: isRTL ? 16 : -16 }}
@@ -227,52 +196,29 @@ export default function SignupPage() {
                     label={isRTL ? "الاسم الكامل" : "Full Name"}
                     placeholder={t("namePlaceholder")}
                     value={name}
-                    onChange={(v) => {
-                      setName(v);
-                      setErrors({});
-                    }}
+                    onChange={(v) => { setName(v); setErrors({}); }}
                     error={errors.name}
                   />
-
                   {tab === "whatsapp" ? (
                     <div>
-                      <label className="font-proxima text-white text-sm block mb-1.5">
-                        {t("tabPhone")}
-                      </label>
+                      <label className="font-proxima text-white text-sm block mb-1.5">{t("tabPhone")}</label>
                       <div className="flex gap-2 h-12">
-                        <CountrySelect
-                          value={phoneKey}
-                          onChange={(c) => setPhoneKey(c.callingCode)}
-                        />
+                        <CountrySelect value={phoneKey} onChange={(c) => setPhoneKey(c.callingCode)} />
                         <input
-                          type="tel"
-                          inputMode="numeric"
-                          value={phone}
-                          onChange={(e) => {
-                            setPhone(e.target.value.replace(/\D/g, ""));
-                            setErrors({});
-                          }}
+                          type="tel" inputMode="numeric" value={phone}
+                          onChange={(e) => { setPhone(e.target.value.replace(/\D/g, "")); setErrors({}); }}
                           placeholder={t("phonePlaceholder")}
                           className="flex-1 h-full px-4 bg-[#171717] text-[#ccccd0] text-sm font-proxima rounded-lg
                             placeholder:text-[#ccccd0]/40 outline-none border border-transparent transition-colors"
                         />
                       </div>
-                      {errors.phone && (
-                        <p className="font-proxima text-red-400 text-xs mt-1">
-                          {errors.phone}
-                        </p>
-                      )}
+                      {errors.phone && <p className="font-proxima text-red-400 text-xs mt-1">{errors.phone}</p>}
                     </div>
                   ) : (
                     <XdInput
-                      label={t("tabEmail")}
-                      type="email"
-                      placeholder={t("emailPlaceholder")}
-                      value={email}
-                      onChange={(v) => {
-                        setEmail(v);
-                        setErrors({});
-                      }}
+                      label={t("tabEmail")} type="email"
+                      placeholder={t("emailPlaceholder")} value={email}
+                      onChange={(v) => { setEmail(v); setErrors({}); }}
                       error={errors.email}
                     />
                   )}
@@ -280,8 +226,7 @@ export default function SignupPage() {
               )}
 
               {step === "otp" && (
-                <motion.div
-                  key="otp"
+                <motion.div key="otp"
                   initial={{ opacity: 0, x: isRTL ? -16 : 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: isRTL ? 16 : -16 }}
@@ -295,16 +240,11 @@ export default function SignupPage() {
                   </p>
                   <OtpInput
                     value={otp}
-                    onChange={(v) => {
-                      setOtp(v);
-                      setErrors({});
-                    }}
+                    onChange={(v) => { setOtp(v); setErrors({}); }}
                     disabled={loading}
                   />
                   {errors.otp && (
-                    <p className="font-proxima text-red-400 text-xs text-center">
-                      {errors.otp}
-                    </p>
+                    <p className="font-proxima text-red-400 text-xs text-center">{errors.otp}</p>
                   )}
                   <div className="flex justify-center">
                     <ResendTimer onResend={handleResend} disabled={loading} />
@@ -313,7 +253,6 @@ export default function SignupPage() {
               )}
             </AnimatePresence>
 
-            {/* White button — same as signin */}
             <button
               onClick={step === "contact" ? handleSend : handleVerify}
               disabled={loading}
@@ -325,30 +264,17 @@ export default function SignupPage() {
               ) : (
                 <>
                   {step === "contact" ? t("sendOtp") : t("verifyAndSignup")}
-                  {isRTL ? (
-                    <IoArrowBack className="size-4" />
-                  ) : (
-                    <IoArrowForward className="size-4" />
-                  )}
+                  {isRTL ? <IoArrowBack className="size-4" /> : <IoArrowForward className="size-4" />}
                 </>
               )}
             </button>
 
             {step === "otp" && (
               <button
-                onClick={() => {
-                  setStep("contact");
-                  setOtp("");
-                  setErrors({});
-                  clearAuthError();
-                }}
+                onClick={() => { setStep("contact"); setOtp(""); setErrors({}); clearAuthError(); }}
                 className="w-full h-10 font-proxima text-sm text-[#ccccd0] hover:text-white
                   transition-colors flex items-center justify-center gap-2">
-                {isRTL ? (
-                  <IoArrowForward className="size-4" />
-                ) : (
-                  <IoArrowBack className="size-4" />
-                )}
+                {isRTL ? <IoArrowForward className="size-4" /> : <IoArrowBack className="size-4" />}
                 {t("changeContact")}
               </button>
             )}
@@ -357,8 +283,7 @@ export default function SignupPage() {
           <div className="mt-8 text-center">
             <p className="font-proxima text-[#6bd41a] text-sm">
               {t("hasAccount")}{" "}
-              <Link
-                href={`/auth/signin`}
+              <Link href={`/auth/signin`}
                 className="underline underline-offset-2 hover:opacity-80 font-semibold">
                 {t("signinLink")}
               </Link>

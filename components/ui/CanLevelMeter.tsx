@@ -33,11 +33,13 @@ const CONTENT_TYPE_REQ: Record<string, number> = {
 };
 
 type ContentCounts = {
-  pictureCount:   number;
-  storyCount:     number;
-  reelCount:      number;
+  pictureCount: number;
+  storyCount: number;
+  reelCount: number;
   longVideoCount: number;
-  postCount:      number;
+  postCount: number;
+  liveCount: number;
+  streamCount: number;
 };
 
 type Props = {

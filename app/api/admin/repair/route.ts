@@ -3,17 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/server";
 import { prisma }      from "@/lib/prisma";
-
-function contentTypeToField(ct: string): string {
-  const map: Record<string, string> = {
-    PICTURE:    "pictureCount",
-    STORY:      "storyCount",
-    REEL:       "reelCount",
-    LONG_VIDEO: "longVideoCount",
-    POST:       "postCount",
-  };
-  return map[ct] ?? "postCount";
-}
+import { CONTENT_TYPE_TO_FIELD } from "@/lib/data/program";
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -35,19 +25,13 @@ export async function POST(request: NextRequest) {
         userId: true,
         rank:   true,
         // Current (possibly wrong) values — logged for diff
-        currentRankReach:    true,
-        totalReachAllTime:   true,
-        pictureCount:        true,
-        storyCount:          true,
-        reelCount:           true,
-        longVideoCount:      true,
-        postCount:           true,
-        totalPictureCount:   true,
-        totalStoryCount:     true,
-        totalReelCount:      true,
-        totalLongVideoCount: true,
-        totalPostCount:      true,
-        engagementRate:      true,
+        currentRankReach: true,
+        totalReachAllTime: true,
+        pictureCount: true, storyCount: true, reelCount: true, longVideoCount: true,
+        postCount: true, streamCount: true, liveCount:  true,
+        totalPictureCount: true, totalStoryCount: true, totalReelCount: true,
+        totalLongVideoCount: true, totalPostCount: true, totalLiveCount: true, totalStreamCount: true,
+        engagementRate: true,
       },
     });
 
@@ -73,18 +57,12 @@ export async function POST(request: NextRequest) {
       // Rank-window counters: only submissions made at the creator's CURRENT rank
       // Total counters: all approved submissions ever
       const rankWindowCounts: Record<string, number> = {
-        pictureCount:   0,
-        storyCount:     0,
-        reelCount:      0,
-        longVideoCount: 0,
-        postCount:      0,
+        pictureCount: 0, storyCount: 0, reelCount: 0, longVideoCount: 0,
+        postCount: 0, streamCount: 0, liveCount: 0
       };
       const totalCounts: Record<string, number> = {
-        totalPictureCount:   0,
-        totalStoryCount:     0,
-        totalReelCount:      0,
-        totalLongVideoCount: 0,
-        totalPostCount:      0,
+        totalPictureCount: 0, totalStoryCount: 0, totalReelCount: 0, totalLongVideoCount: 0,
+        totalPostCount: 0, totalStreamCount: 0, totalLiveCount: 0
       };
 
       let recalcCurrentReach  = 0;
@@ -102,7 +80,7 @@ export async function POST(request: NextRequest) {
 
         // Content counters
         for (const ct of sub.contentTypes) {
-          const field = contentTypeToField(ct);
+          const field = CONTENT_TYPE_TO_FIELD[ct] ?? "postCount"
           totalCounts[`total${capitalize(field)}`] =
             (totalCounts[`total${capitalize(field)}`] ?? 0) + 1;
 
@@ -132,16 +110,13 @@ export async function POST(request: NextRequest) {
       const before = {
         currentRankReach:    profile.currentRankReach,
         totalReachAllTime:   profile.totalReachAllTime,
-        pictureCount:        profile.pictureCount,
-        storyCount:          profile.storyCount,
-        reelCount:           profile.reelCount,
-        longVideoCount:      profile.longVideoCount,
-        postCount:           profile.postCount,
-        totalPictureCount:   profile.totalPictureCount,
-        totalStoryCount:     profile.totalStoryCount,
-        totalReelCount:      profile.totalReelCount,
-        totalLongVideoCount: profile.totalLongVideoCount,
-        totalPostCount:      profile.totalPostCount,
+        pictureCount: profile.pictureCount, storyCount: profile.storyCount, reelCount: profile.reelCount,
+        longVideoCount: profile.longVideoCount, postCount: profile.postCount,
+        streamCount: profile.streamCount, liveCount: profile.liveCount,
+        totalPictureCount: profile.totalPictureCount, totalStoryCount: profile.totalStoryCount,
+        totalReelCount: profile.totalReelCount, totalLongVideoCount: profile.totalLongVideoCount,
+        totalPostCount: profile.totalPostCount, totalStreamCount: profile.totalStreamCount,
+        totalLiveCount: profile.totalLiveCount,
         engagementRate:      profile.engagementRate,
       };
 

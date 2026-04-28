@@ -156,12 +156,16 @@ model CreatorProfile {
   reelCount      Int @default(0)
   longVideoCount Int @default(0)
   postCount      Int @default(0)
+  streamCount    Int @default(0)
+  liveCount     Int @default(0)
 
   totalPictureCount   Int @default(0)
   totalStoryCount     Int @default(0)
   totalReelCount      Int @default(0)
   totalLongVideoCount Int @default(0)
   totalPostCount      Int @default(0)
+  totalStreamCount    Int @default(0)
+  totalLiveCount      Int @default(0)
 
   engagementRate  Float @default(0) //(likes+comments+shares)/reach
   commitmentScore Float @default(0) //0-15

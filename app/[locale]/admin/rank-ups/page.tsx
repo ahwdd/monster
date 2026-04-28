@@ -16,7 +16,7 @@ type Creator = {
   currentRankReach: number; totalReachAllTime: number;
   approvedAt: string | null; rankedUpAt: string | null;
   pictureCount: number; storyCount: number; reelCount: number;
-  longVideoCount: number; postCount: number;
+  longVideoCount: number; postCount: number; streamCount: number; liveCount: number;
   eligibility: RankUpEligibility; nextRank: string | null;
   user: { firstName: string; lastName: string; email: string | null };
 };
@@ -120,7 +120,7 @@ export default function AdminRankUpsPage() {
         <div className="space-y-2">
           {creators.map((c, i) => {
             const e          = c.eligibility;
-            const total      = c.pictureCount + c.storyCount + c.reelCount + c.longVideoCount + c.postCount;
+            const total      = c.pictureCount + c.storyCount + c.reelCount + c.longVideoCount + c.postCount + c.liveCount + c.streamCount;
             const months     = getMonthsInProgram(c.approvedAt ? new Date(c.approvedAt) : null);
             const [,maxMonth]= MONTH_RANGE[c.rank] ?? [0,1];
             const neededReach   = RANK_THRESHOLDS[c.rank] ?? 0;

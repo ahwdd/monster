@@ -22,11 +22,15 @@ export interface CreatorProfile {
   reelCount:           number;
   longVideoCount:      number;
   postCount:           number;
+  streamCount:         number;
+  liveCount:           number;
   totalPictureCount:   number;
   totalStoryCount:     number;
   totalReelCount:      number;
   totalLongVideoCount: number;
   totalPostCount:      number;
+  totalStreamCount:    number;
+  totalLiveCount:      number;
   engagementRate:      number;
   commitmentScore:     number;
   adminGradeScore:     number;

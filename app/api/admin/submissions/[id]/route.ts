@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
+import { CONTENT_TYPE_TO_FIELD } from "@/lib/data/program";
 
 const REJECTION_REASONS = [
   "LOW_QUALITY",
@@ -103,19 +104,32 @@ export async function PATCH(
 
     if (profile) {
       // ── CASE 1: REJECTION of a previously APPROVED submission ─────────
-      // Subtract the reach that was credited and reverse the content counters.
       if (data.status === "REJECTED" && wasAlreadyApproved) {
-        const reachToRemove = submission.acceptedReach; // what was credited
+        const reachToRemove = submission.acceptedReach;
 
-        const contentDecrements: any = {};
-        const totalDecrements:   any = {};
+        const contentDecrements: Record<string, unknown> = {};
+        const totalDecrements:   Record<string, unknown> = {};
+
         submission.contentTypes.forEach((ct) => {
-          const field = contentTypeToField(ct);
-          contentDecrements[field]                   = { decrement: 1 };
-          totalDecrements[`total${capitalize(field)}`] = { decrement: 1 };
+          const field      = CONTENT_TYPE_TO_FIELD[ct] ?? "postCount";
+          const totalField = `total${capitalize(field)}`;
+
+          const currentVal      = (profile as Record<string, unknown>)[field];
+          const currentTotalVal = (profile as Record<string, unknown>)[totalField];
+
+          if (typeof currentVal === "number" && currentVal > 0) {
+            contentDecrements[field] = { decrement: 1 };
+          } else {
+            contentDecrements[field] = 0;
+          }
+
+          if (typeof currentTotalVal === "number" && currentTotalVal > 0) {
+            totalDecrements[totalField] = { decrement: 1 };
+          } else {
+            totalDecrements[totalField] = 0;
+          }
         });
 
-        // Recalculate weighted average engagement excluding this submission
         const remainingApproved = await prisma.submission.findMany({
           where: {
             userId: submission.userId,
@@ -144,7 +158,6 @@ export async function PATCH(
           },
         });
 
-        // Also remove the PlatformStat record for this submission
         await (prisma as any).platformStat.deleteMany({
           where: { submissionId: id },
         });
@@ -152,24 +165,37 @@ export async function PATCH(
 
       // ── CASE 2: APPROVAL (fresh or re-approval) ───────────────────────
       if (data.status === "APPROVED") {
-        // Content counters: only increment on FRESH approvals
-        // (wasAlreadyApproved = false means it was PENDING or REJECTED before)
-        const rankWindowIncrements: any = {};
-        const totalIncrements:      any = {};
+        const rankWindowIncrements: Record<string, unknown> = {};
+        const totalIncrements:      Record<string, unknown> = {};
 
         if (!wasAlreadyApproved) {
           const contentCounts: Record<string, number> = {};
           submission.contentTypes.forEach((ct) => {
-            const field = contentTypeToField(ct);
+            const field = CONTENT_TYPE_TO_FIELD[ct] ?? "postCount";
             contentCounts[field] = (contentCounts[field] ?? 0) + 1;
           });
+
           Object.entries(contentCounts).forEach(([field, count]) => {
-            rankWindowIncrements[field]                   = { increment: count };
-            totalIncrements[`total${capitalize(field)}`] = { increment: count };
+            const totalField = `total${capitalize(field)}`;
+
+            const currentVal      = (profile as Record<string, unknown>)[field];
+            const currentTotalVal = (profile as Record<string, unknown>)[totalField];
+
+            if (currentVal === null || currentVal === undefined) {
+              rankWindowIncrements[field] = count;
+            } else {
+              rankWindowIncrements[field] = { increment: count };
+            }
+
+            if (currentTotalVal === null || currentTotalVal === undefined) {
+              totalIncrements[totalField] = count;
+            } else {
+              totalIncrements[totalField] = { increment: count };
+            }
           });
         }
 
-        // Weighted average engagement across all approved submissions
+        // Weighted average engagement
         let newProfileEngagement = profile.engagementRate;
         if (newAcceptedReach > 0) {
           const approvedSubs = await prisma.submission.findMany({
@@ -202,7 +228,6 @@ export async function PATCH(
           },
         });
 
-        // Upsert PlatformStat
         await (prisma as any).platformStat.upsert({
           where:  { submissionId: id },
           create: {
@@ -242,19 +267,6 @@ export async function PATCH(
     console.error("Admin submission PATCH error:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
-}
-
-function contentTypeToField(ct: string): string {
-  const map: Record<string, string> = {
-    PICTURE:    "pictureCount",
-    STORY:      "storyCount",
-    REEL:       "reelCount",
-    LONG_VIDEO: "longVideoCount",
-    POST:       "postCount",
-    LIVE:       "liveCount",
-    STREAM:     "streamCount",
-  };
-  return map[ct] ?? "postCount";
 }
 
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }

@@ -30,11 +30,9 @@ export async function GET(request: NextRequest) {
         p.currentRankReach,
         p.approvedAt,
         {
-          pictureCount:   p.pictureCount,
-          storyCount:     p.storyCount,
-          reelCount:      p.reelCount,
-          longVideoCount: p.longVideoCount,
-          postCount:      p.postCount,
+          pictureCount: p.pictureCount, storyCount: p.storyCount, reelCount: p.reelCount, 
+          longVideoCount: p.longVideoCount, postCount: p.postCount,
+          streamCount: p.streamCount, liveCount: p.liveCount
         }
       );
       return { ...p, eligibility: elig, nextRank: getNextRank(p.rank) };

@@ -31,6 +31,7 @@ import {
 import ProfileSkeleton, {
   RankBadge, StatCard, CircularProgress,
 } from "./ProfileSkeleton";
+import RepairProfileButton from "./RepairProfileButton";
 
 const CONTENT_REQ_EN = [
   { key: "streams", Icon: IoVideocamOutline, label: "Stream / Live / Long Video" },
@@ -116,14 +117,10 @@ export default function ProfilePage() {
 
   const recentSubs = submissions.slice(0, 3);
 
-  // ── Approved submissions for score: only those at the CURRENT rank ────────
-  // After rank-up, old submissions (at previous rank) must not inflate the
-  // content score for the new rank window. We match by submission.rank === rank.
   const approvedSubsCurrentRank = submissions.filter(
     (s) => s.status === "APPROVED" && s.rank === rank
   ).length;
 
-  // Total approved (all ranks) — used for the stat card display only
   const approvedSubsTotal = submissions.filter((s) => s.status === "APPROVED").length;
 
   // ── Performance score ─────────────────────────────────────────────────────
@@ -131,12 +128,10 @@ export default function ProfilePage() {
   const scoreMax      = MIN_QUARTER_SCORE[rank]  || 50;
   const targetEngRate = (MIN_ENGAGEMENT_RATE[rank] ?? 0.005) * 100;
 
-  // viewsPts: based on currentRankReach vs threshold (rank-window reach)
   const viewsPts = Math.min(
     SCORE_COMPONENTS[0].max,
     Math.round((currentRankReach / (threshold || 1)) * SCORE_COMPONENTS[0].max)
   );
-  // contentPts: based on approved submissions AT current rank only
   const contentPts = Math.min(
     SCORE_COMPONENTS[1].max,
     Math.round((approvedSubsCurrentRank / (minContent || 1)) * SCORE_COMPONENTS[1].max)
@@ -160,11 +155,9 @@ export default function ProfilePage() {
     { ...SCORE_COMPONENTS[4], pts: Math.round(adminGradeScore) },
   ];
 
-  // ── Stat card maximums ────────────────────────────────────────────────────
   const maxSubs  = MAX_SUBMISSIONS_PER_RANK[rank] ?? 20;
   const maxReach = MAX_REACH_PER_RANK[rank]       ?? 50_000;
 
-  // ── Rank-up eligibility ───────────────────────────────────────────────────
   const elig = isApproved && rank !== "COLD"
     ? checkRankUpEligibility(rank, currentRankReach, approvedAt, {
         pictureCount:   profile?.pictureCount   ?? 0,
@@ -172,12 +165,13 @@ export default function ProfilePage() {
         reelCount:      profile?.reelCount      ?? 0,
         longVideoCount: profile?.longVideoCount ?? 0,
         postCount:      profile?.postCount      ?? 0,
+        streamCount:    profile?.streamCount    ?? 0,
+        liveCount:      profile?.liveCount      ?? 0
       })
     : null;
   const isEligible    = elig?.reachOk ?? false;
   const nextRankColor = NEXT_RANK_COLOR[rank] ?? "#22bb39";
 
-  // ── Content counts from profile rank-window counters ─────────────────────
   const currentCounts: Record<string, number> = {
     streams: (profile?.longVideoCount ?? 0)
            + (profile?.liveCount      ?? 0)
@@ -228,13 +222,20 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
+             <div className="flex items-center gap-3 flex-wrap">
               {isApproved && canSubmit && (
                 <Link href={`/submissions/submit`}
                   className="py-1 px-2 bg-monster txt-larger flex items-center gap-0.5 rounded-xl font-bold capitalize text-white tracking-[1.2px] hover:opacity-90 transition-opacity whitespace-nowrap">
                   <MdAdd className="size-5" />
                   <span>{isRTL ? "رفع محتوى" : "Submit Content"}</span>
                 </Link>
+              )}
+ 
+              {isApproved && user && (
+                <RepairProfileButton
+                  userId={user.id}
+                  onRepaired={(fresh) => setProfile(fresh)}
+                />
               )}
             </div>
           </motion.div>
@@ -298,7 +299,7 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
-          {/* ── Admin note (creator-visible) ───────────────────────────── */}
+          {/* ── Admin note ─────────────────────────────────────────────── */}
           {isApproved && adminNote && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="flex items-start gap-3 p-4 border border-[#272727] bg-[#171717]">
@@ -317,8 +318,6 @@ export default function ProfilePage() {
             <>
               {/* Row 1: Level Progress + Performance Score */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                {/* Level progress */}
                 <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}
                   className="col-span-2 bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
                   <p className="txt-larger font-bold text-[#ccc] capitalize tracking-wider">
@@ -360,7 +359,6 @@ export default function ProfilePage() {
                   )}
                 </motion.div>
 
-                {/* Performance Score — collapsible */}
                 <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
                   className="bg-[#171717] border border-[#272727] rounded-lg overflow-hidden">
                   <button onClick={() => setScoreExpanded((v) => !v)} className="w-full text-start p-5 md:p-6 cursor-pointer">
@@ -402,22 +400,14 @@ export default function ProfilePage() {
                 </motion.div>
               </div>
 
-              {/* Row 2: Stat cards ────────────────────────────────────────
-                  ── Total Views: currentRankReach vs maxReach (rank window)
-                  ── Total Reach: totalReachAllTime vs maxReach
-                  ── Approved Submissions: current-rank approved vs maxSubs
-                  Note: currentRaw/targetRaw drive the circular progress ring.
-              ─────────────────────────────────────────────────────────── */}
+              {/* Row 2: Stat cards */}
               <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.11 }}
                 className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
-                {/* Card 1: All-time reach — informational, no progress ring */}
                 <StatCard
                   label={isRTL ? "إجمالي الوصول الكلي" : "All-time Reach"}
                   current={formatNumber(totalReachAllTime)}
                   plain={formatNumber(totalReachAllTime)}
                 />
-
-                {/* Card 2: Rank window reach vs target */}
                 <StatCard
                   label={isRTL ? "وصول هذا المستوى" : "Rank Reach"}
                   current={formatNumber(currentRankReach)}
@@ -425,8 +415,6 @@ export default function ProfilePage() {
                   targetColor={nextRankColor} rankColor={nextRankColor}
                   currentRaw={currentRankReach} targetRaw={maxReach}
                 />
-
-                {/* Card 3: Approved submissions this rank */}
                 <StatCard
                   label={isRTL ? "المشاركات المقبولة" : "Approved Submissions"}
                   current={String(approvedSubsCurrentRank)}
@@ -439,8 +427,6 @@ export default function ProfilePage() {
               {/* Row 3: Content Requirements + KPI */}
               <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.13 }}
                 className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-                {/* Content Requirements */}
                 <div className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
                   <p className="txt-larger font-bold text-white capitalize tracking-wider mb-4">
                     {isRTL ? "متطلبات المحتوى" : "Content Requirements"}
@@ -472,7 +458,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* KPI & Engagement */}
                 <div className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6">
                   <p className="txt-larger font-bold text-white capitalize tracking-wider mb-4">
                     {isRTL ? "مستهدفات KPI والتفاعل" : "KPI & Engagement Targets"}
@@ -505,7 +490,7 @@ export default function ProfilePage() {
                               <span className="txt-larger text-[#ccccd0]">{isRTL ? "معدل التفاعل" : "Engagement Rate"}</span>
                               <span className="txt-larger font-semibold tabular-nums"
                                 style={{ color: engMet ? nextRankColor : "#ccc" }}>
-                                <span>{engagementRate.toFixed(2)}% </span> 
+                                <span>{engagementRate.toFixed(2)}% </span>
                                 <span className="txt-huge" style={{color: nextRankColor}}>/{KPI_ENG_LABEL[rank] ?? "0.5%"}</span>
                               </span>
                             </div>
@@ -524,11 +509,11 @@ export default function ProfilePage() {
                 </div>
               </motion.div>
 
-              {/* Row 4: Recent Submissions */}
+              {/* Row 4: Recent Submissions — now with Rank column */}
               {recentSubs.length > 0 && (
                 <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }}
                   className="bg-[#171717] border border-[#272727] rounded-lg p-5 md:p-6 overflow-x-auto">
-                  <div className="flex items-center justify-between mb-4 min-w-100">
+                  <div className="flex items-center justify-between mb-4 min-w-120">
                     <p className="txt-small font-bold text-[#b6b6b6] capitalize tracking-wider">
                       {isRTL ? "آخر المشاركات" : "Recent Submissions"}
                     </p>
@@ -537,32 +522,52 @@ export default function ProfilePage() {
                       {isRTL ? "عرض الكل" : "View All"}<Arrow className="size-3" />
                     </Link>
                   </div>
-                  <div className="min-w-100">
-                    <div className="grid grid-cols-[1fr_100px_100px_90px] gap-3 pb-2 border-b border-[#272727]">
+
+                  {/* Table — 5 cols now: Content | Rank | Type | Views | Status */}
+                  <div className="min-w-120">
+                    <div className="grid grid-cols-[1fr_80px_100px_90px_80px] gap-3 pb-2 border-b border-[#272727]">
                       {(isRTL
-                        ? ["عنوان المحتوى", "النوع", "المشاهدات", "الحالة"]
-                        : ["Content", "Type", "Views", "Status"]
+                        ? ["عنوان المحتوى", "المستوى", "النوع", "المشاهدات", "الحالة"]
+                        : ["Content", "Rank", "Type", "Views", "Status"]
                       ).map((h, i) => (
-                        <span key={i} className="font-bold text-white capitalize tracking-wider" style={{ fontSize: "11px" }}>{h}</span>
+                        <span key={i} className="font-bold text-white capitalize tracking-wider" style={{ fontSize: "11px" }}>
+                          {h}
+                        </span>
                       ))}
                     </div>
-                    {recentSubs.map((sub) => (
-                      <div key={sub.id} className="grid grid-cols-[1fr_100px_100px_90px] gap-3 py-2 border-b border-[#272727] items-center">
-                        <span className="txt-larger text-white truncate">
-                          {sub.contentLink?.split("/").pop()?.slice(0, 24) ?? "Content"}
-                        </span>
-                        <span className="txt-larger text-[#ccccd0] capitalize">
-                          {sub.contentTypes?.[0]?.toLowerCase() ?? "-"}
-                        </span>
-                        <span className="txt-larger text-white tabular-nums">
-                          {formatNumber(sub.acceptedReach ?? sub.submittedReach ?? 0)}
-                        </span>
-                        <span className="inline-flex items-center justify-center font-bold capitalize h-5 px-1.5 text-[9px] tracking-wider w-fit rounded-lg"
-                          style={{ background: STATUS_BG[sub.status] ?? "#555", color: sub.status === "REJECTED" ? "#fff" : "#000" }}>
-                          {sub.status}
-                        </span>
-                      </div>
-                    ))}
+
+                    {recentSubs.map((sub: any) => {
+                      const subRankColor = RANK_COLOR[sub.rank] ?? "#6b7280";
+                      const subRankLabel = isRTL
+                        ? (RANK_LABEL_AR[sub.rank] ?? sub.rank)
+                        : (RANK_LABEL_EN[sub.rank] ?? sub.rank);
+                      return (
+                        <div
+                          key={sub.id}
+                          className="grid grid-cols-[1fr_80px_100px_90px_80px] gap-3 py-2 border-b border-[#272727] items-center last:border-0">
+                          <span className="txt-larger text-white truncate">
+                            {sub.contentLink?.split("/").pop()?.slice(0, 24) ?? "Content"}
+                          </span>
+                          {/* Rank pill */}
+                          <span
+                            className="txt-smaller font-semibold px-1.5 py-0.5 rounded w-fit uppercase truncate"
+                            style={{ color: subRankColor, background: `${subRankColor}18` }}>
+                            {subRankLabel.split(' ')[0]}
+                          </span>
+                          <span className="txt-larger text-[#ccccd0] capitalize">
+                            {sub.contentTypes?.[0]?.toLowerCase() ?? "-"}
+                          </span>
+                          <span className="txt-larger text-white tabular-nums">
+                            {formatNumber(sub.acceptedReach ?? sub.submittedReach ?? 0)}
+                          </span>
+                          <span
+                            className="inline-flex items-center justify-center font-bold capitalize h-5 px-1.5 text-[9px] tracking-wider w-fit rounded-lg"
+                            style={{ background: STATUS_BG[sub.status] ?? "#555", color: sub.status === "REJECTED" ? "#fff" : "#000" }}>
+                            {sub.status}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               )}

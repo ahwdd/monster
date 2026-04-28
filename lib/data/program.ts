@@ -643,3 +643,25 @@ export const PACK_IMAGES: Record<string, string[]> = {
     "/assets/flavors/coffee.webp",
   ],
 };
+
+export const CONTENT_TYPES = [
+  "PICTURE",
+  "STORY",
+  "REEL",
+  "LONG_VIDEO",
+  "POST",
+  "LIVE",
+  "STREAM",
+] as const;
+
+export type ContentType = (typeof CONTENT_TYPES)[number];
+
+export const CONTENT_TYPE_TO_FIELD: Record<ContentType, string> = {
+  PICTURE:    "pictureCount",
+  STORY:      "storyCount",
+  REEL:       "reelCount",
+  LONG_VIDEO: "longVideoCount",
+  POST:       "postCount",
+  LIVE:       "liveCount",
+  STREAM:     "streamCount",
+};

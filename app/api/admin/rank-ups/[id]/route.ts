@@ -67,11 +67,8 @@ export async function POST(
 
         currentRankReach: isPromotingToCold ? profile.currentRankReach : 0,
 
-        pictureCount:   0,
-        storyCount:     0,
-        reelCount:      0,
-        longVideoCount: 0,
-        postCount:      0,
+        pictureCount: 0, storyCount: 0, reelCount: 0, longVideoCount: 0,
+        postCount: 0, liveCount: 0, streamCount: 0,
 
         commitmentScore:  0,
         adminGradeScore:  0,

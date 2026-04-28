@@ -2633,11 +2633,15 @@ export namespace Prisma {
     reelCount: number | null
     longVideoCount: number | null
     postCount: number | null
+    streamCount: number | null
+    liveCount: number | null
     totalPictureCount: number | null
     totalStoryCount: number | null
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    totalStreamCount: number | null
+    totalLiveCount: number | null
     engagementRate: number | null
     commitmentScore: number | null
     adminGradeScore: number | null
@@ -2652,11 +2656,15 @@ export namespace Prisma {
     reelCount: number | null
     longVideoCount: number | null
     postCount: number | null
+    streamCount: number | null
+    liveCount: number | null
     totalPictureCount: number | null
     totalStoryCount: number | null
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    totalStreamCount: number | null
+    totalLiveCount: number | null
     engagementRate: number | null
     commitmentScore: number | null
     adminGradeScore: number | null
@@ -2691,11 +2699,15 @@ export namespace Prisma {
     reelCount: number | null
     longVideoCount: number | null
     postCount: number | null
+    streamCount: number | null
+    liveCount: number | null
     totalPictureCount: number | null
     totalStoryCount: number | null
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    totalStreamCount: number | null
+    totalLiveCount: number | null
     engagementRate: number | null
     commitmentScore: number | null
     adminGradeScore: number | null
@@ -2734,11 +2746,15 @@ export namespace Prisma {
     reelCount: number | null
     longVideoCount: number | null
     postCount: number | null
+    streamCount: number | null
+    liveCount: number | null
     totalPictureCount: number | null
     totalStoryCount: number | null
     totalReelCount: number | null
     totalLongVideoCount: number | null
     totalPostCount: number | null
+    totalStreamCount: number | null
+    totalLiveCount: number | null
     engagementRate: number | null
     commitmentScore: number | null
     adminGradeScore: number | null
@@ -2779,11 +2795,15 @@ export namespace Prisma {
     reelCount: number
     longVideoCount: number
     postCount: number
+    streamCount: number
+    liveCount: number
     totalPictureCount: number
     totalStoryCount: number
     totalReelCount: number
     totalLongVideoCount: number
     totalPostCount: number
+    totalStreamCount: number
+    totalLiveCount: number
     engagementRate: number
     commitmentScore: number
     adminGradeScore: number
@@ -2804,11 +2824,15 @@ export namespace Prisma {
     reelCount?: true
     longVideoCount?: true
     postCount?: true
+    streamCount?: true
+    liveCount?: true
     totalPictureCount?: true
     totalStoryCount?: true
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    totalStreamCount?: true
+    totalLiveCount?: true
     engagementRate?: true
     commitmentScore?: true
     adminGradeScore?: true
@@ -2823,11 +2847,15 @@ export namespace Prisma {
     reelCount?: true
     longVideoCount?: true
     postCount?: true
+    streamCount?: true
+    liveCount?: true
     totalPictureCount?: true
     totalStoryCount?: true
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    totalStreamCount?: true
+    totalLiveCount?: true
     engagementRate?: true
     commitmentScore?: true
     adminGradeScore?: true
@@ -2862,11 +2890,15 @@ export namespace Prisma {
     reelCount?: true
     longVideoCount?: true
     postCount?: true
+    streamCount?: true
+    liveCount?: true
     totalPictureCount?: true
     totalStoryCount?: true
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    totalStreamCount?: true
+    totalLiveCount?: true
     engagementRate?: true
     commitmentScore?: true
     adminGradeScore?: true
@@ -2905,11 +2937,15 @@ export namespace Prisma {
     reelCount?: true
     longVideoCount?: true
     postCount?: true
+    streamCount?: true
+    liveCount?: true
     totalPictureCount?: true
     totalStoryCount?: true
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    totalStreamCount?: true
+    totalLiveCount?: true
     engagementRate?: true
     commitmentScore?: true
     adminGradeScore?: true
@@ -2950,11 +2986,15 @@ export namespace Prisma {
     reelCount?: true
     longVideoCount?: true
     postCount?: true
+    streamCount?: true
+    liveCount?: true
     totalPictureCount?: true
     totalStoryCount?: true
     totalReelCount?: true
     totalLongVideoCount?: true
     totalPostCount?: true
+    totalStreamCount?: true
+    totalLiveCount?: true
     engagementRate?: true
     commitmentScore?: true
     adminGradeScore?: true
@@ -3082,11 +3122,15 @@ export namespace Prisma {
     reelCount: number
     longVideoCount: number
     postCount: number
+    streamCount: number
+    liveCount: number
     totalPictureCount: number
     totalStoryCount: number
     totalReelCount: number
     totalLongVideoCount: number
     totalPostCount: number
+    totalStreamCount: number
+    totalLiveCount: number
     engagementRate: number
     commitmentScore: number
     adminGradeScore: number
@@ -3147,11 +3191,15 @@ export namespace Prisma {
     reelCount?: boolean
     longVideoCount?: boolean
     postCount?: boolean
+    streamCount?: boolean
+    liveCount?: boolean
     totalPictureCount?: boolean
     totalStoryCount?: boolean
     totalReelCount?: boolean
     totalLongVideoCount?: boolean
     totalPostCount?: boolean
+    totalStreamCount?: boolean
+    totalLiveCount?: boolean
     engagementRate?: boolean
     commitmentScore?: boolean
     adminGradeScore?: boolean
@@ -3195,11 +3243,15 @@ export namespace Prisma {
     reelCount?: boolean
     longVideoCount?: boolean
     postCount?: boolean
+    streamCount?: boolean
+    liveCount?: boolean
     totalPictureCount?: boolean
     totalStoryCount?: boolean
     totalReelCount?: boolean
     totalLongVideoCount?: boolean
     totalPostCount?: boolean
+    totalStreamCount?: boolean
+    totalLiveCount?: boolean
     engagementRate?: boolean
     commitmentScore?: boolean
     adminGradeScore?: boolean
@@ -3209,7 +3261,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "realName" | "contactEmail" | "contactPhone" | "nickname" | "birthDate" | "nationality" | "residency" | "platforms" | "platformLinks" | "primarySocialLink" | "channelLogo" | "contentType" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "status" | "adminNotes" | "adminNote" | "registrationRejection" | "approvedAt" | "rank" | "currentRankReach" | "totalReachAllTime" | "pictureCount" | "storyCount" | "reelCount" | "longVideoCount" | "postCount" | "totalPictureCount" | "totalStoryCount" | "totalReelCount" | "totalLongVideoCount" | "totalPostCount" | "engagementRate" | "commitmentScore" | "adminGradeScore" | "rankedUpAt" | "isActive" | "joinedAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
+  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "realName" | "contactEmail" | "contactPhone" | "nickname" | "birthDate" | "nationality" | "residency" | "platforms" | "platformLinks" | "primarySocialLink" | "channelLogo" | "contentType" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "status" | "adminNotes" | "adminNote" | "registrationRejection" | "approvedAt" | "rank" | "currentRankReach" | "totalReachAllTime" | "pictureCount" | "storyCount" | "reelCount" | "longVideoCount" | "postCount" | "streamCount" | "liveCount" | "totalPictureCount" | "totalStoryCount" | "totalReelCount" | "totalLongVideoCount" | "totalPostCount" | "totalStreamCount" | "totalLiveCount" | "engagementRate" | "commitmentScore" | "adminGradeScore" | "rankedUpAt" | "isActive" | "joinedAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3250,11 +3302,15 @@ export namespace Prisma {
       reelCount: number
       longVideoCount: number
       postCount: number
+      streamCount: number
+      liveCount: number
       totalPictureCount: number
       totalStoryCount: number
       totalReelCount: number
       totalLongVideoCount: number
       totalPostCount: number
+      totalStreamCount: number
+      totalLiveCount: number
       engagementRate: number
       commitmentScore: number
       adminGradeScore: number
@@ -3687,11 +3743,15 @@ export namespace Prisma {
     readonly reelCount: FieldRef<"CreatorProfile", 'Int'>
     readonly longVideoCount: FieldRef<"CreatorProfile", 'Int'>
     readonly postCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly streamCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly liveCount: FieldRef<"CreatorProfile", 'Int'>
     readonly totalPictureCount: FieldRef<"CreatorProfile", 'Int'>
     readonly totalStoryCount: FieldRef<"CreatorProfile", 'Int'>
     readonly totalReelCount: FieldRef<"CreatorProfile", 'Int'>
     readonly totalLongVideoCount: FieldRef<"CreatorProfile", 'Int'>
     readonly totalPostCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalStreamCount: FieldRef<"CreatorProfile", 'Int'>
+    readonly totalLiveCount: FieldRef<"CreatorProfile", 'Int'>
     readonly engagementRate: FieldRef<"CreatorProfile", 'Float'>
     readonly commitmentScore: FieldRef<"CreatorProfile", 'Float'>
     readonly adminGradeScore: FieldRef<"CreatorProfile", 'Float'>
@@ -7524,11 +7584,15 @@ export namespace Prisma {
     reelCount: 'reelCount',
     longVideoCount: 'longVideoCount',
     postCount: 'postCount',
+    streamCount: 'streamCount',
+    liveCount: 'liveCount',
     totalPictureCount: 'totalPictureCount',
     totalStoryCount: 'totalStoryCount',
     totalReelCount: 'totalReelCount',
     totalLongVideoCount: 'totalLongVideoCount',
     totalPostCount: 'totalPostCount',
+    totalStreamCount: 'totalStreamCount',
+    totalLiveCount: 'totalLiveCount',
     engagementRate: 'engagementRate',
     commitmentScore: 'commitmentScore',
     adminGradeScore: 'adminGradeScore',
@@ -7992,11 +8056,15 @@ export namespace Prisma {
     reelCount?: IntFilter<"CreatorProfile"> | number
     longVideoCount?: IntFilter<"CreatorProfile"> | number
     postCount?: IntFilter<"CreatorProfile"> | number
+    streamCount?: IntFilter<"CreatorProfile"> | number
+    liveCount?: IntFilter<"CreatorProfile"> | number
     totalPictureCount?: IntFilter<"CreatorProfile"> | number
     totalStoryCount?: IntFilter<"CreatorProfile"> | number
     totalReelCount?: IntFilter<"CreatorProfile"> | number
     totalLongVideoCount?: IntFilter<"CreatorProfile"> | number
     totalPostCount?: IntFilter<"CreatorProfile"> | number
+    totalStreamCount?: IntFilter<"CreatorProfile"> | number
+    totalLiveCount?: IntFilter<"CreatorProfile"> | number
     engagementRate?: FloatFilter<"CreatorProfile"> | number
     commitmentScore?: FloatFilter<"CreatorProfile"> | number
     adminGradeScore?: FloatFilter<"CreatorProfile"> | number
@@ -8039,11 +8107,15 @@ export namespace Prisma {
     reelCount?: SortOrder
     longVideoCount?: SortOrder
     postCount?: SortOrder
+    streamCount?: SortOrder
+    liveCount?: SortOrder
     totalPictureCount?: SortOrder
     totalStoryCount?: SortOrder
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    totalStreamCount?: SortOrder
+    totalLiveCount?: SortOrder
     engagementRate?: SortOrder
     commitmentScore?: SortOrder
     adminGradeScore?: SortOrder
@@ -8089,11 +8161,15 @@ export namespace Prisma {
     reelCount?: IntFilter<"CreatorProfile"> | number
     longVideoCount?: IntFilter<"CreatorProfile"> | number
     postCount?: IntFilter<"CreatorProfile"> | number
+    streamCount?: IntFilter<"CreatorProfile"> | number
+    liveCount?: IntFilter<"CreatorProfile"> | number
     totalPictureCount?: IntFilter<"CreatorProfile"> | number
     totalStoryCount?: IntFilter<"CreatorProfile"> | number
     totalReelCount?: IntFilter<"CreatorProfile"> | number
     totalLongVideoCount?: IntFilter<"CreatorProfile"> | number
     totalPostCount?: IntFilter<"CreatorProfile"> | number
+    totalStreamCount?: IntFilter<"CreatorProfile"> | number
+    totalLiveCount?: IntFilter<"CreatorProfile"> | number
     engagementRate?: FloatFilter<"CreatorProfile"> | number
     commitmentScore?: FloatFilter<"CreatorProfile"> | number
     adminGradeScore?: FloatFilter<"CreatorProfile"> | number
@@ -8135,11 +8211,15 @@ export namespace Prisma {
     reelCount?: SortOrder
     longVideoCount?: SortOrder
     postCount?: SortOrder
+    streamCount?: SortOrder
+    liveCount?: SortOrder
     totalPictureCount?: SortOrder
     totalStoryCount?: SortOrder
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    totalStreamCount?: SortOrder
+    totalLiveCount?: SortOrder
     engagementRate?: SortOrder
     commitmentScore?: SortOrder
     adminGradeScore?: SortOrder
@@ -8188,11 +8268,15 @@ export namespace Prisma {
     reelCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     longVideoCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     postCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    streamCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    liveCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     totalPictureCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     totalStoryCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     totalReelCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     totalLongVideoCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     totalPostCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalStreamCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
+    totalLiveCount?: IntWithAggregatesFilter<"CreatorProfile"> | number
     engagementRate?: FloatWithAggregatesFilter<"CreatorProfile"> | number
     commitmentScore?: FloatWithAggregatesFilter<"CreatorProfile"> | number
     adminGradeScore?: FloatWithAggregatesFilter<"CreatorProfile"> | number
@@ -8691,11 +8775,15 @@ export namespace Prisma {
     reelCount?: number
     longVideoCount?: number
     postCount?: number
+    streamCount?: number
+    liveCount?: number
     totalPictureCount?: number
     totalStoryCount?: number
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    totalStreamCount?: number
+    totalLiveCount?: number
     engagementRate?: number
     commitmentScore?: number
     adminGradeScore?: number
@@ -8738,11 +8826,15 @@ export namespace Prisma {
     reelCount?: number
     longVideoCount?: number
     postCount?: number
+    streamCount?: number
+    liveCount?: number
     totalPictureCount?: number
     totalStoryCount?: number
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    totalStreamCount?: number
+    totalLiveCount?: number
     engagementRate?: number
     commitmentScore?: number
     adminGradeScore?: number
@@ -8782,11 +8874,15 @@ export namespace Prisma {
     reelCount?: IntFieldUpdateOperationsInput | number
     longVideoCount?: IntFieldUpdateOperationsInput | number
     postCount?: IntFieldUpdateOperationsInput | number
+    streamCount?: IntFieldUpdateOperationsInput | number
+    liveCount?: IntFieldUpdateOperationsInput | number
     totalPictureCount?: IntFieldUpdateOperationsInput | number
     totalStoryCount?: IntFieldUpdateOperationsInput | number
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    totalStreamCount?: IntFieldUpdateOperationsInput | number
+    totalLiveCount?: IntFieldUpdateOperationsInput | number
     engagementRate?: FloatFieldUpdateOperationsInput | number
     commitmentScore?: FloatFieldUpdateOperationsInput | number
     adminGradeScore?: FloatFieldUpdateOperationsInput | number
@@ -8828,11 +8924,15 @@ export namespace Prisma {
     reelCount?: IntFieldUpdateOperationsInput | number
     longVideoCount?: IntFieldUpdateOperationsInput | number
     postCount?: IntFieldUpdateOperationsInput | number
+    streamCount?: IntFieldUpdateOperationsInput | number
+    liveCount?: IntFieldUpdateOperationsInput | number
     totalPictureCount?: IntFieldUpdateOperationsInput | number
     totalStoryCount?: IntFieldUpdateOperationsInput | number
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    totalStreamCount?: IntFieldUpdateOperationsInput | number
+    totalLiveCount?: IntFieldUpdateOperationsInput | number
     engagementRate?: FloatFieldUpdateOperationsInput | number
     commitmentScore?: FloatFieldUpdateOperationsInput | number
     adminGradeScore?: FloatFieldUpdateOperationsInput | number
@@ -8874,11 +8974,15 @@ export namespace Prisma {
     reelCount?: number
     longVideoCount?: number
     postCount?: number
+    streamCount?: number
+    liveCount?: number
     totalPictureCount?: number
     totalStoryCount?: number
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    totalStreamCount?: number
+    totalLiveCount?: number
     engagementRate?: number
     commitmentScore?: number
     adminGradeScore?: number
@@ -8918,11 +9022,15 @@ export namespace Prisma {
     reelCount?: IntFieldUpdateOperationsInput | number
     longVideoCount?: IntFieldUpdateOperationsInput | number
     postCount?: IntFieldUpdateOperationsInput | number
+    streamCount?: IntFieldUpdateOperationsInput | number
+    liveCount?: IntFieldUpdateOperationsInput | number
     totalPictureCount?: IntFieldUpdateOperationsInput | number
     totalStoryCount?: IntFieldUpdateOperationsInput | number
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    totalStreamCount?: IntFieldUpdateOperationsInput | number
+    totalLiveCount?: IntFieldUpdateOperationsInput | number
     engagementRate?: FloatFieldUpdateOperationsInput | number
     commitmentScore?: FloatFieldUpdateOperationsInput | number
     adminGradeScore?: FloatFieldUpdateOperationsInput | number
@@ -8963,11 +9071,15 @@ export namespace Prisma {
     reelCount?: IntFieldUpdateOperationsInput | number
     longVideoCount?: IntFieldUpdateOperationsInput | number
     postCount?: IntFieldUpdateOperationsInput | number
+    streamCount?: IntFieldUpdateOperationsInput | number
+    liveCount?: IntFieldUpdateOperationsInput | number
     totalPictureCount?: IntFieldUpdateOperationsInput | number
     totalStoryCount?: IntFieldUpdateOperationsInput | number
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    totalStreamCount?: IntFieldUpdateOperationsInput | number
+    totalLiveCount?: IntFieldUpdateOperationsInput | number
     engagementRate?: FloatFieldUpdateOperationsInput | number
     commitmentScore?: FloatFieldUpdateOperationsInput | number
     adminGradeScore?: FloatFieldUpdateOperationsInput | number
@@ -9698,11 +9810,15 @@ export namespace Prisma {
     reelCount?: SortOrder
     longVideoCount?: SortOrder
     postCount?: SortOrder
+    streamCount?: SortOrder
+    liveCount?: SortOrder
     totalPictureCount?: SortOrder
     totalStoryCount?: SortOrder
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    totalStreamCount?: SortOrder
+    totalLiveCount?: SortOrder
     engagementRate?: SortOrder
     commitmentScore?: SortOrder
     adminGradeScore?: SortOrder
@@ -9721,11 +9837,15 @@ export namespace Prisma {
     reelCount?: SortOrder
     longVideoCount?: SortOrder
     postCount?: SortOrder
+    streamCount?: SortOrder
+    liveCount?: SortOrder
     totalPictureCount?: SortOrder
     totalStoryCount?: SortOrder
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    totalStreamCount?: SortOrder
+    totalLiveCount?: SortOrder
     engagementRate?: SortOrder
     commitmentScore?: SortOrder
     adminGradeScore?: SortOrder
@@ -9760,11 +9880,15 @@ export namespace Prisma {
     reelCount?: SortOrder
     longVideoCount?: SortOrder
     postCount?: SortOrder
+    streamCount?: SortOrder
+    liveCount?: SortOrder
     totalPictureCount?: SortOrder
     totalStoryCount?: SortOrder
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    totalStreamCount?: SortOrder
+    totalLiveCount?: SortOrder
     engagementRate?: SortOrder
     commitmentScore?: SortOrder
     adminGradeScore?: SortOrder
@@ -9803,11 +9927,15 @@ export namespace Prisma {
     reelCount?: SortOrder
     longVideoCount?: SortOrder
     postCount?: SortOrder
+    streamCount?: SortOrder
+    liveCount?: SortOrder
     totalPictureCount?: SortOrder
     totalStoryCount?: SortOrder
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    totalStreamCount?: SortOrder
+    totalLiveCount?: SortOrder
     engagementRate?: SortOrder
     commitmentScore?: SortOrder
     adminGradeScore?: SortOrder
@@ -9826,11 +9954,15 @@ export namespace Prisma {
     reelCount?: SortOrder
     longVideoCount?: SortOrder
     postCount?: SortOrder
+    streamCount?: SortOrder
+    liveCount?: SortOrder
     totalPictureCount?: SortOrder
     totalStoryCount?: SortOrder
     totalReelCount?: SortOrder
     totalLongVideoCount?: SortOrder
     totalPostCount?: SortOrder
+    totalStreamCount?: SortOrder
+    totalLiveCount?: SortOrder
     engagementRate?: SortOrder
     commitmentScore?: SortOrder
     adminGradeScore?: SortOrder
@@ -10991,11 +11123,15 @@ export namespace Prisma {
     reelCount?: number
     longVideoCount?: number
     postCount?: number
+    streamCount?: number
+    liveCount?: number
     totalPictureCount?: number
     totalStoryCount?: number
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    totalStreamCount?: number
+    totalLiveCount?: number
     engagementRate?: number
     commitmentScore?: number
     adminGradeScore?: number
@@ -11036,11 +11172,15 @@ export namespace Prisma {
     reelCount?: number
     longVideoCount?: number
     postCount?: number
+    streamCount?: number
+    liveCount?: number
     totalPictureCount?: number
     totalStoryCount?: number
     totalReelCount?: number
     totalLongVideoCount?: number
     totalPostCount?: number
+    totalStreamCount?: number
+    totalLiveCount?: number
     engagementRate?: number
     commitmentScore?: number
     adminGradeScore?: number
@@ -11192,11 +11332,15 @@ export namespace Prisma {
     reelCount?: IntFieldUpdateOperationsInput | number
     longVideoCount?: IntFieldUpdateOperationsInput | number
     postCount?: IntFieldUpdateOperationsInput | number
+    streamCount?: IntFieldUpdateOperationsInput | number
+    liveCount?: IntFieldUpdateOperationsInput | number
     totalPictureCount?: IntFieldUpdateOperationsInput | number
     totalStoryCount?: IntFieldUpdateOperationsInput | number
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    totalStreamCount?: IntFieldUpdateOperationsInput | number
+    totalLiveCount?: IntFieldUpdateOperationsInput | number
     engagementRate?: FloatFieldUpdateOperationsInput | number
     commitmentScore?: FloatFieldUpdateOperationsInput | number
     adminGradeScore?: FloatFieldUpdateOperationsInput | number
@@ -11236,11 +11380,15 @@ export namespace Prisma {
     reelCount?: IntFieldUpdateOperationsInput | number
     longVideoCount?: IntFieldUpdateOperationsInput | number
     postCount?: IntFieldUpdateOperationsInput | number
+    streamCount?: IntFieldUpdateOperationsInput | number
+    liveCount?: IntFieldUpdateOperationsInput | number
     totalPictureCount?: IntFieldUpdateOperationsInput | number
     totalStoryCount?: IntFieldUpdateOperationsInput | number
     totalReelCount?: IntFieldUpdateOperationsInput | number
     totalLongVideoCount?: IntFieldUpdateOperationsInput | number
     totalPostCount?: IntFieldUpdateOperationsInput | number
+    totalStreamCount?: IntFieldUpdateOperationsInput | number
+    totalLiveCount?: IntFieldUpdateOperationsInput | number
     engagementRate?: FloatFieldUpdateOperationsInput | number
     commitmentScore?: FloatFieldUpdateOperationsInput | number
     adminGradeScore?: FloatFieldUpdateOperationsInput | number

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z }           from "zod";
 import { requireAuth } from "@/lib/auth/server";
 import { prisma }      from "@/lib/prisma";
+import { CONTENT_TYPES } from "@/lib/data/program";
 
 function extractPublicId(url: string): string | null {
   try {
@@ -31,7 +32,7 @@ async function deleteScreenshot(url: string, req: NextRequest) {
 const editSchema = z.object({
   platform:           z.enum(["FACEBOOK","INSTAGRAM","KICK","TIKTOK","TWITCH","YOUTUBE"]).optional(),
   contentLink:        z.string().url().optional(),
-  contentTypes:       z.array(z.enum(["PICTURE","STORY","REEL","LONG_VIDEO","POST"])).min(1).optional(),
+  contentTypes:       z.array(z.enum(CONTENT_TYPES)).min(1).optional(),
   monsterAppearances: z.array(z.enum(["MONSTER_THEME","LAYOUT","LOGO","MONSTER_PRODUCTS"])).min(1).optional(),
   statsScreenshotUrl: z.string().url().nullable().optional(),
   submittedReach:     z.number().int().min(0).optional(),

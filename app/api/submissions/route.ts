@@ -3,13 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
+import { CONTENT_TYPES } from "@/lib/data/program";
 
 const PENDING_CAP = 5;
 
 const schema = z.object({
   platform:           z.enum(["FACEBOOK","INSTAGRAM","KICK","TIKTOK","TWITCH","YOUTUBE"]),
   contentLink:        z.string().url(),
-  contentTypes:       z.array(z.enum(["PICTURE","STORY","REEL","LONG_VIDEO","POST"])).min(1),
+  contentTypes:       z.array(z.enum(CONTENT_TYPES)).min(1),
   monsterAppearances: z.array(z.enum(["MONSTER_THEME","LAYOUT","LOGO","MONSTER_PRODUCTS"])).min(1),
   submittedReach:     z.number().int().min(0),
   statsScreenshotUrl: z.string().url().optional().nullable(),
@@ -82,18 +83,37 @@ export async function GET(request: NextRequest) {
   try {
     const currentUser = await requireAuth(authHeader);
 
-    const submissions = await prisma.submission.findMany({
-      where:   { userId: currentUser.id },
-      orderBy: { createdAt: "desc" },
-    });
+    const { searchParams } = new URL(request.url);
+    const page  = Math.max(1, parseInt(searchParams.get("page")  ?? "1",  10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10)));
+    const skip  = (page - 1) * limit;
 
-    const pendingCount = submissions.filter((s) => s.status === "PENDING").length;
+    const [submissions, total, pendingCount] = await Promise.all([
+      prisma.submission.findMany({
+        where:   { userId: currentUser.id },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.submission.count({
+        where: { userId: currentUser.id },
+      }),
+      prisma.submission.count({
+        where: { userId: currentUser.id, status: "PENDING" },
+      }),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(total / limit));
 
     return NextResponse.json({
       success: true,
       data: submissions,
+      total,
+      totalPages,
+      page,
+      limit,
       pendingCount,
-      cap:      PENDING_CAP,
+      cap:       PENDING_CAP,
       canSubmit: pendingCount < PENDING_CAP,
     });
   } catch (error) {

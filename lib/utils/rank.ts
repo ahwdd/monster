@@ -134,8 +134,10 @@ export function totalContentInRank(profile: {
   reelCount:      number;
   longVideoCount: number;
   postCount:      number;
+  liveCount:      number;
+  streamCount:    number
 }): number {
-  return profile.pictureCount + profile.storyCount +
+  return profile.pictureCount + profile.storyCount + profile.liveCount + profile.streamCount +
     profile.reelCount + profile.longVideoCount + profile.postCount;
 }
 
@@ -156,7 +158,7 @@ export function checkRankUpEligibility(
   approvedAt:       Date | null | undefined,
   profile: {
     pictureCount: number; storyCount: number; reelCount: number;
-    longVideoCount: number; postCount: number;
+    longVideoCount: number; postCount: number; streamCount: number; liveCount: number;
   }
 ): RankUpEligibility {
   const neededReach   = RANK_THRESHOLDS[rank] ?? Infinity;

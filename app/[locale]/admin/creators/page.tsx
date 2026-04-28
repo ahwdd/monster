@@ -20,7 +20,7 @@ type Creator = {
   commitmentScore: number; adminGradeScore: number;
   approvedAt: string | null; joinedAt: string;
   pictureCount: number; storyCount: number; reelCount: number;
-  longVideoCount: number; postCount: number;
+  longVideoCount: number; postCount: number; liveCount: number; streamCount: number;
   user: { email: string | null; phone: string | null };
 };
 

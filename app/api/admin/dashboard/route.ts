@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         select: {
           rank: true, currentRankReach: true, approvedAt: true,
           pictureCount: true, storyCount: true, reelCount: true,
-          longVideoCount: true, postCount: true,
+          longVideoCount: true, postCount: true, streamCount: true, liveCount: true
         },
       }),
     ]);
@@ -92,7 +92,8 @@ export async function GET(request: NextRequest) {
     const eligibleCount = allProfiles.filter((p) => {
       const e = checkRankUpEligibility(p.rank, p.currentRankReach, p.approvedAt, {
         pictureCount: p.pictureCount, storyCount: p.storyCount, reelCount: p.reelCount,
-        longVideoCount: p.longVideoCount, postCount: p.postCount,
+        longVideoCount: p.longVideoCount, postCount: p.postCount, 
+        streamCount: p.streamCount, liveCount: p.liveCount
       });
       return e.reachOk; // at minimum reach-eligible
     }).length;

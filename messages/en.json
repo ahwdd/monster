@@ -330,7 +330,7 @@
     "stepContent": "Content",
     "phonePlaceholder": "Phone Number",
     "termsPrefix": "I have read and agreed to the",
-    "termsConditionsWord": "roles",
+    "termsConditionsWord": "rules",
     "termsWord": "conditions",
     "termsAndWord": "and",
     "termsLink": "terms and conditions"
@@ -365,6 +365,8 @@
     "reelLabel": "Reel",
     "longVideoLabel": "Long Video",
     "postLabel": "Post",
+    "liveLabel": "Live",
+    "streamLabel": "Stream",
     "themeLabel": "Monster Theme",
     "layoutLabel": "Layout",
     "logoLabel": "Logo",

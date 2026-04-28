@@ -1,6 +1,6 @@
 // src/app/[locale]/submissions/page.tsx
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
@@ -17,14 +17,18 @@ import {
   IoClose,
   IoImageOutline,
   IoArrowUpOutline,
+  IoChevronBackOutline,
+  IoChevronForwardOutline
 } from "react-icons/io5";
 import AuthShell from "@/components/auth/AuthShell";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
 import { formatNumber } from "@/lib/utils/rank";
 import { uploadToCloudinary } from "@/lib/utils/uploadImages";
+import { RANK_COLOR, RANK_LABEL_EN, RANK_LABEL_AR } from "@/lib/data/rankConfig";
 
 const PENDING_CAP = 5;
+const PAGE_LIMIT   = 20;
 
 type Submission = {
   id: string;
@@ -39,22 +43,22 @@ type Submission = {
   status: "PENDING" | "APPROVED" | "REJECTED";
   adminNotes: string | null;
   isEdited: boolean;
+  rank: string;
   createdAt: string;
   updatedAt: string;
 };
 
 const STATUS_STYLE: Record<string, string> = {
   APPROVED: "text-[#78be20] bg-[#78be20]/10",
-  PENDING: "text-yellow-400 bg-yellow-400/10",
+  PENDING:  "text-yellow-400 bg-yellow-400/10",
   REJECTED: "text-red-400 bg-red-400/10",
 };
 const STATUS_ICON: Record<string, React.ElementType> = {
   APPROVED: IoCheckmarkCircle,
-  PENDING: IoTimeOutline,
+  PENDING:  IoTimeOutline,
   REJECTED: IoCloseCircle,
 };
 
-// Extract Cloudinary public_id from URL — used for orphan cleanup on cancel
 function extractPublicId(url: string): string | null {
   try {
     const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z]+)?$/i);
@@ -71,29 +75,47 @@ async function deleteFromCloudinary(url: string) {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ public_id: publicId }),
-  }).catch(() => {}); // non-fatal
+  }).catch(() => {});
+}
+
+/** Small inline rank pill, reused per card */
+function RankPill({ rank, isAr }: { rank: string; isAr: boolean }) {
+  const color = RANK_COLOR[rank] ?? "#6b7280";
+  const label = isAr ? (RANK_LABEL_AR[rank] ?? rank) : (RANK_LABEL_EN[rank] ?? rank);
+  return (
+    <span
+      className="txt-smaller px-2 py-0.5 rounded-sm font-semibold uppercase"
+      style={{ color, background: `${color}18` }}>
+      {label}
+    </span>
+  );
 }
 
 export default function SubmissionsPage() {
-  const t = useTranslations("submissions");
+  const t    = useTranslations("submissions");
   const locale = useLocale();
-  const isAr = locale === "ar";
+  const isAr   = locale === "ar";
   const router = useRouter();
-  const toast = useToast();
+  const toast  = useToast();
   const { user, isAuthenticated, initializationComplete } = useAuth();
 
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [submissions,  setSubmissions]  = useState<Submission[]>([]);
+  const [loading,      setLoading]      = useState(true);
   const [pendingCount, setPendingCount] = useState(0);
-  const [canSubmit, setCanSubmit] = useState(true);
+  const [canSubmit,    setCanSubmit]    = useState(true);
+  const [currentRank,  setCurrentRank]  = useState<string | null>(null);
 
-  // Reach-update panel state
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [reachInput, setReachInput] = useState("");
-  // Newly uploaded screenshot URL — old one stays untouched until user hits Update
-  const [newScreenshot, setNewScreenshot] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  // Pagination
+  const [page,       setPage]       = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  // Reach-update panel
+  const [updatingId,     setUpdatingId]     = useState<string | null>(null);
+  const [reachInput,     setReachInput]     = useState("");
+  const [newScreenshot,  setNewScreenshot]  = useState<string | null>(null);
+  const [uploading,      setUploading]      = useState(false);
+  const [saving,         setSaving]         = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -102,26 +124,46 @@ export default function SubmissionsPage() {
 
   useEffect(() => {
     if (!user) return;
-    loadSubmissions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Fetch current rank from profile once
+    fetch("/api/profile/register", { credentials: "include" })
+      .then((r) => r.json())
+      .then((d) => setCurrentRank(d.data?.rank ?? null))
+      .catch(() => {});
   }, [user]);
 
-  async function loadSubmissions() {
-    setLoading(true);
-    try {
-      const d = await fetch("/api/submissions", {
-        credentials: "include",
-      }).then((r) => r.json());
-      if (d.success) {
-        setSubmissions(d.data);
-        setPendingCount(d.pendingCount ?? 0);
-        setCanSubmit(d.canSubmit ?? true);
+  const loadSubmissions = useCallback(
+    async (p: number) => {
+      setLoading(true);
+      // Close any open update panel when navigating pages
+      setUpdatingId(null);
+      setReachInput("");
+      setNewScreenshot(null);
+      try {
+        const res = await fetch(
+          `/api/submissions?page=${p}&limit=${PAGE_LIMIT}`,
+          { credentials: "include" },
+        );
+        const d = await res.json();
+        if (d.success) {
+          setSubmissions(d.data);
+          setPendingCount(d.pendingCount ?? 0);
+          setCanSubmit(d.canSubmit ?? true);
+          setTotalCount(d.total ?? d.data.length);
+          setTotalPages(d.totalPages ?? 1);
+        }
+      } catch {
+      } finally {
+        setLoading(false);
       }
-    } catch {
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  useEffect(() => {
+    if (!user) return;
+    loadSubmissions(page);
+  }, [user, page, loadSubmissions]);
 
   function openReachUpdate(s: Submission) {
     setUpdatingId(s.id);
@@ -129,8 +171,6 @@ export default function SubmissionsPage() {
     setNewScreenshot(null);
   }
 
-  // Cancel — if user already uploaded a new screenshot, delete it from Cloudinary
-  // since they abandoned the update (otherwise it sits orphaned in the bucket)
   async function cancelReachUpdate() {
     if (newScreenshot) await deleteFromCloudinary(newScreenshot);
     setUpdatingId(null);
@@ -138,19 +178,14 @@ export default function SubmissionsPage() {
     setNewScreenshot(null);
   }
 
-  // Upload new screenshot eagerly — the OLD screenshot is NOT touched yet
-  async function handleScreenshotChange(
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) {
+  async function handleScreenshotChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
       toast.error(isAr ? "الحجم الأقصى 5 ميجا" : "Max file size is 5 MB");
       return;
     }
-    // If user already uploaded a new screenshot this session, delete it first
     if (newScreenshot) await deleteFromCloudinary(newScreenshot);
-
     setUploading(true);
     const result = await uploadToCloudinary(file, "monster-creators/stats");
     setUploading(false);
@@ -162,14 +197,12 @@ export default function SubmissionsPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  // Remove the newly uploaded screenshot (user changed their mind on the new one)
   async function removeNewScreenshot() {
     if (newScreenshot) await deleteFromCloudinary(newScreenshot);
     setNewScreenshot(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  // Confirm update — API handles deleting the OLD screenshot on its side
   async function submitReachUpdate(s: Submission) {
     const newReach = parseInt(reachInput, 10);
     if (isNaN(newReach) || newReach <= s.acceptedReach) {
@@ -180,13 +213,12 @@ export default function SubmissionsPage() {
       );
       return;
     }
-
     setSaving(true);
     try {
-      const payload: any = { submittedReach: newReach };
+      const payload: Record<string, unknown> = { submittedReach: newReach };
       if (newScreenshot) payload.statsScreenshotUrl = newScreenshot;
 
-      const res = await fetch(`/api/submissions/${s.id}`, {
+      const res  = await fetch(`/api/submissions/${s.id}`, {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -199,9 +231,7 @@ export default function SubmissionsPage() {
           prev.map((sub) => (sub.id === s.id ? { ...sub, ...data.data } : sub)),
         );
         toast.success(
-          isAr
-            ? "تم إرسال تحديث الوصول للمراجعة!"
-            : "Reach update sent for review!",
+          isAr ? "تم إرسال تحديث الوصول للمراجعة!" : "Reach update sent for review!",
         );
         setUpdatingId(null);
         setReachInput("");
@@ -236,7 +266,7 @@ export default function SubmissionsPage() {
           </h1>
           {canSubmit ? (
             <Link
-              href={`/submissions/submit`}
+              href="/submissions/submit"
               className="flex items-center gap-2 px-4 py-2.5 bg-[#78be20] hover:bg-[#8fd428]
                 text-black font-display font-semibold txt-small uppercase rounded-xl transition-colors">
               <IoAddCircleOutline className="size-4" />
@@ -245,10 +275,7 @@ export default function SubmissionsPage() {
           ) : (
             <div className="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-800 text-zinc-500 txt-small rounded-xl cursor-not-allowed">
               <IoWarningOutline className="size-4 text-yellow-500" />
-              {t("pendingCountHeader", {
-                count: pendingCount,
-                cap: PENDING_CAP,
-              })}
+              {t("pendingCountHeader", { count: pendingCount, cap: PENDING_CAP })}
             </div>
           )}
         </div>
@@ -281,7 +308,7 @@ export default function SubmissionsPage() {
             <p className="txt-regular text-zinc-500">{t("noSubmissions")}</p>
             {canSubmit && (
               <Link
-                href={`/submissions/submit`}
+                href="/submissions/submit"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#78be20] hover:bg-[#8fd428]
                   text-black font-display font-semibold txt-small uppercase rounded-xl transition-colors">
                 <IoAddCircleOutline className="size-4" />
@@ -290,325 +317,337 @@ export default function SubmissionsPage() {
             )}
           </div>
         ) : (
-          <div className="space-y-3">
-            {submissions.map((s, i) => {
-              const StatusIcon = STATUS_ICON[s.status];
-              const statusStyle = STATUS_STYLE[s.status];
-              const hasDelta = s.pendingReach !== null;
-              const delta = hasDelta
-                ? s.pendingReach! - (s.previousAcceptedReach ?? s.acceptedReach)
-                : 0;
-              const isUpdating = updatingId === s.id;
+          <>
+            <div className="space-y-3">
+              {submissions.map((s, i) => {
+                const StatusIcon  = STATUS_ICON[s.status];
+                const statusStyle = STATUS_STYLE[s.status];
+                const hasDelta    = s.pendingReach !== null;
+                const delta       = hasDelta
+                  ? s.pendingReach! - (s.previousAcceptedReach ?? s.acceptedReach)
+                  : 0;
+                const isUpdating = updatingId === s.id;
 
-              return (
-                <motion.div
-                  key={s.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl overflow-hidden">
-                  {/* Card body */}
-                  <div className="p-4">
-                    {/* Top row */}
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="txt-smaller font-medium uppercase text-[#78be20] bg-[#78be20]/10 px-2 py-0.5 rounded-sm">
-                          {s.platform}
-                        </span>
-                        <span
-                          className={`txt-smaller px-2 py-0.5 rounded-sm flex items-center gap-1 ${statusStyle}`}>
-                          <StatusIcon className="size-3" />
-                          {t(s.status.toLowerCase() as any)}
-                        </span>
-                        {hasDelta && (
-                          <span className="txt-smaller text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-sm flex items-center gap-1">
-                            <IoTimeOutline className="size-3" />
-                            {t("editPending")}
+                // "Update Reach" is only allowed on APPROVED submissions
+                // that belong to the creator's current rank window.
+                const isCurrentRank  = currentRank !== null && s.rank === currentRank;
+                const canUpdateReach = s.status === "APPROVED" && !hasDelta && isCurrentRank;
+
+                return (
+                  <motion.div
+                    key={s.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04 }}
+                    className="bg-[#0d0d0d] border border-zinc-800 rounded-2xl overflow-hidden">
+
+                    {/* Card body */}
+                    <div className="p-4">
+                      {/* Top row */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {/* Platform */}
+                          <span className="txt-smaller font-medium uppercase text-[#78be20] bg-[#78be20]/10 px-2 py-0.5 rounded-sm">
+                            {s.platform}
                           </span>
-                        )}
-                        <span className="txt-smaller text-zinc-500">
-                          {new Date(s.createdAt).toLocaleDateString(locale)}
-                        </span>
-                      </div>
 
-                      {/* Buttons */}
-                      <div className="flex items-center gap-2 shrink-0">
-                        {/* APPROVED with no pending delta → Update Reach button */}
-                        {s.status === "APPROVED" && !hasDelta && (
-                          <button
-                            onClick={() =>
-                              isUpdating
-                                ? cancelReachUpdate()
-                                : openReachUpdate(s)
-                            }
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#78be20]/10
-                              hover:bg-[#78be20]/20 text-[#78be20] txt-smaller font-medium
-                              rounded-lg transition-colors">
-                            {isUpdating ? (
-                              <IoClose className="size-3.5" />
-                            ) : (
-                              <IoArrowUpOutline className="size-3.5" />
-                            )}
-                            {isUpdating
-                              ? isAr
-                                ? "إلغاء"
-                                : "Cancel"
-                              : isAr
-                                ? "تحديث الوصول"
-                                : "Update Reach"}
-                          </button>
-                        )}
-                        {/* PENDING / REJECTED → Edit link */}
-                        {s.status !== "APPROVED" && (
-                          <Link
-                            href={`/submissions/edit/${s.id}`}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800
-                              hover:bg-zinc-700 text-white txt-smaller font-medium
-                              rounded-lg transition-colors">
-                            <IoCreateOutline className="size-3.5" />
-                            {t("edit")}
-                          </Link>
-                        )}
-                      </div>
-                    </div>
+                          {/* Rank at time of submission */}
+                          <RankPill rank={s.rank} isAr={isAr} />
 
-                    {/* Content link */}
-                    <a
-                      href={s.contentLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="txt-small text-zinc-400 hover:text-white transition-colors
-                        flex items-center gap-1.5 truncate max-w-xs mb-2">
-                      <span className="truncate">{s.contentLink}</span>
-                      <IoOpenOutline className="size-3.5 shrink-0" />
-                    </a>
-
-                    {/* Content types */}
-                    <div className="flex gap-1.5 flex-wrap mb-3">
-                      {s.contentTypes.map((ct) => (
-                        <span
-                          key={ct}
-                          className="txt-smaller bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-400">
-                          {ct.replace(/_/g, " ")}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Reach */}
-                    <div className="flex items-center gap-4 flex-wrap txt-smaller">
-                      <div>
-                        <span className="text-zinc-500">
-                          {t("acceptedReach")}:{" "}
-                        </span>
-                        <span className="text-white font-medium">
-                          {formatNumber(s.acceptedReach)}
-                        </span>
-                      </div>
-                      {hasDelta && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-zinc-500">
-                            {t("pendingReach")}:{" "}
+                          {/* Status */}
+                          <span className={`txt-smaller px-2 py-0.5 rounded-sm flex items-center gap-1 ${statusStyle}`}>
+                            <StatusIcon className="size-3" />
+                            {t(s.status.toLowerCase() as Parameters<typeof t>[0])}
                           </span>
-                          <span className="text-yellow-400 font-medium">
-                            {formatNumber(s.pendingReach!)}
-                            {delta > 0 && (
-                              <span className="text-zinc-500 ms-1">
-                                (+{formatNumber(delta)})
-                              </span>
-                            )}
+
+                          {hasDelta && (
+                            <span className="txt-smaller text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-sm flex items-center gap-1">
+                              <IoTimeOutline className="size-3" />
+                              {t("editPending")}
+                            </span>
+                          )}
+
+                          <span className="txt-smaller text-zinc-500">
+                            {new Date(s.createdAt).toLocaleDateString(locale)}
                           </span>
                         </div>
+
+                        {/* Action buttons */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          {/* Update Reach — only for current-rank approved submissions */}
+                          {canUpdateReach && (
+                            <button
+                              onClick={() => isUpdating ? cancelReachUpdate() : openReachUpdate(s)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#78be20]/10
+                                hover:bg-[#78be20]/20 text-[#78be20] txt-smaller font-medium
+                                rounded-lg transition-colors">
+                              {isUpdating
+                                ? <IoClose className="size-3.5" />
+                                : <IoArrowUpOutline className="size-3.5" />}
+                              {isUpdating
+                                ? (isAr ? "إلغاء" : "Cancel")
+                                : (isAr ? "تحديث الوصول" : "Update Reach")}
+                            </button>
+                          )}
+
+                          {/* Edit — only for PENDING / REJECTED */}
+                          {s.status !== "APPROVED" && (
+                            <Link
+                              href={`/submissions/edit/${s.id}`}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800
+                                hover:bg-zinc-700 text-white txt-smaller font-medium
+                                rounded-lg transition-colors">
+                              <IoCreateOutline className="size-3.5" />
+                              {t("edit")}
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content link */}
+                      <a
+                        href={s.contentLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="txt-small text-zinc-400 hover:text-white transition-colors
+                          flex items-center gap-1.5 truncate max-w-xs mb-2">
+                        <span className="truncate">{s.contentLink}</span>
+                        <IoOpenOutline className="size-3.5 shrink-0" />
+                      </a>
+
+                      {/* Content types */}
+                      <div className="flex gap-1.5 flex-wrap mb-3">
+                        {s.contentTypes.map((ct) => (
+                          <span
+                            key={ct}
+                            className="txt-smaller bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-400">
+                            {ct.replace(/_/g, " ")}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Reach */}
+                      <div className="flex items-center gap-4 flex-wrap txt-smaller">
+                        <div>
+                          <span className="text-zinc-500">{t("acceptedReach")}: </span>
+                          <span className="text-white font-medium">{formatNumber(s.acceptedReach)}</span>
+                        </div>
+                        {hasDelta && (
+                          <div className="flex items-center gap-1">
+                            <span className="text-zinc-500">{t("pendingReach")}: </span>
+                            <span className="text-yellow-400 font-medium">
+                              {formatNumber(s.pendingReach!)}
+                              {delta > 0 && (
+                                <span className="text-zinc-500 ms-1">
+                                  (+{formatNumber(delta)})
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Admin notes */}
+                      {s.adminNotes && (
+                        <p className="txt-smaller text-zinc-500 mt-2 italic border-t border-zinc-800 pt-2">
+                          &ldquo;{s.adminNotes}&rdquo;
+                        </p>
                       )}
                     </div>
 
-                    {/* Admin notes */}
-                    {s.adminNotes && (
-                      <p className="txt-smaller text-zinc-500 mt-2 italic border-t border-zinc-800 pt-2">
-                        &ldquo;{s.adminNotes}&rdquo;
-                      </p>
-                    )}
-                  </div>
-
-                  {/* ── Inline reach-update panel ── */}
-                  <AnimatePresence>
-                    {isUpdating && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                        className="overflow-hidden">
-                        <div className="border-t border-zinc-800 p-4 bg-zinc-900/30 space-y-4">
-                          {/* Reach input */}
-                          <div className="space-y-1.5">
-                            <label className="txt-small font-medium text-white">
-                              {isAr
-                                ? "الوصول الإجمالي الجديد"
-                                : "New Total Reach"}
-                              <span className="text-red-400 ms-1">*</span>
-                            </label>
-                            <p className="txt-smaller text-zinc-500">
-                              {isAr
-                                ? `يجب أن يكون أكبر من الوصول المعتمد الحالي: ${formatNumber(s.acceptedReach)}`
-                                : `Must exceed current accepted reach: ${formatNumber(s.acceptedReach)}`}
-                            </p>
-                            <input
-                              type="number"
-                              min={s.acceptedReach + 1}
-                              value={reachInput}
-                              onChange={(e) => setReachInput(e.target.value)}
-                              className="w-full px-4 py-3 bg-black border border-zinc-700 rounded-lg
-                                text-white txt-regular placeholder:text-zinc-600 outline-none
-                                focus:border-[#78be20] transition-colors"
-                              placeholder={String(s.acceptedReach + 1)}
-                            />
-                            {/* Live delta preview */}
-                            {reachInput &&
-                              !isNaN(parseInt(reachInput)) &&
-                              parseInt(reachInput) > s.acceptedReach && (
-                                <p className="txt-smaller text-[#78be20]">
-                                  +
-                                  {formatNumber(
-                                    parseInt(reachInput) - s.acceptedReach,
-                                  )}{" "}
-                                  {isAr ? "زيادة في الوصول" : "increase"}
-                                </p>
-                              )}
-                          </div>
-
-                          {/* Screenshot section */}
-                          <div className="space-y-1.5">
-                            <label className="txt-small font-medium text-white">
-                              {isAr
-                                ? "تحديث صورة الإحصائيات"
-                                : "Update Stats Screenshot"}
-                              <span className="txt-smaller text-zinc-500 font-normal ms-2">
-                                ({isAr ? "اختياري" : "optional"})
-                              </span>
-                            </label>
-                            <p className="txt-smaller text-zinc-500">
-                              {isAr
-                                ? "الصورة القديمة لن تُحذف من Cloudinary إلا عند الضغط على زر التحديث."
-                                : "The old screenshot won't be deleted from Cloudinary until you press Update."}
-                            </p>
-
-                            <input
-                              ref={fileInputRef}
-                              type="file"
-                              accept="image/*"
-                              onChange={handleScreenshotChange}
-                              className="hidden"
-                            />
-
-                            {newScreenshot ? (
-                              // New screenshot uploaded — show preview with remove option
-                              <div className="relative w-full h-40 rounded-xl overflow-hidden border border-[#78be20]/40 group">
-                                <Image
-                                  src={newScreenshot}
-                                  alt="New screenshot"
-                                  fill
-                                  className="object-contain bg-zinc-900 p-2"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={removeNewScreenshot}
-                                  className="absolute top-2 inset-e-2 p-1.5 bg-black/80 hover:bg-black
-                                    rounded-lg text-white transition-colors">
-                                  <IoClose className="size-4" />
-                                </button>
-                                <div className="absolute bottom-0 inset-x-0 bg-black/70 py-1.5 text-center">
-                                  <span className="txt-smaller text-[#78be20]">
-                                    {isAr
-                                      ? "✓ صورة جديدة جاهزة"
-                                      : "✓ New screenshot ready"}
-                                  </span>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="space-y-2">
-                                {/* Current screenshot — dimmed as reference */}
-                                {s.statsScreenshotUrl && (
-                                  <div className="relative w-full h-28 rounded-xl overflow-hidden border border-zinc-700/40">
-                                    <Image
-                                      src={s.statsScreenshotUrl}
-                                      alt="Current"
-                                      fill
-                                      className="object-contain bg-zinc-900/50 p-2 opacity-40"
-                                    />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                      <span className="txt-smaller text-zinc-400 bg-black/70 px-3 py-1 rounded-lg">
-                                        {isAr
-                                          ? "الصورة الحالية"
-                                          : "Current screenshot"}
-                                      </span>
-                                    </div>
-                                  </div>
+                    {/* ── Inline reach-update panel ── */}
+                    <AnimatePresence>
+                      {isUpdating && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                          className="overflow-hidden">
+                          <div className="border-t border-zinc-800 p-4 bg-zinc-900/30 space-y-4">
+                            {/* Reach input */}
+                            <div className="space-y-1.5">
+                              <label className="txt-small font-medium text-white">
+                                {isAr ? "الوصول الإجمالي الجديد" : "New Total Reach"}
+                                <span className="text-red-400 ms-1">*</span>
+                              </label>
+                              <p className="txt-smaller text-zinc-500">
+                                {isAr
+                                  ? `يجب أن يكون أكبر من الوصول المعتمد الحالي: ${formatNumber(s.acceptedReach)}`
+                                  : `Must exceed current accepted reach: ${formatNumber(s.acceptedReach)}`}
+                              </p>
+                              <input
+                                type="number"
+                                min={s.acceptedReach + 1}
+                                value={reachInput}
+                                onChange={(e) => setReachInput(e.target.value)}
+                                className="w-full px-4 py-3 bg-black border border-zinc-700 rounded-lg
+                                  text-white txt-regular placeholder:text-zinc-600 outline-none
+                                  focus:border-[#78be20] transition-colors"
+                                placeholder={String(s.acceptedReach + 1)}
+                              />
+                              {reachInput &&
+                                !isNaN(parseInt(reachInput)) &&
+                                parseInt(reachInput) > s.acceptedReach && (
+                                  <p className="txt-smaller text-[#78be20]">
+                                    +{formatNumber(parseInt(reachInput) - s.acceptedReach)}{" "}
+                                    {isAr ? "زيادة في الوصول" : "increase"}
+                                  </p>
                                 )}
-                                {/* Upload button */}
-                                <button
-                                  type="button"
-                                  onClick={() => fileInputRef.current?.click()}
-                                  disabled={uploading}
-                                  className="w-full flex flex-col items-center justify-center gap-2 h-24
-                                    rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50
-                                    hover:border-[#78be20] hover:bg-[#78be20]/5
-                                    transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                  {uploading ? (
-                                    <>
-                                      <div className="w-5 h-5 border-2 border-[#78be20] border-t-transparent rounded-full animate-spin" />
-                                      <span className="txt-smaller text-zinc-400">
-                                        {isAr
-                                          ? "جارٍ الرفع..."
-                                          : "Uploading..."}
-                                      </span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <IoImageOutline className="size-6 text-zinc-500" />
-                                      <span className="txt-smaller text-zinc-400">
-                                        {isAr
-                                          ? "رفع صورة جديدة"
-                                          : "Upload new screenshot"}
-                                      </span>
-                                    </>
-                                  )}
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                            </div>
 
-                          {/* Confirm / Cancel */}
-                          <div className="flex gap-2 pt-1">
-                            <button
-                              onClick={cancelReachUpdate}
-                              disabled={saving}
-                              className="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white
-                                txt-small font-medium rounded-xl transition-colors disabled:opacity-50">
-                              {isAr ? "إلغاء" : "Cancel"}
-                            </button>
-                            <button
-                              onClick={() => submitReachUpdate(s)}
-                              disabled={saving || uploading}
-                              className="flex-1 py-2.5 bg-[#78be20] hover:bg-[#8fd428] text-black
-                                txt-small font-semibold rounded-xl transition-colors
-                                disabled:opacity-50 disabled:cursor-not-allowed
-                                flex items-center justify-center gap-2">
-                              {saving ? (
-                                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                            {/* Screenshot section */}
+                            <div className="space-y-1.5">
+                              <label className="txt-small font-medium text-white">
+                                {isAr ? "تحديث صورة الإحصائيات" : "Update Stats Screenshot"}
+                                <span className="txt-smaller text-zinc-500 font-normal ms-2">
+                                  ({isAr ? "اختياري" : "optional"})
+                                </span>
+                              </label>
+                              <p className="txt-smaller text-zinc-500">
+                                {isAr
+                                  ? "الصورة القديمة لن تُحذف من Cloudinary إلا عند الضغط على زر التحديث."
+                                  : "The old screenshot won't be deleted from Cloudinary until you press Update."}
+                              </p>
+
+                              <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleScreenshotChange}
+                                className="hidden"
+                              />
+
+                              {newScreenshot ? (
+                                <div className="relative w-full h-40 rounded-xl overflow-hidden border border-[#78be20]/40 group">
+                                  <Image
+                                    src={newScreenshot}
+                                    alt="New screenshot"
+                                    fill
+                                    className="object-contain bg-zinc-900 p-2"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={removeNewScreenshot}
+                                    className="absolute top-2 inset-e-2 p-1.5 bg-black/80 hover:bg-black
+                                      rounded-lg text-white transition-colors">
+                                    <IoClose className="size-4" />
+                                  </button>
+                                  <div className="absolute bottom-0 inset-x-0 bg-black/70 py-1.5 text-center">
+                                    <span className="txt-smaller text-[#78be20]">
+                                      {isAr ? "✓ صورة جديدة جاهزة" : "✓ New screenshot ready"}
+                                    </span>
+                                  </div>
+                                </div>
                               ) : (
-                                <IoArrowUpOutline className="size-4" />
+                                <div className="space-y-2">
+                                  {s.statsScreenshotUrl && (
+                                    <div className="relative w-full h-28 rounded-xl overflow-hidden border border-zinc-700/40">
+                                      <Image
+                                        src={s.statsScreenshotUrl}
+                                        alt="Current"
+                                        fill
+                                        className="object-contain bg-zinc-900/50 p-2 opacity-40"
+                                      />
+                                      <div className="absolute inset-0 flex items-center justify-center">
+                                        <span className="txt-smaller text-zinc-400 bg-black/70 px-3 py-1 rounded-lg">
+                                          {isAr ? "الصورة الحالية" : "Current screenshot"}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploading}
+                                    className="w-full flex flex-col items-center justify-center gap-2 h-24
+                                      rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50
+                                      hover:border-[#78be20] hover:bg-[#78be20]/5
+                                      transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {uploading ? (
+                                      <>
+                                        <div className="w-5 h-5 border-2 border-[#78be20] border-t-transparent rounded-full animate-spin" />
+                                        <span className="txt-smaller text-zinc-400">
+                                          {isAr ? "جارٍ الرفع..." : "Uploading..."}
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <IoImageOutline className="size-6 text-zinc-500" />
+                                        <span className="txt-smaller text-zinc-400">
+                                          {isAr ? "رفع صورة جديدة" : "Upload new screenshot"}
+                                        </span>
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
                               )}
-                              {isAr ? "تحديث" : "Update"}
-                            </button>
+                            </div>
+
+                            {/* Confirm / Cancel */}
+                            <div className="flex gap-2 pt-1">
+                              <button
+                                onClick={cancelReachUpdate}
+                                disabled={saving}
+                                className="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white
+                                  txt-small font-medium rounded-xl transition-colors disabled:opacity-50">
+                                {isAr ? "إلغاء" : "Cancel"}
+                              </button>
+                              <button
+                                onClick={() => submitReachUpdate(s)}
+                                disabled={saving || uploading}
+                                className="flex-1 py-2.5 bg-[#78be20] hover:bg-[#8fd428] text-black
+                                  txt-small font-semibold rounded-xl transition-colors
+                                  disabled:opacity-50 disabled:cursor-not-allowed
+                                  flex items-center justify-center gap-2">
+                                {saving ? (
+                                  <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                ) : (
+                                  <IoArrowUpOutline className="size-4" />
+                                )}
+                                {isAr ? "تحديث" : "Update"}
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* ── Pagination ── */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-6 gap-3">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1 || loading}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-zinc-800 hover:bg-zinc-700
+                    text-white txt-smaller font-medium rounded-xl transition-colors
+                    disabled:opacity-40 disabled:cursor-not-allowed">
+                  <IoChevronBackOutline className="size-3.5" />
+                  {isAr ? "السابق" : "Previous"}
+                </button>
+
+                <span className="txt-smaller text-zinc-400 tabular-nums">
+                  {isAr
+                    ? `${page} / ${totalPages} — ${totalCount} مشاركة`
+                    : `${page} / ${totalPages} — ${totalCount} submissions`}
+                </span>
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages || loading}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-zinc-800 hover:bg-zinc-700
+                    text-white txt-smaller font-medium rounded-xl transition-colors
+                    disabled:opacity-40 disabled:cursor-not-allowed">
+                  {isAr ? "التالي" : "Next"}
+                  <IoChevronForwardOutline className="size-3.5" />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </AuthShell>
