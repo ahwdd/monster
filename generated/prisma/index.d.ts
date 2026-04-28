@@ -33,6 +33,16 @@ export type CreatorProfile = $Result.DefaultSelection<Prisma.$CreatorProfilePayl
  * 
  */
 export type Submission = $Result.DefaultSelection<Prisma.$SubmissionPayload>
+/**
+ * Model MonthlySnapshot
+ * 
+ */
+export type MonthlySnapshot = $Result.DefaultSelection<Prisma.$MonthlySnapshotPayload>
+/**
+ * Model PlatformStat
+ * 
+ */
+export type PlatformStat = $Result.DefaultSelection<Prisma.$PlatformStatPayload>
 
 /**
  * Enums
@@ -81,7 +91,9 @@ export const ContentType: {
   STORY: 'STORY',
   REEL: 'REEL',
   LONG_VIDEO: 'LONG_VIDEO',
-  POST: 'POST'
+  POST: 'POST',
+  LIVE: 'LIVE',
+  STREAM: 'STREAM'
 };
 
 export type ContentType = (typeof ContentType)[keyof typeof ContentType]
@@ -127,6 +139,29 @@ export const CreatorRank: {
 
 export type CreatorRank = (typeof CreatorRank)[keyof typeof CreatorRank]
 
+
+export const SubmissionRejectionReason: {
+  LOW_QUALITY: 'LOW_QUALITY',
+  WRONG_CONTENT_TYPE: 'WRONG_CONTENT_TYPE',
+  INSUFFICIENT_REACH: 'INSUFFICIENT_REACH',
+  GUIDELINE_VIOLATION: 'GUIDELINE_VIOLATION',
+  DUPLICATE: 'DUPLICATE',
+  OTHER: 'OTHER'
+};
+
+export type SubmissionRejectionReason = (typeof SubmissionRejectionReason)[keyof typeof SubmissionRejectionReason]
+
+
+export const RegistrationRejectionReason: {
+  INELIGIBLE_REGION: 'INELIGIBLE_REGION',
+  COMPETING_BRAND: 'COMPETING_BRAND',
+  INSUFFICIENT_FOLLOWERS: 'INSUFFICIENT_FOLLOWERS',
+  INCOMPLETE_PROFILE: 'INCOMPLETE_PROFILE',
+  OTHER: 'OTHER'
+};
+
+export type RegistrationRejectionReason = (typeof RegistrationRejectionReason)[keyof typeof RegistrationRejectionReason]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -164,6 +199,14 @@ export const DiscoverySource: typeof $Enums.DiscoverySource
 export type CreatorRank = $Enums.CreatorRank
 
 export const CreatorRank: typeof $Enums.CreatorRank
+
+export type SubmissionRejectionReason = $Enums.SubmissionRejectionReason
+
+export const SubmissionRejectionReason: typeof $Enums.SubmissionRejectionReason
+
+export type RegistrationRejectionReason = $Enums.RegistrationRejectionReason
+
+export const RegistrationRejectionReason: typeof $Enums.RegistrationRejectionReason
 
 /**
  * ##  Prisma Client ʲˢ
@@ -279,6 +322,26 @@ export class PrismaClient<
     * ```
     */
   get submission(): Prisma.SubmissionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.monthlySnapshot`: Exposes CRUD operations for the **MonthlySnapshot** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MonthlySnapshots
+    * const monthlySnapshots = await prisma.monthlySnapshot.findMany()
+    * ```
+    */
+  get monthlySnapshot(): Prisma.MonthlySnapshotDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.platformStat`: Exposes CRUD operations for the **PlatformStat** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PlatformStats
+    * const platformStats = await prisma.platformStat.findMany()
+    * ```
+    */
+  get platformStat(): Prisma.PlatformStatDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -722,7 +785,9 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     CreatorProfile: 'CreatorProfile',
-    Submission: 'Submission'
+    Submission: 'Submission',
+    MonthlySnapshot: 'MonthlySnapshot',
+    PlatformStat: 'PlatformStat'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -741,7 +806,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "creatorProfile" | "submission"
+      modelProps: "user" | "creatorProfile" | "submission" | "monthlySnapshot" | "platformStat"
       txIsolationLevel: never
     }
     model: {
@@ -967,6 +1032,154 @@ export namespace Prisma {
           }
         }
       }
+      MonthlySnapshot: {
+        payload: Prisma.$MonthlySnapshotPayload<ExtArgs>
+        fields: Prisma.MonthlySnapshotFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MonthlySnapshotFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MonthlySnapshotFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload>
+          }
+          findFirst: {
+            args: Prisma.MonthlySnapshotFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MonthlySnapshotFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload>
+          }
+          findMany: {
+            args: Prisma.MonthlySnapshotFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload>[]
+          }
+          create: {
+            args: Prisma.MonthlySnapshotCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload>
+          }
+          createMany: {
+            args: Prisma.MonthlySnapshotCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.MonthlySnapshotDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload>
+          }
+          update: {
+            args: Prisma.MonthlySnapshotUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload>
+          }
+          deleteMany: {
+            args: Prisma.MonthlySnapshotDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MonthlySnapshotUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MonthlySnapshotUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlySnapshotPayload>
+          }
+          aggregate: {
+            args: Prisma.MonthlySnapshotAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMonthlySnapshot>
+          }
+          groupBy: {
+            args: Prisma.MonthlySnapshotGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MonthlySnapshotGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.MonthlySnapshotFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.MonthlySnapshotAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.MonthlySnapshotCountArgs<ExtArgs>
+            result: $Utils.Optional<MonthlySnapshotCountAggregateOutputType> | number
+          }
+        }
+      }
+      PlatformStat: {
+        payload: Prisma.$PlatformStatPayload<ExtArgs>
+        fields: Prisma.PlatformStatFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PlatformStatFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PlatformStatFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload>
+          }
+          findFirst: {
+            args: Prisma.PlatformStatFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PlatformStatFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload>
+          }
+          findMany: {
+            args: Prisma.PlatformStatFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload>[]
+          }
+          create: {
+            args: Prisma.PlatformStatCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload>
+          }
+          createMany: {
+            args: Prisma.PlatformStatCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.PlatformStatDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload>
+          }
+          update: {
+            args: Prisma.PlatformStatUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload>
+          }
+          deleteMany: {
+            args: Prisma.PlatformStatDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PlatformStatUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.PlatformStatUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlatformStatPayload>
+          }
+          aggregate: {
+            args: Prisma.PlatformStatAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePlatformStat>
+          }
+          groupBy: {
+            args: Prisma.PlatformStatGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PlatformStatGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.PlatformStatFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.PlatformStatAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.PlatformStatCountArgs<ExtArgs>
+            result: $Utils.Optional<PlatformStatCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1049,6 +1262,8 @@ export namespace Prisma {
     user?: UserOmit
     creatorProfile?: CreatorProfileOmit
     submission?: SubmissionOmit
+    monthlySnapshot?: MonthlySnapshotOmit
+    platformStat?: PlatformStatOmit
   }
 
   /* Types for Logging */
@@ -1130,10 +1345,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     submissions: number
+    snapshots: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     submissions?: boolean | UserCountOutputTypeCountSubmissionsArgs
+    snapshots?: boolean | UserCountOutputTypeCountSnapshotsArgs
   }
 
   // Custom InputTypes
@@ -1152,6 +1369,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSubmissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SubmissionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSnapshotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MonthlySnapshotWhereInput
   }
 
 
@@ -1468,6 +1692,7 @@ export namespace Prisma {
     updatedAt?: boolean
     profile?: boolean | User$profileArgs<ExtArgs>
     submissions?: boolean | User$submissionsArgs<ExtArgs>
+    snapshots?: boolean | User$snapshotsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1495,6 +1720,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     profile?: boolean | User$profileArgs<ExtArgs>
     submissions?: boolean | User$submissionsArgs<ExtArgs>
+    snapshots?: boolean | User$snapshotsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -1503,6 +1729,7 @@ export namespace Prisma {
     objects: {
       profile: Prisma.$CreatorProfilePayload<ExtArgs> | null
       submissions: Prisma.$SubmissionPayload<ExtArgs>[]
+      snapshots: Prisma.$MonthlySnapshotPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1885,6 +2112,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     profile<T extends User$profileArgs<ExtArgs> = {}>(args?: Subset<T, User$profileArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     submissions<T extends User$submissionsArgs<ExtArgs> = {}>(args?: Subset<T, User$submissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    snapshots<T extends User$snapshotsArgs<ExtArgs> = {}>(args?: Subset<T, User$snapshotsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2342,6 +2570,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.snapshots
+   */
+  export type User$snapshotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    where?: MonthlySnapshotWhereInput
+    orderBy?: MonthlySnapshotOrderByWithRelationInput | MonthlySnapshotOrderByWithRelationInput[]
+    cursor?: MonthlySnapshotWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MonthlySnapshotScalarFieldEnum | MonthlySnapshotScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2428,6 +2680,8 @@ export namespace Prisma {
     whyJoin: string | null
     status: $Enums.RegistrationStatus | null
     adminNotes: string | null
+    adminNote: string | null
+    registrationRejection: $Enums.RegistrationRejectionReason | null
     approvedAt: Date | null
     rank: $Enums.CreatorRank | null
     currentRankReach: number | null
@@ -2469,6 +2723,8 @@ export namespace Prisma {
     whyJoin: string | null
     status: $Enums.RegistrationStatus | null
     adminNotes: string | null
+    adminNote: string | null
+    registrationRejection: $Enums.RegistrationRejectionReason | null
     approvedAt: Date | null
     rank: $Enums.CreatorRank | null
     currentRankReach: number | null
@@ -2512,6 +2768,8 @@ export namespace Prisma {
     whyJoin: number
     status: number
     adminNotes: number
+    adminNote: number
+    registrationRejection: number
     approvedAt: number
     rank: number
     currentRankReach: number
@@ -2593,6 +2851,8 @@ export namespace Prisma {
     whyJoin?: true
     status?: true
     adminNotes?: true
+    adminNote?: true
+    registrationRejection?: true
     approvedAt?: true
     rank?: true
     currentRankReach?: true
@@ -2634,6 +2894,8 @@ export namespace Prisma {
     whyJoin?: true
     status?: true
     adminNotes?: true
+    adminNote?: true
+    registrationRejection?: true
     approvedAt?: true
     rank?: true
     currentRankReach?: true
@@ -2677,6 +2939,8 @@ export namespace Prisma {
     whyJoin?: true
     status?: true
     adminNotes?: true
+    adminNote?: true
+    registrationRejection?: true
     approvedAt?: true
     rank?: true
     currentRankReach?: true
@@ -2807,6 +3071,8 @@ export namespace Prisma {
     whyJoin: string | null
     status: $Enums.RegistrationStatus
     adminNotes: string | null
+    adminNote: string | null
+    registrationRejection: $Enums.RegistrationRejectionReason | null
     approvedAt: Date | null
     rank: $Enums.CreatorRank
     currentRankReach: number
@@ -2870,6 +3136,8 @@ export namespace Prisma {
     whyJoin?: boolean
     status?: boolean
     adminNotes?: boolean
+    adminNote?: boolean
+    registrationRejection?: boolean
     approvedAt?: boolean
     rank?: boolean
     currentRankReach?: boolean
@@ -2916,6 +3184,8 @@ export namespace Prisma {
     whyJoin?: boolean
     status?: boolean
     adminNotes?: boolean
+    adminNote?: boolean
+    registrationRejection?: boolean
     approvedAt?: boolean
     rank?: boolean
     currentRankReach?: boolean
@@ -2939,7 +3209,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "realName" | "contactEmail" | "contactPhone" | "nickname" | "birthDate" | "nationality" | "residency" | "platforms" | "platformLinks" | "primarySocialLink" | "channelLogo" | "contentType" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "status" | "adminNotes" | "approvedAt" | "rank" | "currentRankReach" | "totalReachAllTime" | "pictureCount" | "storyCount" | "reelCount" | "longVideoCount" | "postCount" | "totalPictureCount" | "totalStoryCount" | "totalReelCount" | "totalLongVideoCount" | "totalPostCount" | "engagementRate" | "commitmentScore" | "adminGradeScore" | "rankedUpAt" | "isActive" | "joinedAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
+  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "realName" | "contactEmail" | "contactPhone" | "nickname" | "birthDate" | "nationality" | "residency" | "platforms" | "platformLinks" | "primarySocialLink" | "channelLogo" | "contentType" | "followers" | "eventAttendance" | "discoverySources" | "whyJoin" | "status" | "adminNotes" | "adminNote" | "registrationRejection" | "approvedAt" | "rank" | "currentRankReach" | "totalReachAllTime" | "pictureCount" | "storyCount" | "reelCount" | "longVideoCount" | "postCount" | "totalPictureCount" | "totalStoryCount" | "totalReelCount" | "totalLongVideoCount" | "totalPostCount" | "engagementRate" | "commitmentScore" | "adminGradeScore" | "rankedUpAt" | "isActive" | "joinedAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2969,6 +3239,8 @@ export namespace Prisma {
       whyJoin: string | null
       status: $Enums.RegistrationStatus
       adminNotes: string | null
+      adminNote: string | null
+      registrationRejection: $Enums.RegistrationRejectionReason | null
       approvedAt: Date | null
       rank: $Enums.CreatorRank
       currentRankReach: number
@@ -3404,6 +3676,8 @@ export namespace Prisma {
     readonly whyJoin: FieldRef<"CreatorProfile", 'String'>
     readonly status: FieldRef<"CreatorProfile", 'RegistrationStatus'>
     readonly adminNotes: FieldRef<"CreatorProfile", 'String'>
+    readonly adminNote: FieldRef<"CreatorProfile", 'String'>
+    readonly registrationRejection: FieldRef<"CreatorProfile", 'RegistrationRejectionReason'>
     readonly approvedAt: FieldRef<"CreatorProfile", 'DateTime'>
     readonly rank: FieldRef<"CreatorProfile", 'CreatorRank'>
     readonly currentRankReach: FieldRef<"CreatorProfile", 'Int'>
@@ -3834,6 +4108,7 @@ export namespace Prisma {
     submittedLikes: number | null
     submittedComments: number | null
     submittedShares: number | null
+    qualityRating: number | null
   }
 
   export type SubmissionSumAggregateOutputType = {
@@ -3845,6 +4120,7 @@ export namespace Prisma {
     submittedLikes: number | null
     submittedComments: number | null
     submittedShares: number | null
+    qualityRating: number | null
   }
 
   export type SubmissionMinAggregateOutputType = {
@@ -3865,6 +4141,8 @@ export namespace Prisma {
     submittedShares: number | null
     status: $Enums.SubmissionStatus | null
     adminNotes: string | null
+    rejectionReason: $Enums.SubmissionRejectionReason | null
+    qualityRating: number | null
     isEdited: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3888,6 +4166,8 @@ export namespace Prisma {
     submittedShares: number | null
     status: $Enums.SubmissionStatus | null
     adminNotes: string | null
+    rejectionReason: $Enums.SubmissionRejectionReason | null
+    qualityRating: number | null
     isEdited: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3913,6 +4193,8 @@ export namespace Prisma {
     submittedShares: number
     status: number
     adminNotes: number
+    rejectionReason: number
+    qualityRating: number
     isEdited: number
     createdAt: number
     updatedAt: number
@@ -3929,6 +4211,7 @@ export namespace Prisma {
     submittedLikes?: true
     submittedComments?: true
     submittedShares?: true
+    qualityRating?: true
   }
 
   export type SubmissionSumAggregateInputType = {
@@ -3940,6 +4223,7 @@ export namespace Prisma {
     submittedLikes?: true
     submittedComments?: true
     submittedShares?: true
+    qualityRating?: true
   }
 
   export type SubmissionMinAggregateInputType = {
@@ -3960,6 +4244,8 @@ export namespace Prisma {
     submittedShares?: true
     status?: true
     adminNotes?: true
+    rejectionReason?: true
+    qualityRating?: true
     isEdited?: true
     createdAt?: true
     updatedAt?: true
@@ -3983,6 +4269,8 @@ export namespace Prisma {
     submittedShares?: true
     status?: true
     adminNotes?: true
+    rejectionReason?: true
+    qualityRating?: true
     isEdited?: true
     createdAt?: true
     updatedAt?: true
@@ -4008,6 +4296,8 @@ export namespace Prisma {
     submittedShares?: true
     status?: true
     adminNotes?: true
+    rejectionReason?: true
+    qualityRating?: true
     isEdited?: true
     createdAt?: true
     updatedAt?: true
@@ -4120,6 +4410,8 @@ export namespace Prisma {
     submittedShares: number | null
     status: $Enums.SubmissionStatus
     adminNotes: string | null
+    rejectionReason: $Enums.SubmissionRejectionReason | null
+    qualityRating: number | null
     isEdited: boolean
     createdAt: Date
     updatedAt: Date
@@ -4164,6 +4456,8 @@ export namespace Prisma {
     submittedShares?: boolean
     status?: boolean
     adminNotes?: boolean
+    rejectionReason?: boolean
+    qualityRating?: boolean
     isEdited?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4192,12 +4486,14 @@ export namespace Prisma {
     submittedShares?: boolean
     status?: boolean
     adminNotes?: boolean
+    rejectionReason?: boolean
+    qualityRating?: boolean
     isEdited?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "nickname" | "rank" | "platform" | "contentLink" | "contentTypes" | "monsterAppearances" | "submittedReach" | "acceptedReach" | "pendingReach" | "previousAcceptedReach" | "statsScreenshotUrl" | "engagementRate" | "submittedLikes" | "submittedComments" | "submittedShares" | "status" | "adminNotes" | "isEdited" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
+  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "nickname" | "rank" | "platform" | "contentLink" | "contentTypes" | "monsterAppearances" | "submittedReach" | "acceptedReach" | "pendingReach" | "previousAcceptedReach" | "statsScreenshotUrl" | "engagementRate" | "submittedLikes" | "submittedComments" | "submittedShares" | "status" | "adminNotes" | "rejectionReason" | "qualityRating" | "isEdited" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
   export type SubmissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4227,6 +4523,8 @@ export namespace Prisma {
       submittedShares: number | null
       status: $Enums.SubmissionStatus
       adminNotes: string | null
+      rejectionReason: $Enums.SubmissionRejectionReason | null
+      qualityRating: number | null
       isEdited: boolean
       createdAt: Date
       updatedAt: Date
@@ -4642,6 +4940,8 @@ export namespace Prisma {
     readonly submittedShares: FieldRef<"Submission", 'Int'>
     readonly status: FieldRef<"Submission", 'SubmissionStatus'>
     readonly adminNotes: FieldRef<"Submission", 'String'>
+    readonly rejectionReason: FieldRef<"Submission", 'SubmissionRejectionReason'>
+    readonly qualityRating: FieldRef<"Submission", 'Float'>
     readonly isEdited: FieldRef<"Submission", 'Boolean'>
     readonly createdAt: FieldRef<"Submission", 'DateTime'>
     readonly updatedAt: FieldRef<"Submission", 'DateTime'>
@@ -5034,6 +5334,2141 @@ export namespace Prisma {
 
 
   /**
+   * Model MonthlySnapshot
+   */
+
+  export type AggregateMonthlySnapshot = {
+    _count: MonthlySnapshotCountAggregateOutputType | null
+    _avg: MonthlySnapshotAvgAggregateOutputType | null
+    _sum: MonthlySnapshotSumAggregateOutputType | null
+    _min: MonthlySnapshotMinAggregateOutputType | null
+    _max: MonthlySnapshotMaxAggregateOutputType | null
+  }
+
+  export type MonthlySnapshotAvgAggregateOutputType = {
+    reach: number | null
+    totalReach: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
+    approvedSubs: number | null
+  }
+
+  export type MonthlySnapshotSumAggregateOutputType = {
+    reach: number | null
+    totalReach: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
+    approvedSubs: number | null
+  }
+
+  export type MonthlySnapshotMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    month: string | null
+    rank: string | null
+    reach: number | null
+    totalReach: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
+    approvedSubs: number | null
+    createdAt: Date | null
+  }
+
+  export type MonthlySnapshotMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    month: string | null
+    rank: string | null
+    reach: number | null
+    totalReach: number | null
+    engagementRate: number | null
+    commitmentScore: number | null
+    adminGradeScore: number | null
+    approvedSubs: number | null
+    createdAt: Date | null
+  }
+
+  export type MonthlySnapshotCountAggregateOutputType = {
+    id: number
+    userId: number
+    month: number
+    rank: number
+    reach: number
+    totalReach: number
+    engagementRate: number
+    commitmentScore: number
+    adminGradeScore: number
+    approvedSubs: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type MonthlySnapshotAvgAggregateInputType = {
+    reach?: true
+    totalReach?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
+    approvedSubs?: true
+  }
+
+  export type MonthlySnapshotSumAggregateInputType = {
+    reach?: true
+    totalReach?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
+    approvedSubs?: true
+  }
+
+  export type MonthlySnapshotMinAggregateInputType = {
+    id?: true
+    userId?: true
+    month?: true
+    rank?: true
+    reach?: true
+    totalReach?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
+    approvedSubs?: true
+    createdAt?: true
+  }
+
+  export type MonthlySnapshotMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    month?: true
+    rank?: true
+    reach?: true
+    totalReach?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
+    approvedSubs?: true
+    createdAt?: true
+  }
+
+  export type MonthlySnapshotCountAggregateInputType = {
+    id?: true
+    userId?: true
+    month?: true
+    rank?: true
+    reach?: true
+    totalReach?: true
+    engagementRate?: true
+    commitmentScore?: true
+    adminGradeScore?: true
+    approvedSubs?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type MonthlySnapshotAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonthlySnapshot to aggregate.
+     */
+    where?: MonthlySnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlySnapshots to fetch.
+     */
+    orderBy?: MonthlySnapshotOrderByWithRelationInput | MonthlySnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MonthlySnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlySnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlySnapshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MonthlySnapshots
+    **/
+    _count?: true | MonthlySnapshotCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MonthlySnapshotAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MonthlySnapshotSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MonthlySnapshotMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MonthlySnapshotMaxAggregateInputType
+  }
+
+  export type GetMonthlySnapshotAggregateType<T extends MonthlySnapshotAggregateArgs> = {
+        [P in keyof T & keyof AggregateMonthlySnapshot]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMonthlySnapshot[P]>
+      : GetScalarType<T[P], AggregateMonthlySnapshot[P]>
+  }
+
+
+
+
+  export type MonthlySnapshotGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MonthlySnapshotWhereInput
+    orderBy?: MonthlySnapshotOrderByWithAggregationInput | MonthlySnapshotOrderByWithAggregationInput[]
+    by: MonthlySnapshotScalarFieldEnum[] | MonthlySnapshotScalarFieldEnum
+    having?: MonthlySnapshotScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MonthlySnapshotCountAggregateInputType | true
+    _avg?: MonthlySnapshotAvgAggregateInputType
+    _sum?: MonthlySnapshotSumAggregateInputType
+    _min?: MonthlySnapshotMinAggregateInputType
+    _max?: MonthlySnapshotMaxAggregateInputType
+  }
+
+  export type MonthlySnapshotGroupByOutputType = {
+    id: string
+    userId: string
+    month: string
+    rank: string
+    reach: number
+    totalReach: number
+    engagementRate: number
+    commitmentScore: number
+    adminGradeScore: number
+    approvedSubs: number
+    createdAt: Date
+    _count: MonthlySnapshotCountAggregateOutputType | null
+    _avg: MonthlySnapshotAvgAggregateOutputType | null
+    _sum: MonthlySnapshotSumAggregateOutputType | null
+    _min: MonthlySnapshotMinAggregateOutputType | null
+    _max: MonthlySnapshotMaxAggregateOutputType | null
+  }
+
+  type GetMonthlySnapshotGroupByPayload<T extends MonthlySnapshotGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MonthlySnapshotGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MonthlySnapshotGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MonthlySnapshotGroupByOutputType[P]>
+            : GetScalarType<T[P], MonthlySnapshotGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MonthlySnapshotSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    month?: boolean
+    rank?: boolean
+    reach?: boolean
+    totalReach?: boolean
+    engagementRate?: boolean
+    commitmentScore?: boolean
+    adminGradeScore?: boolean
+    approvedSubs?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["monthlySnapshot"]>
+
+
+
+  export type MonthlySnapshotSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    month?: boolean
+    rank?: boolean
+    reach?: boolean
+    totalReach?: boolean
+    engagementRate?: boolean
+    commitmentScore?: boolean
+    adminGradeScore?: boolean
+    approvedSubs?: boolean
+    createdAt?: boolean
+  }
+
+  export type MonthlySnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "month" | "rank" | "reach" | "totalReach" | "engagementRate" | "commitmentScore" | "adminGradeScore" | "approvedSubs" | "createdAt", ExtArgs["result"]["monthlySnapshot"]>
+  export type MonthlySnapshotInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MonthlySnapshotPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MonthlySnapshot"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      month: string
+      rank: string
+      reach: number
+      totalReach: number
+      engagementRate: number
+      commitmentScore: number
+      adminGradeScore: number
+      approvedSubs: number
+      createdAt: Date
+    }, ExtArgs["result"]["monthlySnapshot"]>
+    composites: {}
+  }
+
+  type MonthlySnapshotGetPayload<S extends boolean | null | undefined | MonthlySnapshotDefaultArgs> = $Result.GetResult<Prisma.$MonthlySnapshotPayload, S>
+
+  type MonthlySnapshotCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MonthlySnapshotFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MonthlySnapshotCountAggregateInputType | true
+    }
+
+  export interface MonthlySnapshotDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MonthlySnapshot'], meta: { name: 'MonthlySnapshot' } }
+    /**
+     * Find zero or one MonthlySnapshot that matches the filter.
+     * @param {MonthlySnapshotFindUniqueArgs} args - Arguments to find a MonthlySnapshot
+     * @example
+     * // Get one MonthlySnapshot
+     * const monthlySnapshot = await prisma.monthlySnapshot.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MonthlySnapshotFindUniqueArgs>(args: SelectSubset<T, MonthlySnapshotFindUniqueArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MonthlySnapshot that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MonthlySnapshotFindUniqueOrThrowArgs} args - Arguments to find a MonthlySnapshot
+     * @example
+     * // Get one MonthlySnapshot
+     * const monthlySnapshot = await prisma.monthlySnapshot.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MonthlySnapshotFindUniqueOrThrowArgs>(args: SelectSubset<T, MonthlySnapshotFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MonthlySnapshot that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlySnapshotFindFirstArgs} args - Arguments to find a MonthlySnapshot
+     * @example
+     * // Get one MonthlySnapshot
+     * const monthlySnapshot = await prisma.monthlySnapshot.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MonthlySnapshotFindFirstArgs>(args?: SelectSubset<T, MonthlySnapshotFindFirstArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MonthlySnapshot that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlySnapshotFindFirstOrThrowArgs} args - Arguments to find a MonthlySnapshot
+     * @example
+     * // Get one MonthlySnapshot
+     * const monthlySnapshot = await prisma.monthlySnapshot.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MonthlySnapshotFindFirstOrThrowArgs>(args?: SelectSubset<T, MonthlySnapshotFindFirstOrThrowArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MonthlySnapshots that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlySnapshotFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MonthlySnapshots
+     * const monthlySnapshots = await prisma.monthlySnapshot.findMany()
+     * 
+     * // Get first 10 MonthlySnapshots
+     * const monthlySnapshots = await prisma.monthlySnapshot.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const monthlySnapshotWithIdOnly = await prisma.monthlySnapshot.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MonthlySnapshotFindManyArgs>(args?: SelectSubset<T, MonthlySnapshotFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MonthlySnapshot.
+     * @param {MonthlySnapshotCreateArgs} args - Arguments to create a MonthlySnapshot.
+     * @example
+     * // Create one MonthlySnapshot
+     * const MonthlySnapshot = await prisma.monthlySnapshot.create({
+     *   data: {
+     *     // ... data to create a MonthlySnapshot
+     *   }
+     * })
+     * 
+     */
+    create<T extends MonthlySnapshotCreateArgs>(args: SelectSubset<T, MonthlySnapshotCreateArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MonthlySnapshots.
+     * @param {MonthlySnapshotCreateManyArgs} args - Arguments to create many MonthlySnapshots.
+     * @example
+     * // Create many MonthlySnapshots
+     * const monthlySnapshot = await prisma.monthlySnapshot.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MonthlySnapshotCreateManyArgs>(args?: SelectSubset<T, MonthlySnapshotCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a MonthlySnapshot.
+     * @param {MonthlySnapshotDeleteArgs} args - Arguments to delete one MonthlySnapshot.
+     * @example
+     * // Delete one MonthlySnapshot
+     * const MonthlySnapshot = await prisma.monthlySnapshot.delete({
+     *   where: {
+     *     // ... filter to delete one MonthlySnapshot
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MonthlySnapshotDeleteArgs>(args: SelectSubset<T, MonthlySnapshotDeleteArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MonthlySnapshot.
+     * @param {MonthlySnapshotUpdateArgs} args - Arguments to update one MonthlySnapshot.
+     * @example
+     * // Update one MonthlySnapshot
+     * const monthlySnapshot = await prisma.monthlySnapshot.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MonthlySnapshotUpdateArgs>(args: SelectSubset<T, MonthlySnapshotUpdateArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MonthlySnapshots.
+     * @param {MonthlySnapshotDeleteManyArgs} args - Arguments to filter MonthlySnapshots to delete.
+     * @example
+     * // Delete a few MonthlySnapshots
+     * const { count } = await prisma.monthlySnapshot.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MonthlySnapshotDeleteManyArgs>(args?: SelectSubset<T, MonthlySnapshotDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MonthlySnapshots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlySnapshotUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MonthlySnapshots
+     * const monthlySnapshot = await prisma.monthlySnapshot.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MonthlySnapshotUpdateManyArgs>(args: SelectSubset<T, MonthlySnapshotUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MonthlySnapshot.
+     * @param {MonthlySnapshotUpsertArgs} args - Arguments to update or create a MonthlySnapshot.
+     * @example
+     * // Update or create a MonthlySnapshot
+     * const monthlySnapshot = await prisma.monthlySnapshot.upsert({
+     *   create: {
+     *     // ... data to create a MonthlySnapshot
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MonthlySnapshot we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MonthlySnapshotUpsertArgs>(args: SelectSubset<T, MonthlySnapshotUpsertArgs<ExtArgs>>): Prisma__MonthlySnapshotClient<$Result.GetResult<Prisma.$MonthlySnapshotPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MonthlySnapshots that matches the filter.
+     * @param {MonthlySnapshotFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const monthlySnapshot = await prisma.monthlySnapshot.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: MonthlySnapshotFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a MonthlySnapshot.
+     * @param {MonthlySnapshotAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const monthlySnapshot = await prisma.monthlySnapshot.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: MonthlySnapshotAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of MonthlySnapshots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlySnapshotCountArgs} args - Arguments to filter MonthlySnapshots to count.
+     * @example
+     * // Count the number of MonthlySnapshots
+     * const count = await prisma.monthlySnapshot.count({
+     *   where: {
+     *     // ... the filter for the MonthlySnapshots we want to count
+     *   }
+     * })
+    **/
+    count<T extends MonthlySnapshotCountArgs>(
+      args?: Subset<T, MonthlySnapshotCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MonthlySnapshotCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MonthlySnapshot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlySnapshotAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MonthlySnapshotAggregateArgs>(args: Subset<T, MonthlySnapshotAggregateArgs>): Prisma.PrismaPromise<GetMonthlySnapshotAggregateType<T>>
+
+    /**
+     * Group by MonthlySnapshot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlySnapshotGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MonthlySnapshotGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MonthlySnapshotGroupByArgs['orderBy'] }
+        : { orderBy?: MonthlySnapshotGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MonthlySnapshotGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMonthlySnapshotGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MonthlySnapshot model
+   */
+  readonly fields: MonthlySnapshotFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MonthlySnapshot.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MonthlySnapshotClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MonthlySnapshot model
+   */
+  interface MonthlySnapshotFieldRefs {
+    readonly id: FieldRef<"MonthlySnapshot", 'String'>
+    readonly userId: FieldRef<"MonthlySnapshot", 'String'>
+    readonly month: FieldRef<"MonthlySnapshot", 'String'>
+    readonly rank: FieldRef<"MonthlySnapshot", 'String'>
+    readonly reach: FieldRef<"MonthlySnapshot", 'Int'>
+    readonly totalReach: FieldRef<"MonthlySnapshot", 'Int'>
+    readonly engagementRate: FieldRef<"MonthlySnapshot", 'Float'>
+    readonly commitmentScore: FieldRef<"MonthlySnapshot", 'Float'>
+    readonly adminGradeScore: FieldRef<"MonthlySnapshot", 'Float'>
+    readonly approvedSubs: FieldRef<"MonthlySnapshot", 'Int'>
+    readonly createdAt: FieldRef<"MonthlySnapshot", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MonthlySnapshot findUnique
+   */
+  export type MonthlySnapshotFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlySnapshot to fetch.
+     */
+    where: MonthlySnapshotWhereUniqueInput
+  }
+
+  /**
+   * MonthlySnapshot findUniqueOrThrow
+   */
+  export type MonthlySnapshotFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlySnapshot to fetch.
+     */
+    where: MonthlySnapshotWhereUniqueInput
+  }
+
+  /**
+   * MonthlySnapshot findFirst
+   */
+  export type MonthlySnapshotFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlySnapshot to fetch.
+     */
+    where?: MonthlySnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlySnapshots to fetch.
+     */
+    orderBy?: MonthlySnapshotOrderByWithRelationInput | MonthlySnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonthlySnapshots.
+     */
+    cursor?: MonthlySnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlySnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlySnapshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonthlySnapshots.
+     */
+    distinct?: MonthlySnapshotScalarFieldEnum | MonthlySnapshotScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlySnapshot findFirstOrThrow
+   */
+  export type MonthlySnapshotFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlySnapshot to fetch.
+     */
+    where?: MonthlySnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlySnapshots to fetch.
+     */
+    orderBy?: MonthlySnapshotOrderByWithRelationInput | MonthlySnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonthlySnapshots.
+     */
+    cursor?: MonthlySnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlySnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlySnapshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonthlySnapshots.
+     */
+    distinct?: MonthlySnapshotScalarFieldEnum | MonthlySnapshotScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlySnapshot findMany
+   */
+  export type MonthlySnapshotFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlySnapshots to fetch.
+     */
+    where?: MonthlySnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlySnapshots to fetch.
+     */
+    orderBy?: MonthlySnapshotOrderByWithRelationInput | MonthlySnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MonthlySnapshots.
+     */
+    cursor?: MonthlySnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlySnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlySnapshots.
+     */
+    skip?: number
+    distinct?: MonthlySnapshotScalarFieldEnum | MonthlySnapshotScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlySnapshot create
+   */
+  export type MonthlySnapshotCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MonthlySnapshot.
+     */
+    data: XOR<MonthlySnapshotCreateInput, MonthlySnapshotUncheckedCreateInput>
+  }
+
+  /**
+   * MonthlySnapshot createMany
+   */
+  export type MonthlySnapshotCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MonthlySnapshots.
+     */
+    data: MonthlySnapshotCreateManyInput | MonthlySnapshotCreateManyInput[]
+  }
+
+  /**
+   * MonthlySnapshot update
+   */
+  export type MonthlySnapshotUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MonthlySnapshot.
+     */
+    data: XOR<MonthlySnapshotUpdateInput, MonthlySnapshotUncheckedUpdateInput>
+    /**
+     * Choose, which MonthlySnapshot to update.
+     */
+    where: MonthlySnapshotWhereUniqueInput
+  }
+
+  /**
+   * MonthlySnapshot updateMany
+   */
+  export type MonthlySnapshotUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MonthlySnapshots.
+     */
+    data: XOR<MonthlySnapshotUpdateManyMutationInput, MonthlySnapshotUncheckedUpdateManyInput>
+    /**
+     * Filter which MonthlySnapshots to update
+     */
+    where?: MonthlySnapshotWhereInput
+    /**
+     * Limit how many MonthlySnapshots to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonthlySnapshot upsert
+   */
+  export type MonthlySnapshotUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MonthlySnapshot to update in case it exists.
+     */
+    where: MonthlySnapshotWhereUniqueInput
+    /**
+     * In case the MonthlySnapshot found by the `where` argument doesn't exist, create a new MonthlySnapshot with this data.
+     */
+    create: XOR<MonthlySnapshotCreateInput, MonthlySnapshotUncheckedCreateInput>
+    /**
+     * In case the MonthlySnapshot was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MonthlySnapshotUpdateInput, MonthlySnapshotUncheckedUpdateInput>
+  }
+
+  /**
+   * MonthlySnapshot delete
+   */
+  export type MonthlySnapshotDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+    /**
+     * Filter which MonthlySnapshot to delete.
+     */
+    where: MonthlySnapshotWhereUniqueInput
+  }
+
+  /**
+   * MonthlySnapshot deleteMany
+   */
+  export type MonthlySnapshotDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonthlySnapshots to delete
+     */
+    where?: MonthlySnapshotWhereInput
+    /**
+     * Limit how many MonthlySnapshots to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonthlySnapshot findRaw
+   */
+  export type MonthlySnapshotFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * MonthlySnapshot aggregateRaw
+   */
+  export type MonthlySnapshotAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * MonthlySnapshot without action
+   */
+  export type MonthlySnapshotDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlySnapshot
+     */
+    select?: MonthlySnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlySnapshot
+     */
+    omit?: MonthlySnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlySnapshotInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PlatformStat
+   */
+
+  export type AggregatePlatformStat = {
+    _count: PlatformStatCountAggregateOutputType | null
+    _avg: PlatformStatAvgAggregateOutputType | null
+    _sum: PlatformStatSumAggregateOutputType | null
+    _min: PlatformStatMinAggregateOutputType | null
+    _max: PlatformStatMaxAggregateOutputType | null
+  }
+
+  export type PlatformStatAvgAggregateOutputType = {
+    acceptedReach: number | null
+    engagementRate: number | null
+    qualityRating: number | null
+  }
+
+  export type PlatformStatSumAggregateOutputType = {
+    acceptedReach: number | null
+    engagementRate: number | null
+    qualityRating: number | null
+  }
+
+  export type PlatformStatMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    submissionId: string | null
+    platform: string | null
+    acceptedReach: number | null
+    engagementRate: number | null
+    qualityRating: number | null
+    rank: string | null
+    approvedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PlatformStatMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    submissionId: string | null
+    platform: string | null
+    acceptedReach: number | null
+    engagementRate: number | null
+    qualityRating: number | null
+    rank: string | null
+    approvedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PlatformStatCountAggregateOutputType = {
+    id: number
+    userId: number
+    submissionId: number
+    platform: number
+    contentTypes: number
+    acceptedReach: number
+    engagementRate: number
+    qualityRating: number
+    rank: number
+    approvedAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PlatformStatAvgAggregateInputType = {
+    acceptedReach?: true
+    engagementRate?: true
+    qualityRating?: true
+  }
+
+  export type PlatformStatSumAggregateInputType = {
+    acceptedReach?: true
+    engagementRate?: true
+    qualityRating?: true
+  }
+
+  export type PlatformStatMinAggregateInputType = {
+    id?: true
+    userId?: true
+    submissionId?: true
+    platform?: true
+    acceptedReach?: true
+    engagementRate?: true
+    qualityRating?: true
+    rank?: true
+    approvedAt?: true
+    updatedAt?: true
+  }
+
+  export type PlatformStatMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    submissionId?: true
+    platform?: true
+    acceptedReach?: true
+    engagementRate?: true
+    qualityRating?: true
+    rank?: true
+    approvedAt?: true
+    updatedAt?: true
+  }
+
+  export type PlatformStatCountAggregateInputType = {
+    id?: true
+    userId?: true
+    submissionId?: true
+    platform?: true
+    contentTypes?: true
+    acceptedReach?: true
+    engagementRate?: true
+    qualityRating?: true
+    rank?: true
+    approvedAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PlatformStatAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PlatformStat to aggregate.
+     */
+    where?: PlatformStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlatformStats to fetch.
+     */
+    orderBy?: PlatformStatOrderByWithRelationInput | PlatformStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PlatformStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlatformStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlatformStats.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PlatformStats
+    **/
+    _count?: true | PlatformStatCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PlatformStatAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PlatformStatSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PlatformStatMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PlatformStatMaxAggregateInputType
+  }
+
+  export type GetPlatformStatAggregateType<T extends PlatformStatAggregateArgs> = {
+        [P in keyof T & keyof AggregatePlatformStat]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePlatformStat[P]>
+      : GetScalarType<T[P], AggregatePlatformStat[P]>
+  }
+
+
+
+
+  export type PlatformStatGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PlatformStatWhereInput
+    orderBy?: PlatformStatOrderByWithAggregationInput | PlatformStatOrderByWithAggregationInput[]
+    by: PlatformStatScalarFieldEnum[] | PlatformStatScalarFieldEnum
+    having?: PlatformStatScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PlatformStatCountAggregateInputType | true
+    _avg?: PlatformStatAvgAggregateInputType
+    _sum?: PlatformStatSumAggregateInputType
+    _min?: PlatformStatMinAggregateInputType
+    _max?: PlatformStatMaxAggregateInputType
+  }
+
+  export type PlatformStatGroupByOutputType = {
+    id: string
+    userId: string
+    submissionId: string
+    platform: string
+    contentTypes: string[]
+    acceptedReach: number
+    engagementRate: number
+    qualityRating: number | null
+    rank: string
+    approvedAt: Date
+    updatedAt: Date
+    _count: PlatformStatCountAggregateOutputType | null
+    _avg: PlatformStatAvgAggregateOutputType | null
+    _sum: PlatformStatSumAggregateOutputType | null
+    _min: PlatformStatMinAggregateOutputType | null
+    _max: PlatformStatMaxAggregateOutputType | null
+  }
+
+  type GetPlatformStatGroupByPayload<T extends PlatformStatGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PlatformStatGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PlatformStatGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PlatformStatGroupByOutputType[P]>
+            : GetScalarType<T[P], PlatformStatGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PlatformStatSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    submissionId?: boolean
+    platform?: boolean
+    contentTypes?: boolean
+    acceptedReach?: boolean
+    engagementRate?: boolean
+    qualityRating?: boolean
+    rank?: boolean
+    approvedAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["platformStat"]>
+
+
+
+  export type PlatformStatSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    submissionId?: boolean
+    platform?: boolean
+    contentTypes?: boolean
+    acceptedReach?: boolean
+    engagementRate?: boolean
+    qualityRating?: boolean
+    rank?: boolean
+    approvedAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PlatformStatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "submissionId" | "platform" | "contentTypes" | "acceptedReach" | "engagementRate" | "qualityRating" | "rank" | "approvedAt" | "updatedAt", ExtArgs["result"]["platformStat"]>
+
+  export type $PlatformStatPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PlatformStat"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      submissionId: string
+      platform: string
+      contentTypes: string[]
+      acceptedReach: number
+      engagementRate: number
+      qualityRating: number | null
+      rank: string
+      approvedAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["platformStat"]>
+    composites: {}
+  }
+
+  type PlatformStatGetPayload<S extends boolean | null | undefined | PlatformStatDefaultArgs> = $Result.GetResult<Prisma.$PlatformStatPayload, S>
+
+  type PlatformStatCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PlatformStatFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PlatformStatCountAggregateInputType | true
+    }
+
+  export interface PlatformStatDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PlatformStat'], meta: { name: 'PlatformStat' } }
+    /**
+     * Find zero or one PlatformStat that matches the filter.
+     * @param {PlatformStatFindUniqueArgs} args - Arguments to find a PlatformStat
+     * @example
+     * // Get one PlatformStat
+     * const platformStat = await prisma.platformStat.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PlatformStatFindUniqueArgs>(args: SelectSubset<T, PlatformStatFindUniqueArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PlatformStat that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PlatformStatFindUniqueOrThrowArgs} args - Arguments to find a PlatformStat
+     * @example
+     * // Get one PlatformStat
+     * const platformStat = await prisma.platformStat.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PlatformStatFindUniqueOrThrowArgs>(args: SelectSubset<T, PlatformStatFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PlatformStat that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlatformStatFindFirstArgs} args - Arguments to find a PlatformStat
+     * @example
+     * // Get one PlatformStat
+     * const platformStat = await prisma.platformStat.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PlatformStatFindFirstArgs>(args?: SelectSubset<T, PlatformStatFindFirstArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PlatformStat that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlatformStatFindFirstOrThrowArgs} args - Arguments to find a PlatformStat
+     * @example
+     * // Get one PlatformStat
+     * const platformStat = await prisma.platformStat.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PlatformStatFindFirstOrThrowArgs>(args?: SelectSubset<T, PlatformStatFindFirstOrThrowArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PlatformStats that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlatformStatFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PlatformStats
+     * const platformStats = await prisma.platformStat.findMany()
+     * 
+     * // Get first 10 PlatformStats
+     * const platformStats = await prisma.platformStat.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const platformStatWithIdOnly = await prisma.platformStat.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PlatformStatFindManyArgs>(args?: SelectSubset<T, PlatformStatFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PlatformStat.
+     * @param {PlatformStatCreateArgs} args - Arguments to create a PlatformStat.
+     * @example
+     * // Create one PlatformStat
+     * const PlatformStat = await prisma.platformStat.create({
+     *   data: {
+     *     // ... data to create a PlatformStat
+     *   }
+     * })
+     * 
+     */
+    create<T extends PlatformStatCreateArgs>(args: SelectSubset<T, PlatformStatCreateArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PlatformStats.
+     * @param {PlatformStatCreateManyArgs} args - Arguments to create many PlatformStats.
+     * @example
+     * // Create many PlatformStats
+     * const platformStat = await prisma.platformStat.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PlatformStatCreateManyArgs>(args?: SelectSubset<T, PlatformStatCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a PlatformStat.
+     * @param {PlatformStatDeleteArgs} args - Arguments to delete one PlatformStat.
+     * @example
+     * // Delete one PlatformStat
+     * const PlatformStat = await prisma.platformStat.delete({
+     *   where: {
+     *     // ... filter to delete one PlatformStat
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PlatformStatDeleteArgs>(args: SelectSubset<T, PlatformStatDeleteArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PlatformStat.
+     * @param {PlatformStatUpdateArgs} args - Arguments to update one PlatformStat.
+     * @example
+     * // Update one PlatformStat
+     * const platformStat = await prisma.platformStat.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PlatformStatUpdateArgs>(args: SelectSubset<T, PlatformStatUpdateArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PlatformStats.
+     * @param {PlatformStatDeleteManyArgs} args - Arguments to filter PlatformStats to delete.
+     * @example
+     * // Delete a few PlatformStats
+     * const { count } = await prisma.platformStat.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PlatformStatDeleteManyArgs>(args?: SelectSubset<T, PlatformStatDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PlatformStats.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlatformStatUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PlatformStats
+     * const platformStat = await prisma.platformStat.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PlatformStatUpdateManyArgs>(args: SelectSubset<T, PlatformStatUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one PlatformStat.
+     * @param {PlatformStatUpsertArgs} args - Arguments to update or create a PlatformStat.
+     * @example
+     * // Update or create a PlatformStat
+     * const platformStat = await prisma.platformStat.upsert({
+     *   create: {
+     *     // ... data to create a PlatformStat
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PlatformStat we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PlatformStatUpsertArgs>(args: SelectSubset<T, PlatformStatUpsertArgs<ExtArgs>>): Prisma__PlatformStatClient<$Result.GetResult<Prisma.$PlatformStatPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PlatformStats that matches the filter.
+     * @param {PlatformStatFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const platformStat = await prisma.platformStat.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: PlatformStatFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a PlatformStat.
+     * @param {PlatformStatAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const platformStat = await prisma.platformStat.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: PlatformStatAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of PlatformStats.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlatformStatCountArgs} args - Arguments to filter PlatformStats to count.
+     * @example
+     * // Count the number of PlatformStats
+     * const count = await prisma.platformStat.count({
+     *   where: {
+     *     // ... the filter for the PlatformStats we want to count
+     *   }
+     * })
+    **/
+    count<T extends PlatformStatCountArgs>(
+      args?: Subset<T, PlatformStatCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PlatformStatCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PlatformStat.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlatformStatAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PlatformStatAggregateArgs>(args: Subset<T, PlatformStatAggregateArgs>): Prisma.PrismaPromise<GetPlatformStatAggregateType<T>>
+
+    /**
+     * Group by PlatformStat.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlatformStatGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PlatformStatGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PlatformStatGroupByArgs['orderBy'] }
+        : { orderBy?: PlatformStatGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PlatformStatGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPlatformStatGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PlatformStat model
+   */
+  readonly fields: PlatformStatFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PlatformStat.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PlatformStatClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PlatformStat model
+   */
+  interface PlatformStatFieldRefs {
+    readonly id: FieldRef<"PlatformStat", 'String'>
+    readonly userId: FieldRef<"PlatformStat", 'String'>
+    readonly submissionId: FieldRef<"PlatformStat", 'String'>
+    readonly platform: FieldRef<"PlatformStat", 'String'>
+    readonly contentTypes: FieldRef<"PlatformStat", 'String[]'>
+    readonly acceptedReach: FieldRef<"PlatformStat", 'Int'>
+    readonly engagementRate: FieldRef<"PlatformStat", 'Float'>
+    readonly qualityRating: FieldRef<"PlatformStat", 'Float'>
+    readonly rank: FieldRef<"PlatformStat", 'String'>
+    readonly approvedAt: FieldRef<"PlatformStat", 'DateTime'>
+    readonly updatedAt: FieldRef<"PlatformStat", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PlatformStat findUnique
+   */
+  export type PlatformStatFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * Filter, which PlatformStat to fetch.
+     */
+    where: PlatformStatWhereUniqueInput
+  }
+
+  /**
+   * PlatformStat findUniqueOrThrow
+   */
+  export type PlatformStatFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * Filter, which PlatformStat to fetch.
+     */
+    where: PlatformStatWhereUniqueInput
+  }
+
+  /**
+   * PlatformStat findFirst
+   */
+  export type PlatformStatFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * Filter, which PlatformStat to fetch.
+     */
+    where?: PlatformStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlatformStats to fetch.
+     */
+    orderBy?: PlatformStatOrderByWithRelationInput | PlatformStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PlatformStats.
+     */
+    cursor?: PlatformStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlatformStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlatformStats.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PlatformStats.
+     */
+    distinct?: PlatformStatScalarFieldEnum | PlatformStatScalarFieldEnum[]
+  }
+
+  /**
+   * PlatformStat findFirstOrThrow
+   */
+  export type PlatformStatFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * Filter, which PlatformStat to fetch.
+     */
+    where?: PlatformStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlatformStats to fetch.
+     */
+    orderBy?: PlatformStatOrderByWithRelationInput | PlatformStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PlatformStats.
+     */
+    cursor?: PlatformStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlatformStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlatformStats.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PlatformStats.
+     */
+    distinct?: PlatformStatScalarFieldEnum | PlatformStatScalarFieldEnum[]
+  }
+
+  /**
+   * PlatformStat findMany
+   */
+  export type PlatformStatFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * Filter, which PlatformStats to fetch.
+     */
+    where?: PlatformStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlatformStats to fetch.
+     */
+    orderBy?: PlatformStatOrderByWithRelationInput | PlatformStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PlatformStats.
+     */
+    cursor?: PlatformStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlatformStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlatformStats.
+     */
+    skip?: number
+    distinct?: PlatformStatScalarFieldEnum | PlatformStatScalarFieldEnum[]
+  }
+
+  /**
+   * PlatformStat create
+   */
+  export type PlatformStatCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * The data needed to create a PlatformStat.
+     */
+    data: XOR<PlatformStatCreateInput, PlatformStatUncheckedCreateInput>
+  }
+
+  /**
+   * PlatformStat createMany
+   */
+  export type PlatformStatCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PlatformStats.
+     */
+    data: PlatformStatCreateManyInput | PlatformStatCreateManyInput[]
+  }
+
+  /**
+   * PlatformStat update
+   */
+  export type PlatformStatUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * The data needed to update a PlatformStat.
+     */
+    data: XOR<PlatformStatUpdateInput, PlatformStatUncheckedUpdateInput>
+    /**
+     * Choose, which PlatformStat to update.
+     */
+    where: PlatformStatWhereUniqueInput
+  }
+
+  /**
+   * PlatformStat updateMany
+   */
+  export type PlatformStatUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PlatformStats.
+     */
+    data: XOR<PlatformStatUpdateManyMutationInput, PlatformStatUncheckedUpdateManyInput>
+    /**
+     * Filter which PlatformStats to update
+     */
+    where?: PlatformStatWhereInput
+    /**
+     * Limit how many PlatformStats to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PlatformStat upsert
+   */
+  export type PlatformStatUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * The filter to search for the PlatformStat to update in case it exists.
+     */
+    where: PlatformStatWhereUniqueInput
+    /**
+     * In case the PlatformStat found by the `where` argument doesn't exist, create a new PlatformStat with this data.
+     */
+    create: XOR<PlatformStatCreateInput, PlatformStatUncheckedCreateInput>
+    /**
+     * In case the PlatformStat was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PlatformStatUpdateInput, PlatformStatUncheckedUpdateInput>
+  }
+
+  /**
+   * PlatformStat delete
+   */
+  export type PlatformStatDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+    /**
+     * Filter which PlatformStat to delete.
+     */
+    where: PlatformStatWhereUniqueInput
+  }
+
+  /**
+   * PlatformStat deleteMany
+   */
+  export type PlatformStatDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PlatformStats to delete
+     */
+    where?: PlatformStatWhereInput
+    /**
+     * Limit how many PlatformStats to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PlatformStat findRaw
+   */
+  export type PlatformStatFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * PlatformStat aggregateRaw
+   */
+  export type PlatformStatAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * PlatformStat without action
+   */
+  export type PlatformStatDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformStat
+     */
+    select?: PlatformStatSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformStat
+     */
+    omit?: PlatformStatOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5078,6 +7513,8 @@ export namespace Prisma {
     whyJoin: 'whyJoin',
     status: 'status',
     adminNotes: 'adminNotes',
+    adminNote: 'adminNote',
+    registrationRejection: 'registrationRejection',
     approvedAt: 'approvedAt',
     rank: 'rank',
     currentRankReach: 'currentRankReach',
@@ -5124,12 +7561,48 @@ export namespace Prisma {
     submittedShares: 'submittedShares',
     status: 'status',
     adminNotes: 'adminNotes',
+    rejectionReason: 'rejectionReason',
+    qualityRating: 'qualityRating',
     isEdited: 'isEdited',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type SubmissionScalarFieldEnum = (typeof SubmissionScalarFieldEnum)[keyof typeof SubmissionScalarFieldEnum]
+
+
+  export const MonthlySnapshotScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    month: 'month',
+    rank: 'rank',
+    reach: 'reach',
+    totalReach: 'totalReach',
+    engagementRate: 'engagementRate',
+    commitmentScore: 'commitmentScore',
+    adminGradeScore: 'adminGradeScore',
+    approvedSubs: 'approvedSubs',
+    createdAt: 'createdAt'
+  };
+
+  export type MonthlySnapshotScalarFieldEnum = (typeof MonthlySnapshotScalarFieldEnum)[keyof typeof MonthlySnapshotScalarFieldEnum]
+
+
+  export const PlatformStatScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    submissionId: 'submissionId',
+    platform: 'platform',
+    contentTypes: 'contentTypes',
+    acceptedReach: 'acceptedReach',
+    engagementRate: 'engagementRate',
+    qualityRating: 'qualityRating',
+    rank: 'rank',
+    approvedAt: 'approvedAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PlatformStatScalarFieldEnum = (typeof PlatformStatScalarFieldEnum)[keyof typeof PlatformStatScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -5273,6 +7746,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'RegistrationRejectionReason'
+   */
+  export type EnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RegistrationRejectionReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'RegistrationRejectionReason[]'
+   */
+  export type ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RegistrationRejectionReason[]'>
+    
+
+
+  /**
    * Reference to a field of type 'CreatorRank'
    */
   export type EnumCreatorRankFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CreatorRank'>
@@ -5340,6 +7827,20 @@ export namespace Prisma {
    */
   export type ListEnumSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'SubmissionRejectionReason'
+   */
+  export type EnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionRejectionReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'SubmissionRejectionReason[]'
+   */
+  export type ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionRejectionReason[]'>
+    
   /**
    * Deep Input Types
    */
@@ -5366,6 +7867,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     profile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
     submissions?: SubmissionListRelationFilter
+    snapshots?: MonthlySnapshotListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -5386,6 +7888,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     profile?: CreatorProfileOrderByWithRelationInput
     submissions?: SubmissionOrderByRelationAggregateInput
+    snapshots?: MonthlySnapshotOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -5409,6 +7912,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     profile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
     submissions?: SubmissionListRelationFilter
+    snapshots?: MonthlySnapshotListRelationFilter
   }, "id" | "username" | "email" | "phone">
 
   export type UserOrderByWithAggregationInput = {
@@ -5477,6 +7981,8 @@ export namespace Prisma {
     whyJoin?: StringNullableFilter<"CreatorProfile"> | string | null
     status?: EnumRegistrationStatusFilter<"CreatorProfile"> | $Enums.RegistrationStatus
     adminNotes?: StringNullableFilter<"CreatorProfile"> | string | null
+    adminNote?: StringNullableFilter<"CreatorProfile"> | string | null
+    registrationRejection?: EnumRegistrationRejectionReasonNullableFilter<"CreatorProfile"> | $Enums.RegistrationRejectionReason | null
     approvedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     rank?: EnumCreatorRankFilter<"CreatorProfile"> | $Enums.CreatorRank
     currentRankReach?: IntFilter<"CreatorProfile"> | number
@@ -5522,6 +8028,8 @@ export namespace Prisma {
     whyJoin?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    adminNote?: SortOrder
+    registrationRejection?: SortOrder
     approvedAt?: SortOrder
     rank?: SortOrder
     currentRankReach?: SortOrder
@@ -5570,6 +8078,8 @@ export namespace Prisma {
     whyJoin?: StringNullableFilter<"CreatorProfile"> | string | null
     status?: EnumRegistrationStatusFilter<"CreatorProfile"> | $Enums.RegistrationStatus
     adminNotes?: StringNullableFilter<"CreatorProfile"> | string | null
+    adminNote?: StringNullableFilter<"CreatorProfile"> | string | null
+    registrationRejection?: EnumRegistrationRejectionReasonNullableFilter<"CreatorProfile"> | $Enums.RegistrationRejectionReason | null
     approvedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     rank?: EnumCreatorRankFilter<"CreatorProfile"> | $Enums.CreatorRank
     currentRankReach?: IntFilter<"CreatorProfile"> | number
@@ -5614,6 +8124,8 @@ export namespace Prisma {
     whyJoin?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    adminNote?: SortOrder
+    registrationRejection?: SortOrder
     approvedAt?: SortOrder
     rank?: SortOrder
     currentRankReach?: SortOrder
@@ -5665,6 +8177,8 @@ export namespace Prisma {
     whyJoin?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
     status?: EnumRegistrationStatusWithAggregatesFilter<"CreatorProfile"> | $Enums.RegistrationStatus
     adminNotes?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    adminNote?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    registrationRejection?: EnumRegistrationRejectionReasonNullableWithAggregatesFilter<"CreatorProfile"> | $Enums.RegistrationRejectionReason | null
     approvedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
     rank?: EnumCreatorRankWithAggregatesFilter<"CreatorProfile"> | $Enums.CreatorRank
     currentRankReach?: IntWithAggregatesFilter<"CreatorProfile"> | number
@@ -5711,6 +8225,8 @@ export namespace Prisma {
     submittedShares?: IntNullableFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
+    rejectionReason?: EnumSubmissionRejectionReasonNullableFilter<"Submission"> | $Enums.SubmissionRejectionReason | null
+    qualityRating?: FloatNullableFilter<"Submission"> | number | null
     isEdited?: BoolFilter<"Submission"> | boolean
     createdAt?: DateTimeFilter<"Submission"> | Date | string
     updatedAt?: DateTimeFilter<"Submission"> | Date | string
@@ -5737,6 +8253,8 @@ export namespace Prisma {
     submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    rejectionReason?: SortOrder
+    qualityRating?: SortOrder
     isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5766,6 +8284,8 @@ export namespace Prisma {
     submittedShares?: IntNullableFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
+    rejectionReason?: EnumSubmissionRejectionReasonNullableFilter<"Submission"> | $Enums.SubmissionRejectionReason | null
+    qualityRating?: FloatNullableFilter<"Submission"> | number | null
     isEdited?: BoolFilter<"Submission"> | boolean
     createdAt?: DateTimeFilter<"Submission"> | Date | string
     updatedAt?: DateTimeFilter<"Submission"> | Date | string
@@ -5792,6 +8312,8 @@ export namespace Prisma {
     submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    rejectionReason?: SortOrder
+    qualityRating?: SortOrder
     isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5825,9 +8347,183 @@ export namespace Prisma {
     submittedShares?: IntNullableWithAggregatesFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusWithAggregatesFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableWithAggregatesFilter<"Submission"> | string | null
+    rejectionReason?: EnumSubmissionRejectionReasonNullableWithAggregatesFilter<"Submission"> | $Enums.SubmissionRejectionReason | null
+    qualityRating?: FloatNullableWithAggregatesFilter<"Submission"> | number | null
     isEdited?: BoolWithAggregatesFilter<"Submission"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Submission"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Submission"> | Date | string
+  }
+
+  export type MonthlySnapshotWhereInput = {
+    AND?: MonthlySnapshotWhereInput | MonthlySnapshotWhereInput[]
+    OR?: MonthlySnapshotWhereInput[]
+    NOT?: MonthlySnapshotWhereInput | MonthlySnapshotWhereInput[]
+    id?: StringFilter<"MonthlySnapshot"> | string
+    userId?: StringFilter<"MonthlySnapshot"> | string
+    month?: StringFilter<"MonthlySnapshot"> | string
+    rank?: StringFilter<"MonthlySnapshot"> | string
+    reach?: IntFilter<"MonthlySnapshot"> | number
+    totalReach?: IntFilter<"MonthlySnapshot"> | number
+    engagementRate?: FloatFilter<"MonthlySnapshot"> | number
+    commitmentScore?: FloatFilter<"MonthlySnapshot"> | number
+    adminGradeScore?: FloatFilter<"MonthlySnapshot"> | number
+    approvedSubs?: IntFilter<"MonthlySnapshot"> | number
+    createdAt?: DateTimeFilter<"MonthlySnapshot"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type MonthlySnapshotOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    rank?: SortOrder
+    reach?: SortOrder
+    totalReach?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
+    approvedSubs?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type MonthlySnapshotWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_month?: MonthlySnapshotUserIdMonthCompoundUniqueInput
+    AND?: MonthlySnapshotWhereInput | MonthlySnapshotWhereInput[]
+    OR?: MonthlySnapshotWhereInput[]
+    NOT?: MonthlySnapshotWhereInput | MonthlySnapshotWhereInput[]
+    userId?: StringFilter<"MonthlySnapshot"> | string
+    month?: StringFilter<"MonthlySnapshot"> | string
+    rank?: StringFilter<"MonthlySnapshot"> | string
+    reach?: IntFilter<"MonthlySnapshot"> | number
+    totalReach?: IntFilter<"MonthlySnapshot"> | number
+    engagementRate?: FloatFilter<"MonthlySnapshot"> | number
+    commitmentScore?: FloatFilter<"MonthlySnapshot"> | number
+    adminGradeScore?: FloatFilter<"MonthlySnapshot"> | number
+    approvedSubs?: IntFilter<"MonthlySnapshot"> | number
+    createdAt?: DateTimeFilter<"MonthlySnapshot"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_month">
+
+  export type MonthlySnapshotOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    rank?: SortOrder
+    reach?: SortOrder
+    totalReach?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
+    approvedSubs?: SortOrder
+    createdAt?: SortOrder
+    _count?: MonthlySnapshotCountOrderByAggregateInput
+    _avg?: MonthlySnapshotAvgOrderByAggregateInput
+    _max?: MonthlySnapshotMaxOrderByAggregateInput
+    _min?: MonthlySnapshotMinOrderByAggregateInput
+    _sum?: MonthlySnapshotSumOrderByAggregateInput
+  }
+
+  export type MonthlySnapshotScalarWhereWithAggregatesInput = {
+    AND?: MonthlySnapshotScalarWhereWithAggregatesInput | MonthlySnapshotScalarWhereWithAggregatesInput[]
+    OR?: MonthlySnapshotScalarWhereWithAggregatesInput[]
+    NOT?: MonthlySnapshotScalarWhereWithAggregatesInput | MonthlySnapshotScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MonthlySnapshot"> | string
+    userId?: StringWithAggregatesFilter<"MonthlySnapshot"> | string
+    month?: StringWithAggregatesFilter<"MonthlySnapshot"> | string
+    rank?: StringWithAggregatesFilter<"MonthlySnapshot"> | string
+    reach?: IntWithAggregatesFilter<"MonthlySnapshot"> | number
+    totalReach?: IntWithAggregatesFilter<"MonthlySnapshot"> | number
+    engagementRate?: FloatWithAggregatesFilter<"MonthlySnapshot"> | number
+    commitmentScore?: FloatWithAggregatesFilter<"MonthlySnapshot"> | number
+    adminGradeScore?: FloatWithAggregatesFilter<"MonthlySnapshot"> | number
+    approvedSubs?: IntWithAggregatesFilter<"MonthlySnapshot"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"MonthlySnapshot"> | Date | string
+  }
+
+  export type PlatformStatWhereInput = {
+    AND?: PlatformStatWhereInput | PlatformStatWhereInput[]
+    OR?: PlatformStatWhereInput[]
+    NOT?: PlatformStatWhereInput | PlatformStatWhereInput[]
+    id?: StringFilter<"PlatformStat"> | string
+    userId?: StringFilter<"PlatformStat"> | string
+    submissionId?: StringFilter<"PlatformStat"> | string
+    platform?: StringFilter<"PlatformStat"> | string
+    contentTypes?: StringNullableListFilter<"PlatformStat">
+    acceptedReach?: IntFilter<"PlatformStat"> | number
+    engagementRate?: FloatFilter<"PlatformStat"> | number
+    qualityRating?: FloatNullableFilter<"PlatformStat"> | number | null
+    rank?: StringFilter<"PlatformStat"> | string
+    approvedAt?: DateTimeFilter<"PlatformStat"> | Date | string
+    updatedAt?: DateTimeFilter<"PlatformStat"> | Date | string
+  }
+
+  export type PlatformStatOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    submissionId?: SortOrder
+    platform?: SortOrder
+    contentTypes?: SortOrder
+    acceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    qualityRating?: SortOrder
+    rank?: SortOrder
+    approvedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PlatformStatWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    submissionId?: string
+    AND?: PlatformStatWhereInput | PlatformStatWhereInput[]
+    OR?: PlatformStatWhereInput[]
+    NOT?: PlatformStatWhereInput | PlatformStatWhereInput[]
+    userId?: StringFilter<"PlatformStat"> | string
+    platform?: StringFilter<"PlatformStat"> | string
+    contentTypes?: StringNullableListFilter<"PlatformStat">
+    acceptedReach?: IntFilter<"PlatformStat"> | number
+    engagementRate?: FloatFilter<"PlatformStat"> | number
+    qualityRating?: FloatNullableFilter<"PlatformStat"> | number | null
+    rank?: StringFilter<"PlatformStat"> | string
+    approvedAt?: DateTimeFilter<"PlatformStat"> | Date | string
+    updatedAt?: DateTimeFilter<"PlatformStat"> | Date | string
+  }, "id" | "submissionId">
+
+  export type PlatformStatOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    submissionId?: SortOrder
+    platform?: SortOrder
+    contentTypes?: SortOrder
+    acceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    qualityRating?: SortOrder
+    rank?: SortOrder
+    approvedAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PlatformStatCountOrderByAggregateInput
+    _avg?: PlatformStatAvgOrderByAggregateInput
+    _max?: PlatformStatMaxOrderByAggregateInput
+    _min?: PlatformStatMinOrderByAggregateInput
+    _sum?: PlatformStatSumOrderByAggregateInput
+  }
+
+  export type PlatformStatScalarWhereWithAggregatesInput = {
+    AND?: PlatformStatScalarWhereWithAggregatesInput | PlatformStatScalarWhereWithAggregatesInput[]
+    OR?: PlatformStatScalarWhereWithAggregatesInput[]
+    NOT?: PlatformStatScalarWhereWithAggregatesInput | PlatformStatScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PlatformStat"> | string
+    userId?: StringWithAggregatesFilter<"PlatformStat"> | string
+    submissionId?: StringWithAggregatesFilter<"PlatformStat"> | string
+    platform?: StringWithAggregatesFilter<"PlatformStat"> | string
+    contentTypes?: StringNullableListFilter<"PlatformStat">
+    acceptedReach?: IntWithAggregatesFilter<"PlatformStat"> | number
+    engagementRate?: FloatWithAggregatesFilter<"PlatformStat"> | number
+    qualityRating?: FloatNullableWithAggregatesFilter<"PlatformStat"> | number | null
+    rank?: StringWithAggregatesFilter<"PlatformStat"> | string
+    approvedAt?: DateTimeWithAggregatesFilter<"PlatformStat"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PlatformStat"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -5848,6 +8544,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     profile?: CreatorProfileCreateNestedOneWithoutUserInput
     submissions?: SubmissionCreateNestedManyWithoutUserInput
+    snapshots?: MonthlySnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -5868,6 +8565,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     profile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
     submissions?: SubmissionUncheckedCreateNestedManyWithoutUserInput
+    snapshots?: MonthlySnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -5887,6 +8585,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: CreatorProfileUpdateOneWithoutUserNestedInput
     submissions?: SubmissionUpdateManyWithoutUserNestedInput
+    snapshots?: MonthlySnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -5906,6 +8605,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
     submissions?: SubmissionUncheckedUpdateManyWithoutUserNestedInput
+    snapshots?: MonthlySnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -5980,6 +8680,8 @@ export namespace Prisma {
     whyJoin?: string | null
     status?: $Enums.RegistrationStatus
     adminNotes?: string | null
+    adminNote?: string | null
+    registrationRejection?: $Enums.RegistrationRejectionReason | null
     approvedAt?: Date | string | null
     rank?: $Enums.CreatorRank
     currentRankReach?: number
@@ -6025,6 +8727,8 @@ export namespace Prisma {
     whyJoin?: string | null
     status?: $Enums.RegistrationStatus
     adminNotes?: string | null
+    adminNote?: string | null
+    registrationRejection?: $Enums.RegistrationRejectionReason | null
     approvedAt?: Date | string | null
     rank?: $Enums.CreatorRank
     currentRankReach?: number
@@ -6067,6 +8771,8 @@ export namespace Prisma {
     whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationRejection?: NullableEnumRegistrationRejectionReasonFieldUpdateOperationsInput | $Enums.RegistrationRejectionReason | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     currentRankReach?: IntFieldUpdateOperationsInput | number
@@ -6111,6 +8817,8 @@ export namespace Prisma {
     whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationRejection?: NullableEnumRegistrationRejectionReasonFieldUpdateOperationsInput | $Enums.RegistrationRejectionReason | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     currentRankReach?: IntFieldUpdateOperationsInput | number
@@ -6155,6 +8863,8 @@ export namespace Prisma {
     whyJoin?: string | null
     status?: $Enums.RegistrationStatus
     adminNotes?: string | null
+    adminNote?: string | null
+    registrationRejection?: $Enums.RegistrationRejectionReason | null
     approvedAt?: Date | string | null
     rank?: $Enums.CreatorRank
     currentRankReach?: number
@@ -6197,6 +8907,8 @@ export namespace Prisma {
     whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationRejection?: NullableEnumRegistrationRejectionReasonFieldUpdateOperationsInput | $Enums.RegistrationRejectionReason | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     currentRankReach?: IntFieldUpdateOperationsInput | number
@@ -6240,6 +8952,8 @@ export namespace Prisma {
     whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationRejection?: NullableEnumRegistrationRejectionReasonFieldUpdateOperationsInput | $Enums.RegistrationRejectionReason | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     currentRankReach?: IntFieldUpdateOperationsInput | number
@@ -6282,6 +8996,8 @@ export namespace Prisma {
     submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
+    rejectionReason?: $Enums.SubmissionRejectionReason | null
+    qualityRating?: number | null
     isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6308,6 +9024,8 @@ export namespace Prisma {
     submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
+    rejectionReason?: $Enums.SubmissionRejectionReason | null
+    qualityRating?: number | null
     isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6331,6 +9049,8 @@ export namespace Prisma {
     submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput | $Enums.SubmissionRejectionReason | null
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6356,6 +9076,8 @@ export namespace Prisma {
     submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput | $Enums.SubmissionRejectionReason | null
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6381,6 +9103,8 @@ export namespace Prisma {
     submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
+    rejectionReason?: $Enums.SubmissionRejectionReason | null
+    qualityRating?: number | null
     isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6404,6 +9128,8 @@ export namespace Prisma {
     submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput | $Enums.SubmissionRejectionReason | null
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6428,8 +9154,197 @@ export namespace Prisma {
     submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput | $Enums.SubmissionRejectionReason | null
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlySnapshotCreateInput = {
+    id?: string
+    month: string
+    rank: string
+    reach?: number
+    totalReach?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
+    approvedSubs?: number
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSnapshotsInput
+  }
+
+  export type MonthlySnapshotUncheckedCreateInput = {
+    id?: string
+    userId: string
+    month: string
+    rank: string
+    reach?: number
+    totalReach?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
+    approvedSubs?: number
+    createdAt?: Date | string
+  }
+
+  export type MonthlySnapshotUpdateInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    rank?: StringFieldUpdateOperationsInput | string
+    reach?: IntFieldUpdateOperationsInput | number
+    totalReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
+    approvedSubs?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSnapshotsNestedInput
+  }
+
+  export type MonthlySnapshotUncheckedUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    month?: StringFieldUpdateOperationsInput | string
+    rank?: StringFieldUpdateOperationsInput | string
+    reach?: IntFieldUpdateOperationsInput | number
+    totalReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
+    approvedSubs?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlySnapshotCreateManyInput = {
+    id?: string
+    userId: string
+    month: string
+    rank: string
+    reach?: number
+    totalReach?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
+    approvedSubs?: number
+    createdAt?: Date | string
+  }
+
+  export type MonthlySnapshotUpdateManyMutationInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    rank?: StringFieldUpdateOperationsInput | string
+    reach?: IntFieldUpdateOperationsInput | number
+    totalReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
+    approvedSubs?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlySnapshotUncheckedUpdateManyInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    month?: StringFieldUpdateOperationsInput | string
+    rank?: StringFieldUpdateOperationsInput | string
+    reach?: IntFieldUpdateOperationsInput | number
+    totalReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
+    approvedSubs?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlatformStatCreateInput = {
+    id?: string
+    userId: string
+    submissionId: string
+    platform: string
+    contentTypes?: PlatformStatCreatecontentTypesInput | string[]
+    acceptedReach?: number
+    engagementRate?: number
+    qualityRating?: number | null
+    rank: string
+    approvedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PlatformStatUncheckedCreateInput = {
+    id?: string
+    userId: string
+    submissionId: string
+    platform: string
+    contentTypes?: PlatformStatCreatecontentTypesInput | string[]
+    acceptedReach?: number
+    engagementRate?: number
+    qualityRating?: number | null
+    rank: string
+    approvedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PlatformStatUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    submissionId?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    contentTypes?: PlatformStatUpdatecontentTypesInput | string[]
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    rank?: StringFieldUpdateOperationsInput | string
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlatformStatUncheckedUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    submissionId?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    contentTypes?: PlatformStatUpdatecontentTypesInput | string[]
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    rank?: StringFieldUpdateOperationsInput | string
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlatformStatCreateManyInput = {
+    id?: string
+    userId: string
+    submissionId: string
+    platform: string
+    contentTypes?: PlatformStatCreatecontentTypesInput | string[]
+    acceptedReach?: number
+    engagementRate?: number
+    qualityRating?: number | null
+    rank: string
+    approvedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PlatformStatUpdateManyMutationInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    submissionId?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    contentTypes?: PlatformStatUpdatecontentTypesInput | string[]
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    rank?: StringFieldUpdateOperationsInput | string
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlatformStatUncheckedUpdateManyInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    submissionId?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    contentTypes?: PlatformStatUpdatecontentTypesInput | string[]
+    acceptedReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
+    rank?: StringFieldUpdateOperationsInput | string
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -6510,7 +9425,17 @@ export namespace Prisma {
     none?: SubmissionWhereInput
   }
 
+  export type MonthlySnapshotListRelationFilter = {
+    every?: MonthlySnapshotWhereInput
+    some?: MonthlySnapshotWhereInput
+    none?: MonthlySnapshotWhereInput
+  }
+
   export type SubmissionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MonthlySnapshotOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -6707,6 +9632,14 @@ export namespace Prisma {
     not?: NestedEnumRegistrationStatusFilter<$PrismaModel> | $Enums.RegistrationStatus
   }
 
+  export type EnumRegistrationRejectionReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationRejectionReason | EnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRegistrationRejectionReasonNullableFilter<$PrismaModel> | $Enums.RegistrationRejectionReason | null
+    isSet?: boolean
+  }
+
   export type EnumCreatorRankFilter<$PrismaModel = never> = {
     equals?: $Enums.CreatorRank | EnumCreatorRankFieldRefInput<$PrismaModel>
     in?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
@@ -6754,6 +9687,8 @@ export namespace Prisma {
     whyJoin?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    adminNote?: SortOrder
+    registrationRejection?: SortOrder
     approvedAt?: SortOrder
     rank?: SortOrder
     currentRankReach?: SortOrder
@@ -6814,6 +9749,8 @@ export namespace Prisma {
     whyJoin?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    adminNote?: SortOrder
+    registrationRejection?: SortOrder
     approvedAt?: SortOrder
     rank?: SortOrder
     currentRankReach?: SortOrder
@@ -6855,6 +9792,8 @@ export namespace Prisma {
     whyJoin?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    adminNote?: SortOrder
+    registrationRejection?: SortOrder
     approvedAt?: SortOrder
     rank?: SortOrder
     currentRankReach?: SortOrder
@@ -6931,6 +9870,17 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRegistrationStatusFilter<$PrismaModel>
     _max?: NestedEnumRegistrationStatusFilter<$PrismaModel>
+  }
+
+  export type EnumRegistrationRejectionReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationRejectionReason | EnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRegistrationRejectionReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.RegistrationRejectionReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumRegistrationRejectionReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumRegistrationRejectionReasonNullableFilter<$PrismaModel>
+    isSet?: boolean
   }
 
   export type EnumCreatorRankWithAggregatesFilter<$PrismaModel = never> = {
@@ -7013,6 +9963,14 @@ export namespace Prisma {
     not?: NestedEnumSubmissionStatusFilter<$PrismaModel> | $Enums.SubmissionStatus
   }
 
+  export type EnumSubmissionRejectionReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionRejectionReason | EnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSubmissionRejectionReasonNullableFilter<$PrismaModel> | $Enums.SubmissionRejectionReason | null
+    isSet?: boolean
+  }
+
   export type SubmissionCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -7033,6 +9991,8 @@ export namespace Prisma {
     submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    rejectionReason?: SortOrder
+    qualityRating?: SortOrder
     isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7047,6 +10007,7 @@ export namespace Prisma {
     submittedLikes?: SortOrder
     submittedComments?: SortOrder
     submittedShares?: SortOrder
+    qualityRating?: SortOrder
   }
 
   export type SubmissionMaxOrderByAggregateInput = {
@@ -7067,6 +10028,8 @@ export namespace Prisma {
     submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    rejectionReason?: SortOrder
+    qualityRating?: SortOrder
     isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7090,6 +10053,8 @@ export namespace Prisma {
     submittedShares?: SortOrder
     status?: SortOrder
     adminNotes?: SortOrder
+    rejectionReason?: SortOrder
+    qualityRating?: SortOrder
     isEdited?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7104,6 +10069,7 @@ export namespace Prisma {
     submittedLikes?: SortOrder
     submittedComments?: SortOrder
     submittedShares?: SortOrder
+    qualityRating?: SortOrder
   }
 
   export type EnumPlatformWithAggregatesFilter<$PrismaModel = never> = {
@@ -7160,6 +10126,142 @@ export namespace Prisma {
     _max?: NestedEnumSubmissionStatusFilter<$PrismaModel>
   }
 
+  export type EnumSubmissionRejectionReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionRejectionReason | EnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSubmissionRejectionReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.SubmissionRejectionReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSubmissionRejectionReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumSubmissionRejectionReasonNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
+  export type MonthlySnapshotUserIdMonthCompoundUniqueInput = {
+    userId: string
+    month: string
+  }
+
+  export type MonthlySnapshotCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    rank?: SortOrder
+    reach?: SortOrder
+    totalReach?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
+    approvedSubs?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MonthlySnapshotAvgOrderByAggregateInput = {
+    reach?: SortOrder
+    totalReach?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
+    approvedSubs?: SortOrder
+  }
+
+  export type MonthlySnapshotMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    rank?: SortOrder
+    reach?: SortOrder
+    totalReach?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
+    approvedSubs?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MonthlySnapshotMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    rank?: SortOrder
+    reach?: SortOrder
+    totalReach?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
+    approvedSubs?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MonthlySnapshotSumOrderByAggregateInput = {
+    reach?: SortOrder
+    totalReach?: SortOrder
+    engagementRate?: SortOrder
+    commitmentScore?: SortOrder
+    adminGradeScore?: SortOrder
+    approvedSubs?: SortOrder
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type PlatformStatCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    submissionId?: SortOrder
+    platform?: SortOrder
+    contentTypes?: SortOrder
+    acceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    qualityRating?: SortOrder
+    rank?: SortOrder
+    approvedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PlatformStatAvgOrderByAggregateInput = {
+    acceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    qualityRating?: SortOrder
+  }
+
+  export type PlatformStatMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    submissionId?: SortOrder
+    platform?: SortOrder
+    acceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    qualityRating?: SortOrder
+    rank?: SortOrder
+    approvedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PlatformStatMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    submissionId?: SortOrder
+    platform?: SortOrder
+    acceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    qualityRating?: SortOrder
+    rank?: SortOrder
+    approvedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PlatformStatSumOrderByAggregateInput = {
+    acceptedReach?: SortOrder
+    engagementRate?: SortOrder
+    qualityRating?: SortOrder
+  }
+
   export type CreatorProfileCreateNestedOneWithoutUserInput = {
     create?: XOR<CreatorProfileCreateWithoutUserInput, CreatorProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: CreatorProfileCreateOrConnectWithoutUserInput
@@ -7173,6 +10275,13 @@ export namespace Prisma {
     connect?: SubmissionWhereUniqueInput | SubmissionWhereUniqueInput[]
   }
 
+  export type MonthlySnapshotCreateNestedManyWithoutUserInput = {
+    create?: XOR<MonthlySnapshotCreateWithoutUserInput, MonthlySnapshotUncheckedCreateWithoutUserInput> | MonthlySnapshotCreateWithoutUserInput[] | MonthlySnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MonthlySnapshotCreateOrConnectWithoutUserInput | MonthlySnapshotCreateOrConnectWithoutUserInput[]
+    createMany?: MonthlySnapshotCreateManyUserInputEnvelope
+    connect?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+  }
+
   export type CreatorProfileUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<CreatorProfileCreateWithoutUserInput, CreatorProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: CreatorProfileCreateOrConnectWithoutUserInput
@@ -7184,6 +10293,13 @@ export namespace Prisma {
     connectOrCreate?: SubmissionCreateOrConnectWithoutUserInput | SubmissionCreateOrConnectWithoutUserInput[]
     createMany?: SubmissionCreateManyUserInputEnvelope
     connect?: SubmissionWhereUniqueInput | SubmissionWhereUniqueInput[]
+  }
+
+  export type MonthlySnapshotUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<MonthlySnapshotCreateWithoutUserInput, MonthlySnapshotUncheckedCreateWithoutUserInput> | MonthlySnapshotCreateWithoutUserInput[] | MonthlySnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MonthlySnapshotCreateOrConnectWithoutUserInput | MonthlySnapshotCreateOrConnectWithoutUserInput[]
+    createMany?: MonthlySnapshotCreateManyUserInputEnvelope
+    connect?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -7236,6 +10352,20 @@ export namespace Prisma {
     deleteMany?: SubmissionScalarWhereInput | SubmissionScalarWhereInput[]
   }
 
+  export type MonthlySnapshotUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MonthlySnapshotCreateWithoutUserInput, MonthlySnapshotUncheckedCreateWithoutUserInput> | MonthlySnapshotCreateWithoutUserInput[] | MonthlySnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MonthlySnapshotCreateOrConnectWithoutUserInput | MonthlySnapshotCreateOrConnectWithoutUserInput[]
+    upsert?: MonthlySnapshotUpsertWithWhereUniqueWithoutUserInput | MonthlySnapshotUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MonthlySnapshotCreateManyUserInputEnvelope
+    set?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    disconnect?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    delete?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    connect?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    update?: MonthlySnapshotUpdateWithWhereUniqueWithoutUserInput | MonthlySnapshotUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MonthlySnapshotUpdateManyWithWhereWithoutUserInput | MonthlySnapshotUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MonthlySnapshotScalarWhereInput | MonthlySnapshotScalarWhereInput[]
+  }
+
   export type CreatorProfileUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<CreatorProfileCreateWithoutUserInput, CreatorProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: CreatorProfileCreateOrConnectWithoutUserInput
@@ -7258,6 +10388,20 @@ export namespace Prisma {
     update?: SubmissionUpdateWithWhereUniqueWithoutUserInput | SubmissionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SubmissionUpdateManyWithWhereWithoutUserInput | SubmissionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SubmissionScalarWhereInput | SubmissionScalarWhereInput[]
+  }
+
+  export type MonthlySnapshotUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MonthlySnapshotCreateWithoutUserInput, MonthlySnapshotUncheckedCreateWithoutUserInput> | MonthlySnapshotCreateWithoutUserInput[] | MonthlySnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MonthlySnapshotCreateOrConnectWithoutUserInput | MonthlySnapshotCreateOrConnectWithoutUserInput[]
+    upsert?: MonthlySnapshotUpsertWithWhereUniqueWithoutUserInput | MonthlySnapshotUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MonthlySnapshotCreateManyUserInputEnvelope
+    set?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    disconnect?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    delete?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    connect?: MonthlySnapshotWhereUniqueInput | MonthlySnapshotWhereUniqueInput[]
+    update?: MonthlySnapshotUpdateWithWhereUniqueWithoutUserInput | MonthlySnapshotUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MonthlySnapshotUpdateManyWithWhereWithoutUserInput | MonthlySnapshotUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MonthlySnapshotScalarWhereInput | MonthlySnapshotScalarWhereInput[]
   }
 
   export type CreatorProfileCreateplatformsInput = {
@@ -7314,6 +10458,11 @@ export namespace Prisma {
 
   export type EnumRegistrationStatusFieldUpdateOperationsInput = {
     set?: $Enums.RegistrationStatus
+  }
+
+  export type NullableEnumRegistrationRejectionReasonFieldUpdateOperationsInput = {
+    set?: $Enums.RegistrationRejectionReason | null
+    unset?: boolean
   }
 
   export type EnumCreatorRankFieldUpdateOperationsInput = {
@@ -7386,12 +10535,40 @@ export namespace Prisma {
     set?: $Enums.SubmissionStatus
   }
 
+  export type NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput = {
+    set?: $Enums.SubmissionRejectionReason | null
+    unset?: boolean
+  }
+
   export type UserUpdateOneRequiredWithoutSubmissionsNestedInput = {
     create?: XOR<UserCreateWithoutSubmissionsInput, UserUncheckedCreateWithoutSubmissionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSubmissionsInput
     upsert?: UserUpsertWithoutSubmissionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSubmissionsInput, UserUpdateWithoutSubmissionsInput>, UserUncheckedUpdateWithoutSubmissionsInput>
+  }
+
+  export type UserCreateNestedOneWithoutSnapshotsInput = {
+    create?: XOR<UserCreateWithoutSnapshotsInput, UserUncheckedCreateWithoutSnapshotsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSnapshotsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutSnapshotsNestedInput = {
+    create?: XOR<UserCreateWithoutSnapshotsInput, UserUncheckedCreateWithoutSnapshotsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSnapshotsInput
+    upsert?: UserUpsertWithoutSnapshotsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSnapshotsInput, UserUpdateWithoutSnapshotsInput>, UserUncheckedUpdateWithoutSnapshotsInput>
+  }
+
+  export type PlatformStatCreatecontentTypesInput = {
+    set: string[]
+  }
+
+  export type PlatformStatUpdatecontentTypesInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7585,6 +10762,14 @@ export namespace Prisma {
     not?: NestedEnumRegistrationStatusFilter<$PrismaModel> | $Enums.RegistrationStatus
   }
 
+  export type NestedEnumRegistrationRejectionReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationRejectionReason | EnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRegistrationRejectionReasonNullableFilter<$PrismaModel> | $Enums.RegistrationRejectionReason | null
+    isSet?: boolean
+  }
+
   export type NestedEnumCreatorRankFilter<$PrismaModel = never> = {
     equals?: $Enums.CreatorRank | EnumCreatorRankFieldRefInput<$PrismaModel>
     in?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
@@ -7639,6 +10824,17 @@ export namespace Prisma {
     _max?: NestedEnumRegistrationStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumRegistrationRejectionReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RegistrationRejectionReason | EnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.RegistrationRejectionReason[] | ListEnumRegistrationRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRegistrationRejectionReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.RegistrationRejectionReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumRegistrationRejectionReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumRegistrationRejectionReasonNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
   export type NestedEnumCreatorRankWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.CreatorRank | EnumCreatorRankFieldRefInput<$PrismaModel>
     in?: $Enums.CreatorRank[] | ListEnumCreatorRankFieldRefInput<$PrismaModel>
@@ -7689,6 +10885,14 @@ export namespace Prisma {
     in?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumSubmissionStatusFilter<$PrismaModel> | $Enums.SubmissionStatus
+  }
+
+  export type NestedEnumSubmissionRejectionReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionRejectionReason | EnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSubmissionRejectionReasonNullableFilter<$PrismaModel> | $Enums.SubmissionRejectionReason | null
+    isSet?: boolean
   }
 
   export type NestedEnumPlatformWithAggregatesFilter<$PrismaModel = never> = {
@@ -7745,6 +10949,17 @@ export namespace Prisma {
     _max?: NestedEnumSubmissionStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumSubmissionRejectionReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubmissionRejectionReason | EnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SubmissionRejectionReason[] | ListEnumSubmissionRejectionReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSubmissionRejectionReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.SubmissionRejectionReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSubmissionRejectionReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumSubmissionRejectionReasonNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
   export type CreatorProfileCreateWithoutUserInput = {
     id?: string
     realName: string
@@ -7765,6 +10980,8 @@ export namespace Prisma {
     whyJoin?: string | null
     status?: $Enums.RegistrationStatus
     adminNotes?: string | null
+    adminNote?: string | null
+    registrationRejection?: $Enums.RegistrationRejectionReason | null
     approvedAt?: Date | string | null
     rank?: $Enums.CreatorRank
     currentRankReach?: number
@@ -7808,6 +11025,8 @@ export namespace Prisma {
     whyJoin?: string | null
     status?: $Enums.RegistrationStatus
     adminNotes?: string | null
+    adminNote?: string | null
+    registrationRejection?: $Enums.RegistrationRejectionReason | null
     approvedAt?: Date | string | null
     rank?: $Enums.CreatorRank
     currentRankReach?: number
@@ -7855,6 +11074,8 @@ export namespace Prisma {
     submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
+    rejectionReason?: $Enums.SubmissionRejectionReason | null
+    qualityRating?: number | null
     isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7879,6 +11100,8 @@ export namespace Prisma {
     submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
+    rejectionReason?: $Enums.SubmissionRejectionReason | null
+    qualityRating?: number | null
     isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7891,6 +11114,41 @@ export namespace Prisma {
 
   export type SubmissionCreateManyUserInputEnvelope = {
     data: SubmissionCreateManyUserInput | SubmissionCreateManyUserInput[]
+  }
+
+  export type MonthlySnapshotCreateWithoutUserInput = {
+    id?: string
+    month: string
+    rank: string
+    reach?: number
+    totalReach?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
+    approvedSubs?: number
+    createdAt?: Date | string
+  }
+
+  export type MonthlySnapshotUncheckedCreateWithoutUserInput = {
+    id?: string
+    month: string
+    rank: string
+    reach?: number
+    totalReach?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
+    approvedSubs?: number
+    createdAt?: Date | string
+  }
+
+  export type MonthlySnapshotCreateOrConnectWithoutUserInput = {
+    where: MonthlySnapshotWhereUniqueInput
+    create: XOR<MonthlySnapshotCreateWithoutUserInput, MonthlySnapshotUncheckedCreateWithoutUserInput>
+  }
+
+  export type MonthlySnapshotCreateManyUserInputEnvelope = {
+    data: MonthlySnapshotCreateManyUserInput | MonthlySnapshotCreateManyUserInput[]
   }
 
   export type CreatorProfileUpsertWithoutUserInput = {
@@ -7923,6 +11181,8 @@ export namespace Prisma {
     whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationRejection?: NullableEnumRegistrationRejectionReasonFieldUpdateOperationsInput | $Enums.RegistrationRejectionReason | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     currentRankReach?: IntFieldUpdateOperationsInput | number
@@ -7965,6 +11225,8 @@ export namespace Prisma {
     whyJoin?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumRegistrationStatusFieldUpdateOperationsInput | $Enums.RegistrationStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationRejection?: NullableEnumRegistrationRejectionReasonFieldUpdateOperationsInput | $Enums.RegistrationRejectionReason | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rank?: EnumCreatorRankFieldUpdateOperationsInput | $Enums.CreatorRank
     currentRankReach?: IntFieldUpdateOperationsInput | number
@@ -8027,9 +11289,44 @@ export namespace Prisma {
     submittedShares?: IntNullableFilter<"Submission"> | number | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     adminNotes?: StringNullableFilter<"Submission"> | string | null
+    rejectionReason?: EnumSubmissionRejectionReasonNullableFilter<"Submission"> | $Enums.SubmissionRejectionReason | null
+    qualityRating?: FloatNullableFilter<"Submission"> | number | null
     isEdited?: BoolFilter<"Submission"> | boolean
     createdAt?: DateTimeFilter<"Submission"> | Date | string
     updatedAt?: DateTimeFilter<"Submission"> | Date | string
+  }
+
+  export type MonthlySnapshotUpsertWithWhereUniqueWithoutUserInput = {
+    where: MonthlySnapshotWhereUniqueInput
+    update: XOR<MonthlySnapshotUpdateWithoutUserInput, MonthlySnapshotUncheckedUpdateWithoutUserInput>
+    create: XOR<MonthlySnapshotCreateWithoutUserInput, MonthlySnapshotUncheckedCreateWithoutUserInput>
+  }
+
+  export type MonthlySnapshotUpdateWithWhereUniqueWithoutUserInput = {
+    where: MonthlySnapshotWhereUniqueInput
+    data: XOR<MonthlySnapshotUpdateWithoutUserInput, MonthlySnapshotUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MonthlySnapshotUpdateManyWithWhereWithoutUserInput = {
+    where: MonthlySnapshotScalarWhereInput
+    data: XOR<MonthlySnapshotUpdateManyMutationInput, MonthlySnapshotUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type MonthlySnapshotScalarWhereInput = {
+    AND?: MonthlySnapshotScalarWhereInput | MonthlySnapshotScalarWhereInput[]
+    OR?: MonthlySnapshotScalarWhereInput[]
+    NOT?: MonthlySnapshotScalarWhereInput | MonthlySnapshotScalarWhereInput[]
+    id?: StringFilter<"MonthlySnapshot"> | string
+    userId?: StringFilter<"MonthlySnapshot"> | string
+    month?: StringFilter<"MonthlySnapshot"> | string
+    rank?: StringFilter<"MonthlySnapshot"> | string
+    reach?: IntFilter<"MonthlySnapshot"> | number
+    totalReach?: IntFilter<"MonthlySnapshot"> | number
+    engagementRate?: FloatFilter<"MonthlySnapshot"> | number
+    commitmentScore?: FloatFilter<"MonthlySnapshot"> | number
+    adminGradeScore?: FloatFilter<"MonthlySnapshot"> | number
+    approvedSubs?: IntFilter<"MonthlySnapshot"> | number
+    createdAt?: DateTimeFilter<"MonthlySnapshot"> | Date | string
   }
 
   export type UserCreateWithoutProfileInput = {
@@ -8049,6 +11346,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submissions?: SubmissionCreateNestedManyWithoutUserInput
+    snapshots?: MonthlySnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProfileInput = {
@@ -8068,6 +11366,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submissions?: SubmissionUncheckedCreateNestedManyWithoutUserInput
+    snapshots?: MonthlySnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProfileInput = {
@@ -8111,6 +11410,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submissions?: SubmissionUpdateManyWithoutUserNestedInput
+    snapshots?: MonthlySnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProfileInput = {
@@ -8129,6 +11429,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submissions?: SubmissionUncheckedUpdateManyWithoutUserNestedInput
+    snapshots?: MonthlySnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSubmissionsInput = {
@@ -8148,6 +11449,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: CreatorProfileCreateNestedOneWithoutUserInput
+    snapshots?: MonthlySnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSubmissionsInput = {
@@ -8167,6 +11469,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    snapshots?: MonthlySnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSubmissionsInput = {
@@ -8201,6 +11504,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    snapshots?: MonthlySnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmissionsInput = {
@@ -8219,6 +11523,101 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    snapshots?: MonthlySnapshotUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutSnapshotsInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
+    isVerified?: boolean
+    isActive?: boolean
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile?: CreatorProfileCreateNestedOneWithoutUserInput
+    submissions?: SubmissionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSnapshotsInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    username: string
+    email?: string | null
+    phone?: string | null
+    phoneKey?: string | null
+    isVerified?: boolean
+    isActive?: boolean
+    role?: $Enums.UserRole
+    externalId?: string | null
+    provider?: string | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    submissions?: SubmissionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSnapshotsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSnapshotsInput, UserUncheckedCreateWithoutSnapshotsInput>
+  }
+
+  export type UserUpsertWithoutSnapshotsInput = {
+    update: XOR<UserUpdateWithoutSnapshotsInput, UserUncheckedUpdateWithoutSnapshotsInput>
+    create: XOR<UserCreateWithoutSnapshotsInput, UserUncheckedCreateWithoutSnapshotsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSnapshotsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSnapshotsInput, UserUncheckedUpdateWithoutSnapshotsInput>
+  }
+
+  export type UserUpdateWithoutSnapshotsInput = {
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    submissions?: SubmissionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSnapshotsInput = {
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneKey?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    submissions?: SubmissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SubmissionCreateManyUserInput = {
@@ -8240,9 +11639,24 @@ export namespace Prisma {
     submittedShares?: number | null
     status?: $Enums.SubmissionStatus
     adminNotes?: string | null
+    rejectionReason?: $Enums.SubmissionRejectionReason | null
+    qualityRating?: number | null
     isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type MonthlySnapshotCreateManyUserInput = {
+    id?: string
+    month: string
+    rank: string
+    reach?: number
+    totalReach?: number
+    engagementRate?: number
+    commitmentScore?: number
+    adminGradeScore?: number
+    approvedSubs?: number
+    createdAt?: Date | string
   }
 
   export type SubmissionUpdateWithoutUserInput = {
@@ -8263,6 +11677,8 @@ export namespace Prisma {
     submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput | $Enums.SubmissionRejectionReason | null
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8286,6 +11702,8 @@ export namespace Prisma {
     submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput | $Enums.SubmissionRejectionReason | null
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8309,9 +11727,47 @@ export namespace Prisma {
     submittedShares?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableEnumSubmissionRejectionReasonFieldUpdateOperationsInput | $Enums.SubmissionRejectionReason | null
+    qualityRating?: NullableFloatFieldUpdateOperationsInput | number | null
     isEdited?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlySnapshotUpdateWithoutUserInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    rank?: StringFieldUpdateOperationsInput | string
+    reach?: IntFieldUpdateOperationsInput | number
+    totalReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
+    approvedSubs?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlySnapshotUncheckedUpdateWithoutUserInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    rank?: StringFieldUpdateOperationsInput | string
+    reach?: IntFieldUpdateOperationsInput | number
+    totalReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
+    approvedSubs?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlySnapshotUncheckedUpdateManyWithoutUserInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    rank?: StringFieldUpdateOperationsInput | string
+    reach?: IntFieldUpdateOperationsInput | number
+    totalReach?: IntFieldUpdateOperationsInput | number
+    engagementRate?: FloatFieldUpdateOperationsInput | number
+    commitmentScore?: FloatFieldUpdateOperationsInput | number
+    adminGradeScore?: FloatFieldUpdateOperationsInput | number
+    approvedSubs?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PlatformLinkUpdateInput = {

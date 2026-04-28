@@ -11,6 +11,9 @@ import {
   IoDocumentTextOutline,
   IoPeopleOutline,
   IoArrowUpCircleOutline,
+  IoArrowDownCircleOutline,
+  IoGridOutline,
+  IoPersonOutline,
 } from "react-icons/io5";
 import { useAuth } from "@/hooks/useAuth";
 import RepairTool from "@/components/admin/RepairTool";
@@ -33,29 +36,16 @@ export default function AdminLayout({
   }, [initializationComplete, isAuthenticated, user, router, locale]);
 
   const NAV = [
-    {
-      href: `/admin/submissions`,
-      icon: IoDocumentTextOutline,
-      labelEn: "Submissions",
-      labelAr: "المشاركات",
-    },
-    {
-      href: `/admin/registrations`,
-      icon: IoPeopleOutline,
-      labelEn: "Registrations",
-      labelAr: "التسجيلات",
-    },
-    {
-      href: `/admin/rank-ups`,
-      icon: IoArrowUpCircleOutline,
-      labelEn: "Rank Ups",
-      labelAr: "الترقيات",
-    },
+    // { href: `/admin`, icon: IoGridOutline, labelEn: "Dashboard", labelAr: "الرئيسية", exact: true },
+    { href: `/admin/submissions`, icon: IoDocumentTextOutline, labelEn: "Submissions", labelAr: "المشاركات", exact: false },
+    { href: `/admin/registrations`, icon: IoPeopleOutline, labelEn: "Registrations", labelAr: "التسجيلات", exact: false },
+    { href: `/admin/creators`, icon: IoPersonOutline, labelEn: "Creators", labelAr: "المبدعون", exact: false },
+    { href: `/admin/rank-ups`, icon: IoArrowUpCircleOutline, labelEn: "Rank Ups", labelAr: "الترقيات", exact: false },
+    { href: `/admin/rank-downs`, icon: IoArrowDownCircleOutline, labelEn: "Rank Downs", labelAr: "التنزيلات", exact: false },
   ];
 
   return (
     <div className="flex min-h-screen bg-black">
-      {/* ── Fixed sidebar ────────────────────────────────────────────── */}
       <aside
         className="fixed top-0 bottom-0 z-30 flex flex-col bg-[#050505]"
         style={{
@@ -63,11 +53,10 @@ export default function AdminLayout({
           borderInlineEnd: "1px solid #272727",
           [isRTL ? "right" : "left"]: 0,
         }}>
-        {/* Logo */}
         <div
           className="flex items-center px-6 shrink-0"
           style={{ height: "80px", borderBottom: "1px solid #272727" }}>
-          <Link href={`/admin/submissions`}>
+          <Link href={`/admin`}>
             <Image
               src="/assets/logo.png"
               alt="Monster"
@@ -78,7 +67,6 @@ export default function AdminLayout({
           </Link>
         </div>
 
-        {/* Admin label */}
         <div className="px-6 py-4 border-b border-[#272727]">
           <p
             className="font-display font-bold uppercase text-[#6bd41a] tracking-[2px]"
@@ -87,10 +75,11 @@ export default function AdminLayout({
           </p>
         </div>
 
-        {/* Nav links */}
-        <nav className="flex-1 py-4">
-          {NAV.map(({ href, icon: Icon, labelEn, labelAr }) => {
-            const isActive = pathname.startsWith(href);
+        <nav className="flex-1 py-4 overflow-y-auto">
+          {NAV.map(({ href, icon: Icon, labelEn, labelAr, exact }) => {
+            const isActive = exact
+              ? pathname === href
+              : pathname.startsWith(href);
             return (
               <Link
                 key={href}
@@ -107,12 +96,10 @@ export default function AdminLayout({
           })}
         </nav>
 
-        {/* ── Repair tool ───────────────────────────────────────────── */}
         <div className="px-3 pb-3 border-t border-[#272727] pt-3">
           <RepairTool />
         </div>
 
-        {/* User info */}
         {user && (
           <div className="px-6 py-4 border-t border-[#272727]">
             <p className="font-proxima txt-smaller text-[#555]">
@@ -125,11 +112,9 @@ export default function AdminLayout({
         )}
       </aside>
 
-      {/* ── Main content ─────────────────────────────────────────────── */}
       <div
         className="flex-1 flex flex-col"
         style={{ [isRTL ? "marginRight" : "marginLeft"]: "240px" }}>
-        {/* Top header */}
         <header
           className="sticky top-0 z-20 flex items-center justify-between px-6 bg-[#050505]"
           style={{ height: "80px", borderBottom: "1px solid #272727" }}>
@@ -145,7 +130,6 @@ export default function AdminLayout({
           </Link>
         </header>
 
-        {/* Page content */}
         <motion.main
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}

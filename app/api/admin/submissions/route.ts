@@ -41,6 +41,12 @@ export async function GET(request: NextRequest) {
           status:                true,
           adminNotes:            true,
           isEdited:              true,
+          engagementRate:        true,
+          qualityRating:         true,
+          rejectionReason:       true,
+          submittedLikes:        true,
+          submittedComments:     true,
+          submittedShares:       true,
           createdAt:             true,
           updatedAt:             true,
           user: {

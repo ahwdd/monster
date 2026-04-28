@@ -4,14 +4,27 @@ import { z } from "zod";
 import { requireRole } from "@/lib/auth/server";
 import { prisma } from "@/lib/prisma";
 
+const REJECTION_REASONS = [
+  "LOW_QUALITY",
+  "WRONG_CONTENT_TYPE",
+  "INSUFFICIENT_REACH",
+  "GUIDELINE_VIOLATION",
+  "DUPLICATE",
+  "OTHER",
+] as const;
+
 const schema = z.object({
   status:            z.enum(["APPROVED", "REJECTED"]),
   acceptedReach:     z.number().int().min(0).optional(),
   adminNotes:        z.string().optional().nullable(),
+  rejectionReason:   z.enum(REJECTION_REASONS).optional().nullable(),
+  // Engagement
   engagementRate:    z.number().min(0).max(100).optional(),
   submittedLikes:    z.number().int().min(0).optional(),
   submittedComments: z.number().int().min(0).optional(),
   submittedShares:   z.number().int().min(0).optional(),
+  // Quality rating — 0.5–5.0 in 0.5 steps
+  qualityRating:     z.number().min(0.5).max(5).multipleOf(0.5).optional().nullable(),
 });
 
 export async function PATCH(
@@ -31,9 +44,6 @@ export async function PATCH(
     const body = await request.json();
     const data = schema.parse(body);
 
-    // ── Was this submission already APPROVED before this PATCH? ──────────
-    // If yes, this is a reach-update re-approval — content counters must NOT
-    // be incremented again, only the reach delta is credited.
     const wasAlreadyApproved = submission.status === "APPROVED";
 
     // ── Reach delta ───────────────────────────────────────────────────────
@@ -49,22 +59,18 @@ export async function PATCH(
         reachToCredit = submission.pendingReach - prev;
         newAcceptedReach = submission.pendingReach;
       } else if (!wasAlreadyApproved) {
-        // Fresh approval — credit the full submitted reach
         reachToCredit    = submission.submittedReach;
         newAcceptedReach = submission.submittedReach;
       }
-      // If wasAlreadyApproved and no reach fields set, reachToCredit stays 0
     }
 
-    // ── Engagement rate resolution ────────────────────────────────────────
+    // ── Engagement rate ───────────────────────────────────────────────────
     let resolvedEngagementRate = 0;
-
     if (data.status === "APPROVED") {
       const hasRaw =
         data.submittedLikes    !== undefined ||
         data.submittedComments !== undefined ||
         data.submittedShares   !== undefined;
-
       if (hasRaw && newAcceptedReach > 0) {
         const interactions =
           (data.submittedLikes    ?? 0) +
@@ -85,8 +91,10 @@ export async function PATCH(
         acceptedReach:         newAcceptedReach,
         pendingReach:          null,
         previousAcceptedReach: null,
+        rejectionReason:       data.status === "REJECTED" ? (data.rejectionReason ?? null) : null,
         ...(data.status === "APPROVED" && {
           engagementRate:    resolvedEngagementRate,
+          qualityRating:     data.qualityRating ?? null,
           submittedLikes:    data.submittedLikes    ?? null,
           submittedComments: data.submittedComments ?? null,
           submittedShares:   data.submittedShares   ?? null,
@@ -101,57 +109,41 @@ export async function PATCH(
       });
 
       if (profile) {
-        // ── Content counters: only increment on FRESH approvals ──────────
-        // Re-approvals (reach updates on already-approved submissions) must
-        // never touch content counters — that's what caused the stacking bug.
+        // Content counters — only on fresh approvals
         const rankWindowIncrements: any = {};
         const totalIncrements: any      = {};
-
         if (!wasAlreadyApproved) {
           const contentCounts: Record<string, number> = {};
           submission.contentTypes.forEach((ct) => {
             const field = contentTypeToField(ct);
             contentCounts[field] = (contentCounts[field] ?? 0) + 1;
           });
-
           Object.entries(contentCounts).forEach(([field, count]) => {
             rankWindowIncrements[field]                   = { increment: count };
             totalIncrements[`total${capitalize(field)}`] = { increment: count };
           });
         }
 
-        // ── Weighted average engagement ───────────────────────────────────
+        // Weighted average engagement
         let newProfileEngagement = profile.engagementRate;
-
         if (newAcceptedReach > 0) {
           const approvedSubs = await prisma.submission.findMany({
-            where: {
-              userId: submission.userId,
-              status: "APPROVED",
-              id:     { not: id }, // exclude self (still old status in DB)
-            },
+            where: { userId: submission.userId, status: "APPROVED", id: { not: id } },
             select: { acceptedReach: true, engagementRate: true },
           });
-
           const allSubs = [
             ...approvedSubs,
             { acceptedReach: newAcceptedReach, engagementRate: resolvedEngagementRate },
           ];
-
-          const totalWeight = allSubs.reduce((sum, s) => sum + (s.acceptedReach ?? 0), 0);
+          const totalWeight = allSubs.reduce((s, x) => s + (x.acceptedReach ?? 0), 0);
           if (totalWeight > 0) {
-            const weightedSum = allSubs.reduce(
-              (sum, s) => sum + (s.engagementRate ?? 0) * (s.acceptedReach ?? 0),
-              0
-            );
-            newProfileEngagement = weightedSum / totalWeight;
+            newProfileEngagement = allSubs.reduce(
+              (s, x) => s + (x.engagementRate ?? 0) * (x.acceptedReach ?? 0), 0
+            ) / totalWeight;
           }
         }
 
-        // Only update profile if there's something to change
-        const hasCounterChanges =
-          Object.keys(rankWindowIncrements).length > 0 ||
-          Object.keys(totalIncrements).length > 0;
+        const hasCounterChanges = Object.keys(rankWindowIncrements).length > 0;
 
         await prisma.creatorProfile.update({
           where: { userId: submission.userId },
@@ -161,10 +153,28 @@ export async function PATCH(
               totalReachAllTime: { increment: reachToCredit },
             }),
             engagementRate: newProfileEngagement,
-            ...(hasCounterChanges && {
-              ...rankWindowIncrements,
-              ...totalIncrements,
-            }),
+            ...(hasCounterChanges && { ...rankWindowIncrements, ...totalIncrements }),
+          },
+        });
+
+        // ── Upsert PlatformStat ───────────────────────────────────────────
+        // One record per submission — update reach delta on re-approvals
+        await (prisma as any).platformStat.upsert({
+          where:  { submissionId: id },
+          create: {
+            userId:        submission.userId,
+            submissionId:  id,
+            platform:      submission.platform,
+            contentTypes:  submission.contentTypes,
+            acceptedReach: newAcceptedReach,
+            engagementRate: resolvedEngagementRate,
+            qualityRating:  data.qualityRating ?? null,
+            rank:           profile.rank,
+          },
+          update: {
+            acceptedReach:  newAcceptedReach,
+            engagementRate: resolvedEngagementRate,
+            qualityRating:  data.qualityRating ?? null,
           },
         });
       }
@@ -192,15 +202,9 @@ export async function PATCH(
 
 function contentTypeToField(ct: string): string {
   const map: Record<string, string> = {
-    PICTURE:    "pictureCount",
-    STORY:      "storyCount",
-    REEL:       "reelCount",
-    LONG_VIDEO: "longVideoCount",
-    POST:       "postCount",
+    PICTURE: "pictureCount", STORY: "storyCount", REEL: "reelCount",
+    LONG_VIDEO: "longVideoCount", POST: "postCount",
   };
   return map[ct] ?? "postCount";
 }
-
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }

@@ -41,6 +41,8 @@ enum ContentType {
   REEL
   LONG_VIDEO
   POST
+  LIVE
+  STREAM
 }
 
 enum MonsterAppearance {
@@ -65,11 +67,28 @@ enum DiscoverySource {
 
 enum CreatorRank {
   UNRANKED
-  ROOKIE // ≥ 100k total reach
-  MEGA // decorative sub-rank between Rookie and Rising
-  RISING // ≥ 500k total reach (reach resets on rank-up)
-  ELITE // decorative sub-rank between Rising and Cold
-  COLD // ≥ 1M total reach (reach never resets here)
+  ROOKIE
+  MEGA
+  RISING
+  ELITE
+  COLD
+}
+
+enum SubmissionRejectionReason {
+  LOW_QUALITY
+  WRONG_CONTENT_TYPE
+  INSUFFICIENT_REACH
+  GUIDELINE_VIOLATION
+  DUPLICATE
+  OTHER
+}
+
+enum RegistrationRejectionReason {
+  INELIGIBLE_REGION
+  COMPETING_BRAND
+  INSUFFICIENT_FOLLOWERS
+  INCOMPLETE_PROFILE
+  OTHER
 }
 
 model User {
@@ -91,6 +110,7 @@ model User {
 
   profile     CreatorProfile?
   submissions Submission[]
+  snapshots   MonthlySnapshot[]
 }
 
 type PlatformLink {
@@ -120,9 +140,11 @@ model CreatorProfile {
   discoverySources  DiscoverySource[]
   whyJoin           String?
 
-  status     RegistrationStatus @default(PENDING)
-  adminNotes String?
-  approvedAt DateTime?
+  status                RegistrationStatus           @default(PENDING)
+  adminNotes            String?
+  adminNote             String?
+  registrationRejection RegistrationRejectionReason?
+  approvedAt            DateTime?
 
   rank              CreatorRank @default(UNRANKED)
   currentRankReach  Int         @default(0)
@@ -175,11 +197,48 @@ model Submission {
   submittedComments Int?
   submittedShares   Int?
 
-  status     SubmissionStatus @default(PENDING)
-  adminNotes String?
+  status          SubmissionStatus           @default(PENDING)
+  adminNotes      String?
+  rejectionReason SubmissionRejectionReason?
+  qualityRating   Float?
 
   isEdited Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model MonthlySnapshot {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  month           String // "YYYY-MM"
+  rank            String
+  reach           Int    @default(0)
+  totalReach      Int    @default(0)
+  engagementRate  Float  @default(0)
+  commitmentScore Float  @default(0)
+  adminGradeScore Float  @default(0)
+  approvedSubs    Int    @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, month])
+}
+
+model PlatformStat {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String @db.ObjectId
+  submissionId String @unique @db.ObjectId
+
+  platform       String
+  contentTypes   String[]
+  acceptedReach  Int      @default(0)
+  engagementRate Float    @default(0)
+  qualityRating  Float?
+  rank           String
+
+  approvedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

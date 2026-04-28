@@ -152,6 +152,8 @@ exports.Prisma.CreatorProfileScalarFieldEnum = {
   whyJoin: 'whyJoin',
   status: 'status',
   adminNotes: 'adminNotes',
+  adminNote: 'adminNote',
+  registrationRejection: 'registrationRejection',
   approvedAt: 'approvedAt',
   rank: 'rank',
   currentRankReach: 'currentRankReach',
@@ -195,8 +197,38 @@ exports.Prisma.SubmissionScalarFieldEnum = {
   submittedShares: 'submittedShares',
   status: 'status',
   adminNotes: 'adminNotes',
+  rejectionReason: 'rejectionReason',
+  qualityRating: 'qualityRating',
   isEdited: 'isEdited',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MonthlySnapshotScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  month: 'month',
+  rank: 'rank',
+  reach: 'reach',
+  totalReach: 'totalReach',
+  engagementRate: 'engagementRate',
+  commitmentScore: 'commitmentScore',
+  adminGradeScore: 'adminGradeScore',
+  approvedSubs: 'approvedSubs',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PlatformStatScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  submissionId: 'submissionId',
+  platform: 'platform',
+  contentTypes: 'contentTypes',
+  acceptedReach: 'acceptedReach',
+  engagementRate: 'engagementRate',
+  qualityRating: 'qualityRating',
+  rank: 'rank',
+  approvedAt: 'approvedAt',
   updatedAt: 'updatedAt'
 };
 
@@ -224,6 +256,14 @@ exports.RegistrationStatus = exports.$Enums.RegistrationStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
+};
+
+exports.RegistrationRejectionReason = exports.$Enums.RegistrationRejectionReason = {
+  INELIGIBLE_REGION: 'INELIGIBLE_REGION',
+  COMPETING_BRAND: 'COMPETING_BRAND',
+  INSUFFICIENT_FOLLOWERS: 'INSUFFICIENT_FOLLOWERS',
+  INCOMPLETE_PROFILE: 'INCOMPLETE_PROFILE',
+  OTHER: 'OTHER'
 };
 
 exports.CreatorRank = exports.$Enums.CreatorRank = {
@@ -257,12 +297,23 @@ exports.SubmissionStatus = exports.$Enums.SubmissionStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.SubmissionRejectionReason = exports.$Enums.SubmissionRejectionReason = {
+  LOW_QUALITY: 'LOW_QUALITY',
+  WRONG_CONTENT_TYPE: 'WRONG_CONTENT_TYPE',
+  INSUFFICIENT_REACH: 'INSUFFICIENT_REACH',
+  GUIDELINE_VIOLATION: 'GUIDELINE_VIOLATION',
+  DUPLICATE: 'DUPLICATE',
+  OTHER: 'OTHER'
+};
+
 exports.ContentType = exports.$Enums.ContentType = {
   PICTURE: 'PICTURE',
   STORY: 'STORY',
   REEL: 'REEL',
   LONG_VIDEO: 'LONG_VIDEO',
-  POST: 'POST'
+  POST: 'POST',
+  LIVE: 'LIVE',
+  STREAM: 'STREAM'
 };
 
 exports.MonsterAppearance = exports.$Enums.MonsterAppearance = {
@@ -275,7 +326,9 @@ exports.MonsterAppearance = exports.$Enums.MonsterAppearance = {
 exports.Prisma.ModelName = {
   User: 'User',
   CreatorProfile: 'CreatorProfile',
-  Submission: 'Submission'
+  Submission: 'Submission',
+  MonthlySnapshot: 'MonthlySnapshot',
+  PlatformStat: 'PlatformStat'
 };
 
 /**
