@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         pictureCount: 0, storyCount: 0, reelCount: 0, longVideoCount: 0,
         postCount: 0, liveCount: 0, streamCount: 0,
         totalPictureCount: 0, totalStoryCount: 0, totalReelCount: 0, totalLongVideoCount:0,
-        totalPostCount: 0, totalLiveCount: 0, totalStreaCount: 0,
+        totalPostCount: 0, totalLiveCount: 0, totalStreamCount: 0,
         isActive:           true,
       },
     });
