@@ -92,7 +92,6 @@ function ReqCircle({
         className="text-center leading-tight txt-large"
         style={{
           color: "#9ca3af",
-          maxWidth: "clamp(44px, 6vw, 60px)",
         }}>
         {label}
       </span>
@@ -174,8 +173,8 @@ export default function LevelingSection() {
                     {t("requirements")}:
                   </p>
 
-                  {/* Requirement circles — all of them */}
-                  <div className="flex flex-wrap gap-x-3 gap-y-5 min-h-15">
+                  {/* Requirement circles */}
+                  <div className="flex flex-wrap gap-x-3.5 gap-y-5 min-h-15">
                     {reqs.slice(0, 5).map((req) => {
                       const { value, label } = parseReq(req);
                       return (
