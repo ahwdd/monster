@@ -67,9 +67,9 @@ export interface AuthContextType {
   verifyWhatsAppRegisterOTP:(phone: string, otp: string) => Promise<boolean>;
   sendEmailRegisterOTP:     (name: string, email: string) => Promise<boolean>;
   verifyEmailRegisterOTP:   (email: string, otp: string) => Promise<boolean>;
-  sendWhatsAppLoginOTP:     (phone: string, phoneKey: string) => Promise<boolean>;
+  sendWhatsAppLoginOTP:     (phone: string, phoneKey: string) => Promise<boolean | "notRegistered">;
   verifyWhatsAppLoginOTP:   (phone: string, otp: string) => Promise<boolean | "requiresName">;
-  sendEmailLoginOTP:        (email: string) => Promise<boolean>;
+  sendEmailLoginOTP:        (email: string) => Promise<boolean | "notRegistered">;
   verifyEmailLoginOTP:      (email: string, otp: string) => Promise<boolean | "requiresName">;
   logout:                   () => Promise<void>;
   refreshUser:              (forceRefresh?: boolean) => Promise<void>;

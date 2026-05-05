@@ -138,6 +138,7 @@ export const sendWhatsAppLoginOTP = createAsyncThunk(
         body: JSON.stringify({ phone, phone_key }),
       });
       const data = await res.json();
+      if (data.notRegistered) return { notRegistered: true as const };
       if (!data.success) throw new Error(data.message || "Failed to send OTP");
       return data;
     } catch (err) {
@@ -177,6 +178,7 @@ export const sendEmailLoginOTP = createAsyncThunk(
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
+      if (data.notRegistered) return { notRegistered: true as const };
       if (!data.success) throw new Error(data.message || "Failed to send OTP");
       return data;
     } catch (err) {

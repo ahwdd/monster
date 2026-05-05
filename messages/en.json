@@ -157,7 +157,8 @@
     "signupSuccess": "Account created successfully!",
     "alreadyLoggedInTitle": "You are already signed in.",
     "goToProfile": "Go to Profile",
-    "goToHome": "Go to Home"
+    "goToHome": "Go to Home",
+    "notRegistered": "No account found. Please sign up first."
   },
 
   "profile": {

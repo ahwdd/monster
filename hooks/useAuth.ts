@@ -79,11 +79,14 @@ export const useAuth = (): AuthContextType => {
   const sendWhatsAppLoginOTPHandler = async (
     phone: string,
     phoneKey: string,
-  ): Promise<boolean> => {
+  ): Promise<boolean | "notRegistered"> => {
     const result = await dispatch(
       sendWhatsAppLoginOTP({ phone, phone_key: phoneKey })
     );
-    return sendWhatsAppLoginOTP.fulfilled.match(result);
+    if (!sendWhatsAppLoginOTP.fulfilled.match(result)) return false;
+    const payload = result.payload as any;
+    if (payload?.notRegistered === true) return "notRegistered";
+    return true;
   };
 
   const verifyWhatsAppLoginOTPHandler = async (
@@ -97,9 +100,12 @@ export const useAuth = (): AuthContextType => {
     return !!payload;
   };
 
-  const sendEmailLoginOTPHandler = async (email: string): Promise<boolean> => {
+  const sendEmailLoginOTPHandler = async (email: string): Promise<boolean | "notRegistered"> => {
     const result = await dispatch(sendEmailLoginOTP({ email }));
-    return sendEmailLoginOTP.fulfilled.match(result);
+    if (!sendEmailLoginOTP.fulfilled.match(result)) return false;
+    const payload = result.payload as any;
+    if (payload?.notRegistered === true) return "notRegistered";
+    return true;
   };
 
   const verifyEmailLoginOTPHandler = async (

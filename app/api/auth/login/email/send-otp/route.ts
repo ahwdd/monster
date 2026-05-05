@@ -4,20 +4,14 @@ import { z } from "zod";
 
 const schema = z.object({
   email: z.string().email("Valid email is required"),
-  name:  z.string().optional(), // optional — passed from signup page
 });
 
-const NOT_REGISTERED_MESSAGES = [
-  "not registered",
-  "not found",
-];
+const NOT_REGISTERED_MESSAGES = ["not"];//"not registered", "not found"
 
 function isNotRegistered(data: any): boolean {
   const msg      = (data?.message ?? "").toLowerCase();
   const emailErr = (data?.errors?.email ?? []).join(" ").toLowerCase();
-  return NOT_REGISTERED_MESSAGES.some(
-    (s) => msg.includes(s) || emailErr.includes(s)
-  );
+  return NOT_REGISTERED_MESSAGES.some((s) => msg.includes(s) || emailErr.includes(s));
 }
 
 export async function POST(request: NextRequest) {
@@ -25,7 +19,7 @@ export async function POST(request: NextRequest) {
     const body          = await request.json();
     const validatedData = schema.parse(body);
 
-    const loginRes = await fetch(
+    const loginRes  = await fetch(
       `${process.env.HUB_BASE_URL}/api/auth/login/email/send-otp`,
       {
         method:  "POST",
@@ -39,28 +33,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(loginData, { status: loginRes.status });
     }
 
+    // Email not registered on Hub → signal the client to redirect to signup
     if (isNotRegistered(loginData)) {
-      const registerRes = await fetch(
-        `${process.env.HUB_BASE_URL}/api/auth/register/email/send-otp`,
-        {
-          method:  "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body:    JSON.stringify({
-            email: validatedData.email,
-            name:  validatedData.name || "Monster Creator",
-          }),
-        }
+      return NextResponse.json(
+        { success: false, notRegistered: true, message: loginData.message },
+        { status: 404 }
       );
-
-      const text = await registerRes.text();
-      let registerData: any;
-      try { registerData = JSON.parse(text); } catch { registerData = { success: false }; }
-
-      return NextResponse.json(registerData, { status: registerRes.status });
     }
 
     return NextResponse.json(loginData, { status: loginRes.status });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

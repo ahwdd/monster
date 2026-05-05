@@ -171,6 +171,13 @@ export default function SigninPage() {
       tab === "whatsapp"
         ? await sendWhatsAppLoginOTP(phone, phoneKey)
         : await sendEmailLoginOTP(email);
+
+    if (ok === "notRegistered") {
+      toast.error(t("notRegistered"));
+      router.push(`/auth/signup`);
+      return;
+    }
+
     if (ok) {
       setStep("otp");
       setOtp("");

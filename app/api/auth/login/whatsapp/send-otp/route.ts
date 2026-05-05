@@ -7,19 +7,12 @@ const schema = z.object({
   phone_key: z.string().min(1,  "Country code is required"),
 });
 
-const NOT_REGISTERED_MESSAGES = [
-  "not found",
-  "not registered",
-];
+const NOT_REGISTERED_MESSAGES = ["not"];// "not found", "not registered"
 
 function isNotRegistered(data: any): boolean {
-  const msg = (data?.message ?? "").toLowerCase();
-  const phoneErr = (data?.errors?.phone ?? [])
-    .join(" ")
-    .toLowerCase();
-  return NOT_REGISTERED_MESSAGES.some(
-    (s) => msg.includes(s) || phoneErr.includes(s)
-  );
+  const msg      = (data?.message ?? "").toLowerCase();
+  const phoneErr = (data?.errors?.phone ?? []).join(" ").toLowerCase();
+  return NOT_REGISTERED_MESSAGES.some((s) => msg.includes(s) || phoneErr.includes(s));
 }
 
 export async function POST(request: NextRequest) {
@@ -27,7 +20,7 @@ export async function POST(request: NextRequest) {
     const body          = await request.json();
     const validatedData = schema.parse(body);
 
-    const loginRes = await fetch(
+    const loginRes  = await fetch(
       `${process.env.HUB_BASE_URL}/api/auth/login/whatsapp/send-otp`,
       {
         method:  "POST",
@@ -41,30 +34,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(loginData, { status: loginRes.status });
     }
 
+    // Phone not registered on Hub → signal the client to redirect to signup
     if (isNotRegistered(loginData)) {
-      const registerRes = await fetch(
-        `${process.env.HUB_BASE_URL}/api/auth/register/whatsapp/send-otp`,
-        {
-          method:  "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body:    JSON.stringify({
-            name:      "Monster Creator",
-            phone:     validatedData.phone,
-            phone_key: validatedData.phone_key,
-          }),
-        }
+      return NextResponse.json(
+        { success: false, notRegistered: true, message: loginData.message },
+        { status: 404 }
       );
-
-      const text = await registerRes.text();
-      let registerData: any;
-      try { registerData = JSON.parse(text); } catch { registerData = { success: false }; }
-
-      // Return register result (success or failure) to the client
-      return NextResponse.json(registerData, { status: registerRes.status });
     }
 
     return NextResponse.json(loginData, { status: loginRes.status });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
